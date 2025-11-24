@@ -16,7 +16,6 @@ public class Main {
         GameApp.start("Your Game Name", 800, 450, 60, false, "MainMenuScreen");
         john();
         john();
-        john();
-        john();
+        System.out.println("1");
     }
 }
