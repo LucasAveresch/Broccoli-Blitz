@@ -17,6 +17,7 @@ public class Main {
         john();
         john();
         System.out.println("3!");
+        rutger();
 
     }
 }

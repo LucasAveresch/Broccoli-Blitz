@@ -7,4 +7,8 @@ public class Methodes {
     public static void john(){
         System.out.println("Hoi");
     }
+
+    public static void rutger(){
+
+    }
 }
