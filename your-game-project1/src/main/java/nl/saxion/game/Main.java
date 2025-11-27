@@ -15,6 +15,5 @@ public class Main {
 
         // Start game loop and show main menu screen
         GameApp.start("Broccoli blitz", 1280, 720, 60, false, "MainMenuScreen");
-
     }
 }
