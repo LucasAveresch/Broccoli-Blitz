@@ -2,6 +2,9 @@ package nl.saxion.game.yourgamename;
 
 import nl.saxion.gameapp.GameApp;
 import nl.saxion.gameapp.screens.ScalableGameScreen;
+import static nl.saxion.game.yourgamename.Methodes_Rutger.*;
+import static nl.saxion.game.yourgamename.Methodes_Maxje.*;
+import static nl.saxion.game.yourgamename.Methodes_Lucas.*;
 
 public class YourGameScreen extends ScalableGameScreen {
 
@@ -20,6 +23,7 @@ public class YourGameScreen extends ScalableGameScreen {
 
         // Scherm volledig zwart maken
         GameApp.clearScreen("black");
+        Underground();
     }
 
     @Override
