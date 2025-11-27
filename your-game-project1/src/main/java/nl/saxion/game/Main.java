@@ -14,7 +14,7 @@ public class Main {
         GameApp.addScreen("YourGameScreen", new YourGameScreen());
 
         // Start game loop and show main menu screen
-        GameApp.start("Your Game Name", 1280, 720, 60, false, "MainMenuScreen");
+        GameApp.start("Broccoli blitz", 1280, 720, 60, false, "MainMenuScreen");
 
 
     }
