@@ -14,11 +14,8 @@ public class Main {
         GameApp.addScreen("YourGameScreen", new YourGameScreen());
 
         // Start game loop and show main menu screen
-        GameApp.start("Your Game Name", 800, 450, 60, false, "MainMenuScreen");
-        john();
-        john();
-        System.out.println("3!");
-        rutger();
+        GameApp.start("Your Game Name", 1280, 720, 60, false, "MainMenuScreen");
+
 
     }
 }
