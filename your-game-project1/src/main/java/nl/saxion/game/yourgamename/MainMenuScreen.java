@@ -5,14 +5,21 @@ import nl.saxion.gameapp.GameApp;
 import nl.saxion.gameapp.screens.ScalableGameScreen;
 
 public class MainMenuScreen extends ScalableGameScreen {
-    public MainMenuScreen() {
+    private PlayerClass player;
+
+    public MainMenuScreen(PlayerClass player) {
         super(1280, 720);
+        this.player = player;
+
+
     }
+
 
     @Override
     public void show() {
         GameApp.addFont("basic", "fonts/basic.ttf", 100);
     }
+
 
     @Override
     public void render(float delta) {

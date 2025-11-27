@@ -1,9 +1,9 @@
 package nl.saxion.game.yourgamename;
 
 public class PlayerClass {
-    int Ypostion;
-
-    public PlayerClass (){
-        int Yposition;
+    int yPosition = 0;
+    public PlayerClass (int start){
+        this.yPosition = start;
     }
 }
+

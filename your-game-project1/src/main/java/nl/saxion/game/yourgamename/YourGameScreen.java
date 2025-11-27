@@ -8,11 +8,13 @@ import static nl.saxion.game.yourgamename.Methodes_Maxje.*;
 import static nl.saxion.game.yourgamename.Methodes_Lucas.*;
 
 public class YourGameScreen extends ScalableGameScreen {
+    public PlayerClass player;
+    public YourGameScreen(PlayerClass player) {
+        super(1280, 720);
+        this.player = player; // resolutie 1280x720
 
-    public YourGameScreen() {
-        super(1280, 720); // resolutie 1280x720
     }
-    int yPlayer = 200;
+
     @Override
     public void show() {
         // Geen extra setup nodig
@@ -25,7 +27,7 @@ public class YourGameScreen extends ScalableGameScreen {
         // Scherm volledig zwart maken
         GameApp.clearScreen("black");
         Underground();
-        Player(yPlayer);
+        Player(player.yPosition);
     }
 
     @Override

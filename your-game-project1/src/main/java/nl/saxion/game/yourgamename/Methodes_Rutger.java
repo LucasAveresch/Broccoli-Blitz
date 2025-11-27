@@ -6,8 +6,6 @@ import nl.saxion.gameapp.GameApp;
 import java.security.PublicKey;
 
 public class Methodes_Rutger {
-    int yPlayer = 200;
-
     public static void john(){
         System.out.println("Hoi");
     }
@@ -22,18 +20,13 @@ public class Methodes_Rutger {
     //Player maken
     public static Integer Player(int yPlayer){
         GameApp.startShapeRenderingFilled();
-
         GameApp.drawCircle(200,yPlayer, 50 ,Color.CYAN);
         GameApp.endShapeRendering();
         return yPlayer;
 }
 
     //Player springen
-    public static void Jump(){
-
-
-
-
+    public static void Jump(int yPlayer){
 
     }
 
