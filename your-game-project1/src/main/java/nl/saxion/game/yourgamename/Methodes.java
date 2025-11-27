@@ -9,6 +9,7 @@ public class Methodes {
     }
 
     public static void rutger(){
+        System.out.println("Is sexy");
 
     }
 }
