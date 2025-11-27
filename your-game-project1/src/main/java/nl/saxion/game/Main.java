@@ -18,6 +18,7 @@ public class Main {
         john();
         System.out.println("3!");
         rutger();
+        rutger is homo;
 
     }
 }
