@@ -1,10 +1,11 @@
 package nl.saxion.game;
 
-import nl.saxion.game.yourgamename.Methodes;
 import nl.saxion.game.yourgamename.YourGameScreen;
 import nl.saxion.game.yourgamename.MainMenuScreen;
 import nl.saxion.gameapp.GameApp;
-import static nl.saxion.game.yourgamename.Methodes.*;
+import static nl.saxion.game.yourgamename.Methodes_Rutger.*;
+import static nl.saxion.game.yourgamename.Methodes_Maxje.*;
+import static nl.saxion.game.yourgamename.Methodes_Lucas.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -18,7 +19,6 @@ public class Main {
         john();
         System.out.println("3!");
         rutger();
-        rutger is homo;
 
     }
 }
