@@ -28,7 +28,9 @@ public class YourGameScreen extends ScalableGameScreen {
         GameApp.clearScreen("black");
         Underground();
         Player(player.yPosition);
+
     }
+
 
     @Override
     public void hide() {
