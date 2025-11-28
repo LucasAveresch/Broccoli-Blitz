@@ -11,7 +11,8 @@ import static nl.saxion.game.yourgamename.Methodes_Lucas.*;
 public class Main {
     public static void main(String[] args) {
         // Add screens
-        PlayerClass player = new PlayerClass();
+        PlayerClass player = new PlayerClass(
+        );
         GameApp.addScreen("MainMenuScreen", new MainMenuScreen(player));
         GameApp.addScreen("YourGameScreen", new YourGameScreen(player));
 

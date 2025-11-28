@@ -16,15 +16,13 @@ public class Methodes_Lucas {
     public class LucasParallaxMethods {
 
         // Namen voor de textures in de GameApp texture registry
-        private static final String TEX_FAR = "lucas_bg_far";
         private static final String TEX_MID = "lucas_bg_mid";
 
         // Bestandsnamen in src/main/resources/textures
-        private static final String TEX_FAR_PATH = "textures/bg_far.png";
-        private static final String TEX_MID_PATH = "textures/bg_mid.png";
+        private static final String TEX_MID_PATH = "img/bg_mid.png";
 
         // Parallax snelheden (kleiner = lijkt verder weg)
-        private static final float SPEED_FAR = 0.2f;
+
         private static final float SPEED_MID = 0.5f;
 
         // Y-positie waarop de achtergrond getekend wordt
@@ -48,8 +46,8 @@ public class Methodes_Lucas {
 
             // Textures registreren in de globale texture registry
             // Zie Saxion docs: GameApp.addTexture("naam", "textures/bestand.png")
-            GameApp.addTexture(TEX_FAR, TEX_FAR_PATH);
             GameApp.addTexture(TEX_MID, TEX_MID_PATH);
+
 
             initialized = true;
         }
@@ -63,7 +61,7 @@ public class Methodes_Lucas {
                 return;
             }
 
-            GameApp.disposeTexture(TEX_FAR);
+
             GameApp.disposeTexture(TEX_MID);
 
             initialized = false;
@@ -83,7 +81,7 @@ public class Methodes_Lucas {
             }
 
             // Achtergrondlaag ver weg
-            drawLayer(TEX_FAR, SPEED_FAR, cameraX, worldWidth);
+
 
             // Middenlaag dichterbij
             drawLayer(TEX_MID, SPEED_MID, cameraX, worldWidth);

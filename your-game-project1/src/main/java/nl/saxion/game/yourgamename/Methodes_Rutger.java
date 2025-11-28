@@ -19,9 +19,8 @@ public class Methodes_Rutger {
 }
     //Player maken
     public static Integer Player(int yPlayer){
-        GameApp.startShapeRenderingFilled();
-        GameApp.drawCircle(200,yPlayer, 50 ,Color.CYAN);
-        GameApp.endShapeRendering();
+        GameApp.addTexture("spritechef", "img/spritechef.png");
+        GameApp.drawTexture("spritechef", 100, yPlayer);
         return yPlayer;
 }
 

@@ -6,7 +6,7 @@ import nl.saxion.game.yourgamename.PlayerClass.*;
 public class Methodes_Maxje {
 
 
-    public static void initializeEnemy(int positie){
+    public static void initializePlayer(int positie){
 
     }
 }
