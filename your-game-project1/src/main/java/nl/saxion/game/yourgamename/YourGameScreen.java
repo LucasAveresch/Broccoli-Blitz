@@ -26,6 +26,8 @@ public class YourGameScreen extends ScalableGameScreen {
     public void show() {
         Methodes_Lucas.LucasParallaxMethods.initParallax(0);
         // Geen extra setup nodig
+        GameApp.addTexture("kogel", "img/kogel.png");
+
     }
     private float Worldx;
     @Override
@@ -44,7 +46,8 @@ public class YourGameScreen extends ScalableGameScreen {
             Worldx += 300 * delta;
             Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(Worldx, getWorldWidth());
             update(Player, Player.filepath);
-            GameApp.endSpriteRendering();
+            //updateBullets(player);
+        GameApp.endSpriteRendering();
 
 
     }
