@@ -3,11 +3,15 @@ package nl.saxion.game.yourgamename;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import nl.saxion.gameapp.GameApp;
+
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 
 public class Methodes_Rutger {
     // Lijst van kogels
     public static ArrayList<BulletClass> bullets = new ArrayList<>();
+
 
     // Speler update (springen, bukken, tekenen)
     public static void update(PlayerClass Player, String filepath) {
@@ -41,7 +45,7 @@ public class Methodes_Rutger {
         }
         if (Player.isReloading) {
             long now = System.currentTimeMillis();
-            if (now - Player.reloadStartTime >= 750) { // 1.5 seconden
+            if (now - Player.reloadStartTime >= 250) { // 1.5 seconden
                 Player.ammo = Player.maxAmmo;
                 Player.isReloading = false;
             }
@@ -70,8 +74,10 @@ public class Methodes_Rutger {
         // --- TEKENEN VAN DE BROCCOLI ---
         GameApp.drawTexture("brocolli", 100, Player.yPlayer);
 
-      //  // --- AMMO HUD RECHTSBOVEN ---
-     //   GameApp.drawText("Ammo: " + Player.ammo + "/" + Player.maxAmmo, String.valueOf(24, GameApp.getWorldHeight() - 30, GameApp.getWorldWidth() - 30, Color.WHITE);
+
+      // --- AMMO HUD RECHTSBOVEN ---
+        GameApp.drawText("default", "Ammo: " + Player.ammo + "/" + Player.maxAmmo,
+                GameApp.getWorldWidth() - 150, GameApp.getWorldHeight() - 30, "white");
 
     }
     }
