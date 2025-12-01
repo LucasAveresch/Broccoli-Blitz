@@ -2,6 +2,7 @@ package nl.saxion.game.yourgamename;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import nl.saxion.gameapp.GameApp;
@@ -34,7 +35,8 @@ public class YourGameScreen extends ScalableGameScreen {
             GameApp.startSpriteRendering();
             Worldx += 300 * delta;
             Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(Worldx, getWorldWidth());
-            Player(player.yPosition);
+            Texture chef = Player(player.yPosition, player.filepath);
+        Jump(200,chef);
             GameApp.endSpriteRendering();
 
 

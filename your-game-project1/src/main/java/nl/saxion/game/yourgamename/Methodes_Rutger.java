@@ -1,7 +1,11 @@
 package nl.saxion.game.yourgamename;
 
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import nl.saxion.gameapp.GameApp;
+import org.w3c.dom.Text;
 
 import java.security.PublicKey;
 
@@ -18,14 +22,18 @@ public class Methodes_Rutger {
 
 }
     //Player maken
-    public static Integer Player(int yPlayer){
-        GameApp.addTexture("spritechef", "img/spritechef.png");
+    public static Texture Player(int yPlayer, String filepath){
+        Texture chefTexture = new Texture(Gdx.files.internal(filepath));
+        GameApp.addTexture("spritechef", filepath);
         GameApp.drawTexture("spritechef", 100, yPlayer);
-        return yPlayer;
+        return chefTexture;
 }
 
     //Player springen
-    public static void Jump(int yPlayer){
+    public static void Jump(int yPlayer, Texture Texture){
+        if (GameApp.isKeyPressed(32)){
+            System.out.println("kaas");
+        GameApp.drawTexture("spritechef",100, yPlayer+200);}
 
     }
 
