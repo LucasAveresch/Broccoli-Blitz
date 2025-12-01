@@ -1,5 +1,7 @@
 package nl.saxion.game.yourgamename;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,6 +15,7 @@ import static nl.saxion.game.yourgamename.Methodes_Lucas.*;
 
 public class YourGameScreen extends ScalableGameScreen {
     public PlayerClass player;
+    PlayerClass Player = new PlayerClass();
     public YourGameScreen(PlayerClass player) {
         super(1280, 720);
         this.player = player; // resolutie 1280x720
@@ -23,11 +26,18 @@ public class YourGameScreen extends ScalableGameScreen {
     public void show() {
         Methodes_Lucas.LucasParallaxMethods.initParallax(0);
         // Geen extra setup nodig
+        GameApp.addTexture("kogel", "img/kogel.png");
+
     }
     private float Worldx;
     @Override
+
+
     public void render(float delta) {
         super.render(delta);
+
+        GameApp.addTexture("brocolli", "img/brocolli.png");
+
 
             // Scherm volledig zwart maken
             GameApp.clearScreen("black");
@@ -35,12 +45,9 @@ public class YourGameScreen extends ScalableGameScreen {
             GameApp.startSpriteRendering();
             Worldx += 300 * delta;
             Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(Worldx, getWorldWidth());
-            Texture chef = Player(player.yPosition, player.filepath);
-        Jump(200,chef);
-            GameApp.endSpriteRendering();
-
-
-
+            update(Player, Player.filepath);
+            //updateBullets(player);
+        GameApp.endSpriteRendering();
 
 
     }

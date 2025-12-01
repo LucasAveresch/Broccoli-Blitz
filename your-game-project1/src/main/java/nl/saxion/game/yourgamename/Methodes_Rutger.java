@@ -1,42 +1,61 @@
 package nl.saxion.game.yourgamename;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.Input;
 import nl.saxion.gameapp.GameApp;
-import org.w3c.dom.Text;
-
-import java.security.PublicKey;
+import java.util.ArrayList;
 
 public class Methodes_Rutger {
-    public static void john(){
-        System.out.println("Hoi");
+    // Lijst van kogels
+    public static ArrayList<BulletClass> bullets = new ArrayList<>();
+
+    // Speler update (springen, bukken, tekenen)
+    public static void update(PlayerClass Player, String filepath) {
+        // --- SPRINGEN ---
+        if (GameApp.isKeyJustPressed(Input.Keys.SPACE)) {
+            if (Player.jumpCount < 2) { // maximaal 2 sprongen
+                Player.velocity = 20;
+                Player.jumpCount++;
+            }
+        }
+
+        // --- BUKKEN / SNELLER VALLEN ---
+        int currentGravity = Player.gravity;
+        if (GameApp.isKeyPressed(Input.Keys.SHIFT_LEFT) || GameApp.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
+            currentGravity = Player.gravity * 3; // 3x sneller naar beneden
+        }
+
+        // Zwaartekracht toepassen
+        Player.velocity -= currentGravity;
+        Player.yPlayer += Player.velocity;
+
+        // Terug naar de grond
+        if (Player.yPlayer < Player.groundLevel) {
+            Player.yPlayer = Player.groundLevel;
+            Player.velocity = 0;
+            Player.jumpCount = 0;
+        }
+
+        // --- SCHIETEN ---
+        if (GameApp.isKeyJustPressed(Input.Keys.F)) {
+            int broccoliX = 100; // zelfde X als broccoli
+            int startX = broccoliX + Player.spriteWidth;
+            int startY = Player.yPlayer + Player.spriteHeight / 2; // middenhoogte van broccoli
+            bullets.add(new BulletClass(startX, startY));
+        }
+
+        // Kogels bewegen en tekenen
+        for (int i = 0; i < bullets.size(); i++) {
+            BulletClass b = bullets.get(i);
+            b.x += b.velocity; // beweegt horizontaal
+            GameApp.drawTexture("kogel", b.x, b.y, 90, 75);
+
+            if (b.x > GameApp.getWorldWidth()) {
+                bullets.remove(i);
+                i--;
+            }
+        }
+
+        // --- TEKENEN VAN DE BROCCOLI ---
+        GameApp.drawTexture("brocolli", 100, Player.yPlayer);
     }
-
-    //Ondergrond toevoegen
-    public static void Underground(){
-        GameApp.startShapeRenderingFilled();
-        GameApp.drawRect(0, 0, 1280, 100, Color.GREEN);
-        GameApp.endShapeRendering();
-
-}
-    //Player maken
-    public static Texture Player(int yPlayer, String filepath){
-        Texture chefTexture = new Texture(Gdx.files.internal(filepath));
-        GameApp.addTexture("spritechef", filepath);
-        GameApp.drawTexture("spritechef", 100, yPlayer);
-        return chefTexture;
-}
-
-    //Player springen
-    public static void Jump(int yPlayer, Texture Texture){
-        if (GameApp.isKeyPressed(32)){
-            System.out.println("kaas");
-        GameApp.drawTexture("spritechef",100, yPlayer+200);}
-
     }
-
-
-
-}
