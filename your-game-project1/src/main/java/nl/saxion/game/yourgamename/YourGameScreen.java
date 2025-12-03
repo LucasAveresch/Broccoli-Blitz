@@ -28,15 +28,13 @@ public class YourGameScreen extends ScalableGameScreen {
         GameApp.clearScreen("black");
         GameApp.startSpriteRendering();
 
-        Worldx += 300 * delta;
-        Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(Worldx, getWorldWidth());
+        PlayerClass.worldX += 300 * delta; // sneller in game
+        Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(PlayerClass.worldX, getWorldWidth());
 
-        // Use the SAME player instance everywhere:
         Methodes_Rutger.update(player, player.filepath);
         Methodes_Rutger.spawnCoins();
         Methodes_Rutger.updateCoins(player);
         Methodes_Rutger.updateScore(player, delta);
-
 
         GameApp.endSpriteRendering();
     }

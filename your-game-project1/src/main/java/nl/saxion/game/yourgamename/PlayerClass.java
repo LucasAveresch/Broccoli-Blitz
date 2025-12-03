@@ -20,6 +20,8 @@ public class PlayerClass {
     // --- Nieuwe variabele ---
     public double speed = 1; // snelheid waarmee munten naar links bewegen
     public double distanceTravelled = 0; // totaal aantal meters gelopen
+    public static float worldX = 0; // gedeelde parallax offset
+
 
 
 }

@@ -1,8 +1,10 @@
 package nl.saxion.game.yourgamename;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import nl.saxion.gameapp.GameApp;
+import nl.saxion.gameapp.screens.ScalableGameScreen;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,7 +15,6 @@ public class Methodes_Rutger {
     public static ArrayList<BulletClass> bullets = new ArrayList<>();
     public static ArrayList<CoinClass> coins = new ArrayList<>();
     private static long lastCoinSpawnTime = 0;
-
 
 
     // Speler update (springen, bukken, tekenen)
@@ -78,7 +79,7 @@ public class Methodes_Rutger {
         GameApp.drawTexture("brocolli", 100, Player.yPlayer);
 
 
-      // --- AMMO HUD RECHTSBOVEN ---
+        // --- AMMO HUD RECHTSBOVEN ---
         GameApp.drawText("default", "Ammo: " + Player.ammo + "/" + Player.maxAmmo,
                 GameApp.getWorldWidth() - 150, GameApp.getWorldHeight() - 30, "white");
 
@@ -94,7 +95,7 @@ public class Methodes_Rutger {
 
             if (!coin.isCollected) {
                 // Munten bewegen naar links
-                coin.x -= player.speed*5;
+                coin.x -= player.speed * 5;
 
                 // Teken munt
                 GameApp.drawTexture("coin", coin.x, coin.y, coin.width, coin.height);
@@ -140,11 +141,12 @@ public class Methodes_Rutger {
             // Random hoogte tussen groundLevel en worldHeight - 100
             int minY = 100; // iets boven de grond
             int maxY = (int) (GameApp.getWorldHeight() - 300);
-            int y = (int)(Math.random() * (maxY - minY) + minY);
+            int y = (int) (Math.random() * (maxY - minY) + minY);
 
             coins.add(new CoinClass(x, y));
         }
     }
+
     public static void updateScore(PlayerClass player, double delta) {
         // Tel meters op: snelheid (m/s) * tijd (s)
         player.distanceTravelled += player.speed * delta;
@@ -152,5 +154,30 @@ public class Methodes_Rutger {
         // HUD rechtsboven
         GameApp.drawText("default", "Distance: " + String.format("%.1f", player.distanceTravelled) + " m",
                 GameApp.getWorldWidth() - 150, GameApp.getWorldHeight() - 90, "white");
+    }
+
+    public static void drawMenuText(ScalableGameScreen screen) {
+        // Titel
+        String title = "Broccoli Blitz";
+        int centerX = (int) (GameApp.getWorldWidth() / 2);
+        int centerY = (int) (GameApp.getWorldHeight() / 2 + 200);
+
+        // Outline voor titel
+        GameApp.drawTextCentered("basic", title, centerX + 2, centerY, "black");
+        GameApp.drawTextCentered("basic", title, centerX - 2, centerY, "black");
+        GameApp.drawTextCentered("basic", title, centerX, centerY + 2, "black");
+        GameApp.drawTextCentered("basic", title, centerX, centerY - 2, "black");
+        GameApp.drawTextCentered("basic", title, centerX, centerY, "white");
+
+        // Subtitel
+        String subtitle = "jump to start!";
+        int subY = (int) (GameApp.getWorldHeight() / 2 + 100);
+
+        // Outline voor subtitel
+        GameApp.drawTextCentered("basic", subtitle, centerX + 2, subY, "black");
+        GameApp.drawTextCentered("basic", subtitle, centerX - 2, subY, "black");
+        GameApp.drawTextCentered("basic", subtitle, centerX, subY + 2, "black");
+        GameApp.drawTextCentered("basic", subtitle, centerX, subY - 2, "black");
+        GameApp.drawTextCentered("basic", subtitle, centerX, subY, "white");
     }
     }
