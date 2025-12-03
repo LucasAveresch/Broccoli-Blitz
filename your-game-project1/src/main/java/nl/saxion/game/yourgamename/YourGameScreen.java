@@ -37,6 +37,7 @@ public class YourGameScreen extends ScalableGameScreen {
         super.render(delta);
 
         GameApp.addTexture("brocolli", "img/brocolli.png");
+        GameApp.addTexture("coin", "img/munt.png");
 
 
             // Scherm volledig zwart maken
@@ -46,6 +47,8 @@ public class YourGameScreen extends ScalableGameScreen {
             Worldx += 300 * delta;
             Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(Worldx, getWorldWidth());
             update(Player, Player.filepath);
+            updateCoins(player);
+            spawnCoins();
             //updateBullets(player);
         GameApp.endSpriteRendering();
 

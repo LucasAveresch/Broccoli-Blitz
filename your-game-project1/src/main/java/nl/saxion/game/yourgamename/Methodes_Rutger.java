@@ -11,6 +11,7 @@ import java.util.ArrayList;
 public class Methodes_Rutger {
     // Lijst van kogels
     public static ArrayList<BulletClass> bullets = new ArrayList<>();
+    public static ArrayList<CoinClass> coins = new ArrayList<>();
 
 
     // Speler update (springen, bukken, tekenen)
@@ -79,5 +80,36 @@ public class Methodes_Rutger {
         GameApp.drawText("default", "Ammo: " + Player.ammo + "/" + Player.maxAmmo,
                 GameApp.getWorldWidth() - 150, GameApp.getWorldHeight() - 30, "white");
 
+    }
+
+    public static void updateCoins(PlayerClass player) {
+        for (CoinClass coin : coins) {
+            if (!coin.isCollected) {
+                GameApp.drawTexture("coin", coin.x, coin.y, coin.width, coin.height);
+
+                // Collision check
+                int broccoliX = 100;
+                int broccoliY = player.yPlayer;
+                int broccoliWidth = player.spriteWidth;
+                int broccoliHeight = player.spriteHeight;
+
+                boolean overlapX = coin.x < broccoliX + broccoliWidth && coin.x + coin.width > broccoliX;
+                boolean overlapY = coin.y < broccoliY + broccoliHeight && coin.y + coin.height > broccoliY;
+
+                if (overlapX && overlapY) {
+                    coin.isCollected = true;
+                    player.coinsPickedUp++;
+                }
+            }
+        }
+
+
+        // HUD rechtsboven
+        GameApp.drawText("default", "Coins: " + player.coinsPickedUp, GameApp.getWorldWidth() - 150, GameApp.getWorldHeight() - 60, "white");
+    }
+    public static void spawnCoins() {
+        coins.add(new CoinClass(400, 120));
+        coins.add(new CoinClass(700, 100));
+        coins.add(new CoinClass(1000, 140));
     }
     }
