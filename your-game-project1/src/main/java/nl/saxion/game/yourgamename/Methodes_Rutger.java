@@ -94,7 +94,7 @@ public class Methodes_Rutger {
 
             if (!coin.isCollected) {
                 // Munten bewegen naar links
-                coin.x -= player.speed;
+                coin.x -= player.speed*5;
 
                 // Teken munt
                 GameApp.drawTexture("coin", coin.x, coin.y, coin.width, coin.height);
@@ -145,5 +145,12 @@ public class Methodes_Rutger {
             coins.add(new CoinClass(x, y));
         }
     }
+    public static void updateScore(PlayerClass player, double delta) {
+        // Tel meters op: snelheid (m/s) * tijd (s)
+        player.distanceTravelled += player.speed * delta;
 
+        // HUD rechtsboven
+        GameApp.drawText("default", "Distance: " + String.format("%.1f", player.distanceTravelled) + " m",
+                GameApp.getWorldWidth() - 150, GameApp.getWorldHeight() - 90, "white");
+    }
     }

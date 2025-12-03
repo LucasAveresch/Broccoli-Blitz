@@ -35,6 +35,8 @@ public class YourGameScreen extends ScalableGameScreen {
         Methodes_Rutger.update(player, player.filepath);
         Methodes_Rutger.spawnCoins();
         Methodes_Rutger.updateCoins(player);
+        Methodes_Rutger.updateScore(player, delta);
+
 
         GameApp.endSpriteRendering();
     }

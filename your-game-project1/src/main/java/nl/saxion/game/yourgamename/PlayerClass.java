@@ -18,7 +18,9 @@ public class PlayerClass {
     long reloadStartTime = 0; // tijdstip herladen
 
     // --- Nieuwe variabele ---
-    public int speed = 5; // snelheid waarmee munten naar links bewegen
+    public double speed = 1; // snelheid waarmee munten naar links bewegen
+    public double distanceTravelled = 0; // totaal aantal meters gelopen
+
 
 }
 
