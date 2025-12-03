@@ -78,11 +78,6 @@ public class Methodes_Rutger {
         // --- TEKENEN VAN DE BROCCOLI ---
         GameApp.drawTexture("brocolli", 100, Player.yPlayer);
 
-
-        // --- AMMO HUD RECHTSBOVEN ---
-        GameApp.drawText("default", "Ammo: " + Player.ammo + "/" + Player.maxAmmo,
-                GameApp.getWorldWidth() - 150, GameApp.getWorldHeight() - 30, "white");
-
     }
 
     public static void updateCoins(PlayerClass player) {
@@ -118,13 +113,6 @@ public class Methodes_Rutger {
                 }
             }
         }
-
-        // HUD rechtsboven
-        GameApp.drawText("default", "Coins: " + player.coinsPickedUp,
-                GameApp.getWorldWidth() - 150,
-                GameApp.getWorldHeight() - 60,
-                "white");
-
     }
 
 
@@ -151,33 +139,127 @@ public class Methodes_Rutger {
         // Tel meters op: snelheid (m/s) * tijd (s)
         player.distanceTravelled += player.speed * delta;
 
-        // HUD rechtsboven
-        GameApp.drawText("default", "Distance: " + String.format("%.1f", player.distanceTravelled) + " m",
-                GameApp.getWorldWidth() - 150, GameApp.getWorldHeight() - 90, "white");
+        // Check of huidige afstand groter is dan highscore
+        if (player.distanceTravelled > player.highScore) {
+            player.highScore = player.distanceTravelled;
+        }
     }
 
-    public static void drawMenuText(ScalableGameScreen screen) {
-        // Titel
+    public static void drawMenuText(ScalableGameScreen screen, PlayerClass player) {
+        // Titel (midden)
         String title = "Broccoli Blitz";
         int centerX = (int) (GameApp.getWorldWidth() / 2);
         int centerY = (int) (GameApp.getWorldHeight() / 2 + 200);
-
-        // Outline voor titel
-        GameApp.drawTextCentered("basic", title, centerX + 2, centerY, "black");
-        GameApp.drawTextCentered("basic", title, centerX - 2, centerY, "black");
-        GameApp.drawTextCentered("basic", title, centerX, centerY + 2, "black");
-        GameApp.drawTextCentered("basic", title, centerX, centerY - 2, "black");
         GameApp.drawTextCentered("basic", title, centerX, centerY, "white");
 
-        // Subtitel
+        // Subtitel (midden)
         String subtitle = "jump to start!";
         int subY = (int) (GameApp.getWorldHeight() / 2 + 100);
-
-        // Outline voor subtitel
-        GameApp.drawTextCentered("basic", subtitle, centerX + 2, subY, "black");
-        GameApp.drawTextCentered("basic", subtitle, centerX - 2, subY, "black");
-        GameApp.drawTextCentered("basic", subtitle, centerX, subY + 2, "black");
-        GameApp.drawTextCentered("basic", subtitle, centerX, subY - 2, "black");
         GameApp.drawTextCentered("basic", subtitle, centerX, subY, "white");
+
+        // Statistieken rechtsboven (kleiner font)
+        String coinsText = "Total Coins: " + player.totalCoins;
+        String highScoreText = "High Score: " + String.format("%.1f", player.highScore) + " m";
+
+        int margin = 20;
+        int topY = (int) GameApp.getWorldHeight();
+
+        // Bereken breedte van de tekst zodat hij rechts uitgelijnd staat
+        int coinsWidth = (int) GameApp.getTextWidth("small", coinsText);
+        int scoreWidth = (int) GameApp.getTextWidth("small", highScoreText);
+
+        GameApp.drawText("small", coinsText, GameApp.getWorldWidth() - margin - coinsWidth, topY - 30, "white");
+        GameApp.drawText("small", highScoreText, GameApp.getWorldWidth() - margin - scoreWidth, topY - 60, "white");
+    }
+
+    public static boolean checkDeath(PlayerClass player) {
+        if (GameApp.isKeyPressed(Input.Keys.ESCAPE) && GameApp.isKeyPressed(Input.Keys.NUM_9)) {
+            // Munten en highscore bijwerken
+            player.totalCoins += player.coinsPickedUp;
+            if (player.distanceTravelled > player.highScore) {
+                player.highScore = player.distanceTravelled;
+            }
+
+            // Reset ronde waarden
+            player.yPlayer = player.groundLevel;
+            player.velocity = 0;
+            player.jumpCount = 0;
+            player.coinsPickedUp = 0;
+            player.ammo = player.maxAmmo;
+            player.distanceTravelled = 0;
+
+            // Terug naar main menu
+            GameApp.switchScreen("MainMenuScreen");
+            return true;
+        }
+        return false;
+    }
+    public static void updateJump(PlayerClass player) {
+        // --- SPRINGEN ---
+        if (GameApp.isKeyJustPressed(Input.Keys.SPACE)) {
+            if (player.jumpCount < 2) {   // maximaal 2 sprongen
+                player.velocity = 20;
+                player.jumpCount++;
+            }
+        }
+
+        // --- GRAVITY ---
+        player.velocity -= player.gravity;
+        player.yPlayer += player.velocity;
+
+        // --- LANDING ---
+        if (player.yPlayer < player.groundLevel) {
+            player.yPlayer = player.groundLevel;
+            player.velocity = 0;
+            player.jumpCount = 0;
+        }
+    }
+    public static float handleMenuBroccoli(PlayerClass player, float broccoliX, boolean isStarting, float delta) {
+        // Broccoli beweegt naar startpositie
+        if (isStarting && broccoliX > 100) {
+            broccoliX -= 300 * delta;
+            if (broccoliX < 100) broccoliX = 100;
+        }
+
+        // Zodra X bereikt is → start spel
+        if (isStarting && broccoliX == 100) {
+            GameApp.switchScreen("YourGameScreen");
+        }
+
+        // Teken broccoli op huidige X en Y (nu met springen)
+        GameApp.drawTexture("brocolli", (int)broccoliX, player.yPlayer);
+
+        return broccoliX;
+    }
+    public static boolean handleMenuStart(boolean isStarting) {
+        // Spatie activeert beweging
+        if (!isStarting && GameApp.isKeyJustPressed(Input.Keys.SPACE)) {
+            isStarting = true;
+        }
+        return isStarting; // geef de bijgewerkte waarde terug
+    }
+    public static void drawGameHud(PlayerClass player) {
+        int margin = 20;
+        int topY = (int) GameApp.getWorldHeight();
+
+        // Coins
+        drawTextRight("small", "Coins: " + player.coinsPickedUp, margin, topY - 30, "white");
+
+        // Ammo
+        drawTextRight("small", "Ammo: " + player.ammo + "/" + player.maxAmmo, margin, topY - 60, "white");
+
+        // Distance
+        drawTextRight("small", "Distance: " + String.format("%.1f", player.distanceTravelled) + " m",
+                margin, topY - 90, "white");
+
+        // Highscore
+        drawTextRight("small", "High Score: " + String.format("%.1f", player.highScore) + " m",
+                margin, topY - 120, "white");
+    }
+
+    public static void drawTextRight(String fontKey, String text, int marginRight, int y, String color) {
+        int textWidth = (int) GameApp.getTextWidth(fontKey, text); // breedte van de tekst
+        int x = (int) (GameApp.getWorldWidth() - marginRight - textWidth); // corrigeer zodat tekst rechts staat
+        GameApp.drawText(fontKey, text, x, y, color);
     }
     }

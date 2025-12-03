@@ -22,6 +22,8 @@ public class PlayerClass {
     public double distanceTravelled = 0; // totaal aantal meters gelopen
     public static float worldX = 0; // gedeelde parallax offset
 
+    public int totalCoins = 0;       // alle munten over meerdere rondes
+    public double highScore = 0;     // hoogste afstand ooit gehaald
 
 
 }

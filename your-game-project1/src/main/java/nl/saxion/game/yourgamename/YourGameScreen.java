@@ -25,6 +25,11 @@ public class YourGameScreen extends ScalableGameScreen {
     public void render(float delta) {
         super.render(delta);
 
+        // --- Dood gaan check ---
+        if (Methodes_Rutger.checkDeath(player)) {
+            return; // stop render zodat er niet verder getekend wordt
+        }
+
         GameApp.clearScreen("black");
         GameApp.startSpriteRendering();
 
@@ -35,6 +40,7 @@ public class YourGameScreen extends ScalableGameScreen {
         Methodes_Rutger.spawnCoins();
         Methodes_Rutger.updateCoins(player);
         Methodes_Rutger.updateScore(player, delta);
+        Methodes_Rutger.drawGameHud(player);
 
         GameApp.endSpriteRendering();
     }
