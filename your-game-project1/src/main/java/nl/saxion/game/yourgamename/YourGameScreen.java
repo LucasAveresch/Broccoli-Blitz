@@ -15,7 +15,7 @@ public class YourGameScreen extends ScalableGameScreen {
     public void show() {
         Methodes_Lucas.LucasParallaxMethods.initParallax(0);
         GameApp.addTexture("kogel", "img/kogel.png");
-        GameApp.addTexture("brocolli", "img/brocolli.png");
+        GameApp.addTexture("brocolli", "img/brocolli3.png");
         GameApp.addTexture("coin", "img/munt.png");
     }
 

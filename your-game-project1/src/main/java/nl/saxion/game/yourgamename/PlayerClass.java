@@ -2,7 +2,7 @@ package nl.saxion.game.yourgamename;
 
 public class PlayerClass {
     int coinsPickedUp;
-    String filepath = "img/brocolli.png";
+    String filepath = "img/brocolli3.png";
     int velocity = 0;
     int gravity = 1;
     int groundLevel = 100;
