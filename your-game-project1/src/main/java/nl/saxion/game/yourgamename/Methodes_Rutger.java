@@ -76,7 +76,7 @@ public class Methodes_Rutger {
             }
         }
         // --- TEKENEN VAN DE BROCCOLI ---
-        GameApp.drawTexture("brocolli", 100, Player.yPlayer,250,250);
+        GameApp.drawTexture("brocolli", 100, Player.yPlayer,200,200);
 
     }
 
@@ -227,7 +227,7 @@ public class Methodes_Rutger {
         }
 
         // Teken broccoli op huidige X en Y (nu met springen)
-        GameApp.drawTexture("brocolli", (int)broccoliX, player.yPlayer,250,250);
+        GameApp.drawTexture("brocolli", (int)broccoliX, player.yPlayer,200,200);
 
         return broccoliX;
     }

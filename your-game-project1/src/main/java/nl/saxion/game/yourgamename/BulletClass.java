@@ -7,7 +7,7 @@ public class BulletClass {
 
     public BulletClass(int startX, int startY) {
         this.x = startX;
-        this.y = startY-10;
+        this.y = startY-23;
     }
 
 
