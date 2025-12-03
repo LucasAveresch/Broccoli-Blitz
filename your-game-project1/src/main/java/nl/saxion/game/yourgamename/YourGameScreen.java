@@ -1,64 +1,46 @@
 package nl.saxion.game.yourgamename;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import nl.saxion.gameapp.GameApp;
 import nl.saxion.gameapp.screens.ScalableGameScreen;
-import static nl.saxion.game.yourgamename.Methodes_Rutger.*;
-import static nl.saxion.game.yourgamename.Methodes_Maxje.*;
-import static nl.saxion.game.yourgamename.Methodes_Lucas.*;
 
 public class YourGameScreen extends ScalableGameScreen {
     public PlayerClass player;
-    PlayerClass Player = new PlayerClass();
+
     public YourGameScreen(PlayerClass player) {
         super(1280, 720);
-        this.player = player; // resolutie 1280x720
-
+        this.player = player;
     }
 
     @Override
     public void show() {
         Methodes_Lucas.LucasParallaxMethods.initParallax(0);
-        // Geen extra setup nodig
         GameApp.addTexture("kogel", "img/kogel.png");
-
+        GameApp.addTexture("brocolli", "img/brocolli.png");
+        GameApp.addTexture("coin", "img/munt.png");
     }
+
     private float Worldx;
+
     @Override
-
-
     public void render(float delta) {
         super.render(delta);
 
-        GameApp.addTexture("brocolli", "img/brocolli.png");
-        GameApp.addTexture("coin", "img/munt.png");
+        GameApp.clearScreen("black");
+        GameApp.startSpriteRendering();
 
+        Worldx += 300 * delta;
+        Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(Worldx, getWorldWidth());
 
-            // Scherm volledig zwart maken
-            GameApp.clearScreen("black");
+        // Use the SAME player instance everywhere:
+        Methodes_Rutger.update(player, player.filepath);
+        Methodes_Rutger.spawnCoins();
+        Methodes_Rutger.updateCoins(player);
 
-            GameApp.startSpriteRendering();
-            Worldx += 300 * delta;
-            Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(Worldx, getWorldWidth());
-            update(Player, Player.filepath);
-            updateCoins(player);
-            spawnCoins();
-            //updateBullets(player);
         GameApp.endSpriteRendering();
-
-
     }
-
 
     @Override
     public void hide() {
         Methodes_Lucas.LucasParallaxMethods.disposeParallax();
-        // Geen cleanup nodig
     }
 }

@@ -12,6 +12,8 @@ public class Methodes_Rutger {
     // Lijst van kogels
     public static ArrayList<BulletClass> bullets = new ArrayList<>();
     public static ArrayList<CoinClass> coins = new ArrayList<>();
+    private static long lastCoinSpawnTime = 0;
+
 
 
     // Speler update (springen, bukken, tekenen)
@@ -83,33 +85,65 @@ public class Methodes_Rutger {
     }
 
     public static void updateCoins(PlayerClass player) {
-        for (CoinClass coin : coins) {
+        int broccoliX = 100;
+        int broccoliYTop = player.yPlayer;
+        int broccoliYBottom = player.yPlayer + player.spriteHeight;
+
+        for (int i = 0; i < coins.size(); i++) {
+            CoinClass coin = coins.get(i);
+
             if (!coin.isCollected) {
+                // Munten bewegen naar links
+                coin.x -= player.speed;
+
+                // Teken munt
                 GameApp.drawTexture("coin", coin.x, coin.y, coin.width, coin.height);
 
-                // Collision check
-                int broccoliX = 100;
-                int broccoliY = player.yPlayer;
-                int broccoliWidth = player.spriteWidth;
-                int broccoliHeight = player.spriteHeight;
+                // Collision check (AABB)
+                boolean overlap =
+                        broccoliX < coin.x + coin.width &&
+                                broccoliX + player.spriteWidth > coin.x &&
+                                broccoliYTop < coin.y + coin.height &&
+                                broccoliYBottom > coin.y;
 
-                boolean overlapX = coin.x < broccoliX + broccoliWidth && coin.x + coin.width > broccoliX;
-                boolean overlapY = coin.y < broccoliY + broccoliHeight && coin.y + coin.height > broccoliY;
-
-                if (overlapX && overlapY) {
+                if (overlap) {
                     coin.isCollected = true;
                     player.coinsPickedUp++;
+                }
+
+                // Verwijder munt als hij uit beeld is
+                if (coin.x + coin.width < 0) {
+                    coin.isCollected = true;
                 }
             }
         }
 
-
         // HUD rechtsboven
-        GameApp.drawText("default", "Coins: " + player.coinsPickedUp, GameApp.getWorldWidth() - 150, GameApp.getWorldHeight() - 60, "white");
+        GameApp.drawText("default", "Coins: " + player.coinsPickedUp,
+                GameApp.getWorldWidth() - 150,
+                GameApp.getWorldHeight() - 60,
+                "white");
+
     }
+
+
     public static void spawnCoins() {
-        coins.add(new CoinClass(400, 120));
-        coins.add(new CoinClass(700, 100));
-        coins.add(new CoinClass(1000, 140));
+        long now = System.currentTimeMillis();
+
+        // Check of er minstens 5 seconden voorbij zijn
+        if (now - lastCoinSpawnTime >= 5000) {
+            lastCoinSpawnTime = now;
+
+            // Spawn helemaal rechts
+            int x = (int) GameApp.getWorldWidth();
+
+            // Random hoogte tussen groundLevel en worldHeight - 100
+            int minY = 100; // iets boven de grond
+            int maxY = (int) (GameApp.getWorldHeight() - 300);
+            int y = (int)(Math.random() * (maxY - minY) + minY);
+
+            coins.add(new CoinClass(x, y));
+        }
     }
+
     }

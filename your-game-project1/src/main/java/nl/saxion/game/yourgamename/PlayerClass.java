@@ -16,5 +16,9 @@ public class PlayerClass {
     int maxAmmo = 5;          // maximale kogels
     boolean isReloading = false;
     long reloadStartTime = 0; // tijdstip herladen
+
+    // --- Nieuwe variabele ---
+    public int speed = 5; // snelheid waarmee munten naar links bewegen
+
 }
 
