@@ -89,6 +89,8 @@ public class Methodes_Rutger {
 
             // Geluid afspelen
             GameApp.playSound("shoot");
+            Methodes_Rutger.registerShot(player); // schot tellen
+
         }
 
         // --- MUZZLE FLASH UPDATEN/TEKENEN ---
@@ -211,21 +213,13 @@ public class Methodes_Rutger {
 
     public static boolean checkDeath(PlayerClass player) {
         if (GameApp.isKeyPressed(Input.Keys.ESCAPE) && GameApp.isKeyPressed(Input.Keys.NUM_9)) {
-            // Munten en highscore bijwerken
+            // Tellen bij einde ronde
             player.totalCoins += player.coinsPickedUp;
             if (player.distanceTravelled > player.highScore) {
                 player.highScore = player.distanceTravelled;
             }
 
-            // Reset ronde waarden
-            player.yPlayer = player.groundLevel;
-            player.velocity = 0;
-            player.jumpCount = 0;
-            player.coinsPickedUp = 0;
-            player.ammo = player.maxAmmo;
-            player.distanceTravelled = 0;
-
-            // Naar deathscreen
+            // Niet resetten hier -> eerst tonen in DeathScreen
             GameApp.switchScreen("DeathScreen");
             return true;
         }
@@ -303,20 +297,63 @@ public class Methodes_Rutger {
         GameApp.drawText(fontKey, text, x, y, color);
     }
 
-    public static void checkBulletHitsEnemy(EnemyClass enemy) {
+    public static void checkBulletHitsEnemy(PlayerClass player, EnemyClass enemy) {
         for (int i = 0; i < bullets.size(); i++) {
             BulletClass bullet = bullets.get(i);
 
-            // AABB collision check
             boolean overlapX = bullet.x < enemy.enemyXPos + 100 && bullet.x + 90 > enemy.enemyXPos;
             boolean overlapY = bullet.y < enemy.enemyYPos + 100 && bullet.y + 75 > enemy.enemyYPos;
 
             if (overlapX && overlapY && !enemy.enemyIsDead) {
                 enemy.enemyIsDead = true;
-                bullets.remove(i); // verwijder de kogel
-                i--; // index corrigeren
-                break; // enemy geraakt, klaar
+                bullets.remove(i);
+                i--;
+
+                player.enemiesDefeated++; // ✅ kill registreren
+                break;
             }
         }
+    }
+
+    public static void registerEnemyKill(PlayerClass player) {
+        player.enemiesDefeated++;
+    }
+    public static void registerShot(PlayerClass player) {
+        player.shotsFired++;
+    }
+    public static void updateSurvivalTime(PlayerClass player, float delta) {
+        player.survivalTime += delta;
+    }
+    public static void drawDeathStats(PlayerClass player, ScalableGameScreen screen) {
+        float leftX = 50;
+        float topY = screen.getWorldHeight() - 100;
+        float line = 40;
+
+        GameApp.drawText("basic", "GAME OVER", leftX, topY, "white");
+        GameApp.drawText("small", "Coins: " + player.totalCoins, leftX, topY - line * 1, "white");
+        GameApp.drawText("small", "Score: " + String.format("%.1f", player.distanceTravelled), leftX, topY - line * 2, "white");
+        GameApp.drawText("small", "Verslagen enemies: " + player.enemiesDefeated, leftX, topY - line * 3, "white");
+        GameApp.drawText("small", "Aantal keer geschoten: " + player.shotsFired, leftX, topY - line * 4, "white");
+        GameApp.drawText("small", "Overlevingstijd: " + (int) player.survivalTime + "s", leftX, topY - line * 5, "white");
+        GameApp.drawText("small", "Druk [M] voor hoofdmenu", leftX, topY - line * 7, "white");
+    }
+    public static void resetRoundStats(PlayerClass player) {
+        // Ronde-specifieke statistieken
+        player.coinsPickedUp = 0;
+        player.enemiesDefeated = 0;
+        player.shotsFired = 0;
+        player.survivalTime = 0f;
+        player.distanceTravelled = 0.0;
+
+        // Spelerstatus
+        player.yPlayer = player.groundLevel;
+        player.velocity = 0;
+        player.jumpCount = 0;
+        player.ammo = player.maxAmmo;
+
+        // Lijsten opruimen
+        bullets.clear();
+        coins.clear();
+        muzzleFlashes.clear();
     }
     }

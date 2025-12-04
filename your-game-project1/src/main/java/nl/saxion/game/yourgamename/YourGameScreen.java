@@ -15,9 +15,11 @@ public class YourGameScreen extends ScalableGameScreen {
 
     @Override
     public void show() {
+        // Schoon starten
+        Methodes_Rutger.resetRoundStats(player);
+
+        // Assets
         Methodes_Lucas.LucasParallaxMethods.initParallax(0);
-        enemyClass = new EnemyClass("img/chef.png", "chef", 1100, 150, 100);
-        projectileClass = new ProjectileClass("img/mes.png", "mes", enemyClass.enemyXPos, enemyClass.enemyYPos +20 ,  500);
         GameApp.addTexture("kogel", "img/kogel.png");
         GameApp.addTexture("brocolli", "img/brocolli3.png");
         GameApp.addTexture("coin", "img/munt.png");
@@ -27,6 +29,10 @@ public class YourGameScreen extends ScalableGameScreen {
         GameApp.addSound("shoot", "Sounds/Schieten.mp3");
         GameApp.addSound("coin", "Sounds/coin.mp3");
 
+        // Nieuwe enemy/projectiel
+        enemyClass = new EnemyClass("img/chef.png", "chef", 1100, 150, 100);
+        projectileClass = new ProjectileClass("img/mes.png", "mes",
+                enemyClass.enemyXPos, enemyClass.enemyYPos + 20, 500);
     }
 
     private float Worldx;
@@ -54,12 +60,13 @@ public class YourGameScreen extends ScalableGameScreen {
 
         if (!enemyClass.enemyIsDead) {
             Methodes_Maxje.updateEnenmy(delta, enemyClass);
-            Methodes_Rutger.checkBulletHitsEnemy(enemyClass);
+            Methodes_Rutger.checkBulletHitsEnemy(player, enemyClass);
         }
         Methodes_Maxje.addMes(delta,projectileClass,enemyClass);
         Methodes_Maxje.updateMes(delta, projectileClass,enemyClass);
         Methodes_Maxje.checkCollsionMes(projectileClass,player);
         Methodes_Maxje.checkCollisionEnemy(player,enemyClass);
+        Methodes_Rutger.updateSurvivalTime(player, delta);
 
         GameApp.endSpriteRendering();
     }

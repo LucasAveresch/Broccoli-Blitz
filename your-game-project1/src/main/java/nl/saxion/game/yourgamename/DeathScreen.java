@@ -21,6 +21,7 @@ public class DeathScreen extends ScalableGameScreen {
         GameApp.addFont("small", "fonts/basic.ttf", 30);
 
         GameApp.addSound("death", "Sounds/DeadSound.mp3");
+        GameApp.addTexture("DeathScreen", "img/DeathScreen.png");
         deathSoundId = GameApp.playSound("death", 0.8f); // ID opslaan
 
     }
@@ -28,39 +29,19 @@ public class DeathScreen extends ScalableGameScreen {
     @Override
     public void render(float delta) {
         super.render(delta);
-
         GameApp.clearScreen("black");
         GameApp.startSpriteRendering();
 
-        // Titel
-        GameApp.drawText("basic", "GAME OVER", getWorldWidth()/2f - 250, getWorldHeight()/2f + 200,"white");
-
-        // Statistieken van de speler
-        GameApp.drawText("small", "Coins: " + player.totalCoins,
-                getWorldWidth()/2f - 200, getWorldHeight()/2f + 100,"white");
-
-        GameApp.drawText("small", "Score: " + player.distanceTravelled,
-                getWorldWidth()/2f - 200, getWorldHeight()/2f + 60,"white");
-
-        GameApp.drawText("small", "Verslagen enemies: " + player.enemiesDefeated,
-                getWorldWidth()/2f - 200, getWorldHeight()/2f + 20,"white");
-
-        GameApp.drawText("small", "Aantal keer geschoten: " + player.shotsFired,
-                getWorldWidth()/2f - 200, getWorldHeight()/2f - 20,"white");
-
-        GameApp.drawText("small", "Overlevingstijd: " + (int)player.survivalTime + "s",
-                getWorldWidth()/2f - 200, getWorldHeight()/2f - 60,"white");
-
-        // Instructies
-        GameApp.drawTextCentered("small", "Druk [M] voor hoofdmenu",
-                getWorldWidth()/2f, getWorldHeight()/2f - 160,"white");
+        // Achtergrond + stats
+        GameApp.drawTexture("DeathScreen", 0, 0, getWorldWidth(), getWorldHeight());
+        Methodes_Rutger.drawDeathStats(player, this);
 
         GameApp.endSpriteRendering();
 
-        // Input afhandelen
+        // Exit naar menu: eerst sound stoppen, dan resetten, dan switch
         if (GameApp.isKeyJustPressed(Input.Keys.M)) {
-            GameApp.stopSound(deathSoundId); // stop het geluid
-
+            GameApp.stopSound(deathSoundId);
+            Methodes_Rutger.resetRoundStats(player);
             GameApp.switchScreen("MainMenuScreen");
         }
     }
