@@ -19,7 +19,7 @@ public class EnemyClass {
         this.enemyXPos = startX;
         this.enemyYPos = startY;
         this.enemyspeed = speed;
-/
+
         GameApp.addTexture(textureKey, filepath);
     }
 }
