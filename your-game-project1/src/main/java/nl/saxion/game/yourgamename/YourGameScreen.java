@@ -15,6 +15,8 @@ import static nl.saxion.game.yourgamename.Methodes_Lucas.*;
 
 public class YourGameScreen extends ScalableGameScreen {
     public PlayerClass player;
+    public EnemyClass enemyClass;
+    public ProjectileClass projectileClass;
     PlayerClass Player = new PlayerClass();
     public YourGameScreen(PlayerClass player) {
         super(1280, 720);
@@ -27,6 +29,8 @@ public class YourGameScreen extends ScalableGameScreen {
         Methodes_Lucas.LucasParallaxMethods.initParallax(0);
         // Geen extra setup nodig
         GameApp.addTexture("kogel", "img/kogel.png");
+        enemyClass = new EnemyClass("img/chef.png","chef", 1100, 100, 100);
+        projectileClass = new ProjectileClass("img/mes.png","mes", enemyClass.enemyXPos,enemyClass.enemyYPos + 30,300);
 
     }
     private float Worldx;
@@ -46,6 +50,9 @@ public class YourGameScreen extends ScalableGameScreen {
             Worldx += 300 * delta;
             Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(Worldx, getWorldWidth());
             update(Player, Player.filepath);
+            updateEnenmy(delta, enemyClass);
+            addProjectile(delta, projectileClass, enemyClass);
+            updateProjectiles(delta, projectileClass, enemyClass);
             //updateBullets(player);
         GameApp.endSpriteRendering();
 
