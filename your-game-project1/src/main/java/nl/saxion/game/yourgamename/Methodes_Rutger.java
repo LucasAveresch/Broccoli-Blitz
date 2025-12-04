@@ -56,6 +56,20 @@ public class Methodes_Rutger {
             }
         }
 
+        // --- KOGELS UPDATEN ---
+        for (int i = 0; i < bullets.size(); i++) {
+            BulletClass b = bullets.get(i);
+            b.x += b.velocity;
+            GameApp.drawTexture("kogel", b.x, b.y, 90, 75);
+
+            if (b.x > GameApp.getWorldWidth()) {
+                bullets.remove(i);
+                i--;
+            }
+        }
+        // --- TEKENEN VAN DE BROCCOLI ---
+        GameApp.drawTexture("brocolli", 100, Player.yPlayer,200,200);
+
         // --- SCHIETEN ---
         if (GameApp.isKeyJustPressed(Input.Keys.F) && Player.ammo > 0 && !Player.isReloading) {
             int broccoliX = 100;
@@ -89,26 +103,12 @@ public class Methodes_Rutger {
             }
 
             if (flash.frameIndex < MuzzleFlash.TOTAL_FRAMES) {
-                GameApp.drawTexture("muzzleFlash" + flash.frameIndex, flash.x, flash.y, 64, 64);
+                GameApp.drawTexture("muzzleFlash" + flash.frameIndex, flash.x+75, flash.y-22, 64, 64);
             } else {
                 muzzleFlashes.remove(i);
                 i--;
             }
         }
-
-        // --- KOGELS UPDATEN ---
-        for (int i = 0; i < bullets.size(); i++) {
-            BulletClass b = bullets.get(i);
-            b.x += b.velocity;
-            GameApp.drawTexture("kogel", b.x, b.y, 90, 75);
-
-            if (b.x > GameApp.getWorldWidth()) {
-                bullets.remove(i);
-                i--;
-            }
-        }
-        // --- TEKENEN VAN DE BROCCOLI ---
-        GameApp.drawTexture("brocolli", 100, Player.yPlayer,200,200);
 
     }
 
