@@ -42,6 +42,12 @@ public class YourGameScreen extends ScalableGameScreen {
         Methodes_Rutger.updateScore(player, delta);
         Methodes_Rutger.drawGameHud(player);
 
+        Methodes_Maxje.updateEnenmy(delta, enemyClass);
+        Methodes_Maxje.addMes(delta,projectileClass,enemyClass);
+        Methodes_Maxje.updateMes(delta, projectileClass,enemyClass);
+        Methodes_Maxje.checkCollsionMes(projectileClass,player);
+        Methodes_Maxje.checkCollisionEnemy(player,enemyClass);
+
         GameApp.endSpriteRendering();
     }
 
