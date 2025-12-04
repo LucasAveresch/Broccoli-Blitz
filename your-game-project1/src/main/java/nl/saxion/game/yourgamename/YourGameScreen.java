@@ -16,11 +16,11 @@ public class YourGameScreen extends ScalableGameScreen {
     @Override
     public void show() {
         Methodes_Lucas.LucasParallaxMethods.initParallax(0);
+        enemyClass = new EnemyClass("img/chef.png", "chef", 1100, 150, 100);
+        projectileClass = new ProjectileClass("img/mes.png", "mes", enemyClass.enemyXPos, enemyClass.enemyYPos +20 ,  500);
         GameApp.addTexture("kogel", "img/kogel.png");
         GameApp.addTexture("brocolli", "img/brocolli3.png");
         GameApp.addTexture("coin", "img/munt.png");
-        enemyClass = new EnemyClass("img/chef.png", "chef", 1200, 150, 300);
-        projectileClass = new ProjectileClass("img/mes.png", "mes", enemyClass.enemyXPos, 150, 500);
     }
 
     private float Worldx;
@@ -51,6 +51,7 @@ public class YourGameScreen extends ScalableGameScreen {
         Methodes_Maxje.updateMes(delta, projectileClass,enemyClass);
         Methodes_Maxje.checkCollsionMes(projectileClass,player);
         Methodes_Maxje.checkCollisionEnemy(player,enemyClass);
+
 
         GameApp.endSpriteRendering();
     }
