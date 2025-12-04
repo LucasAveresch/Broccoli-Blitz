@@ -50,6 +50,10 @@ public class Methodes_Rutger {
         if (GameApp.isKeyJustPressed(Input.Keys.R) && !player.isReloading) {
             player.isReloading = true;
             player.reloadStartTime = System.currentTimeMillis();
+
+            // 🔊 Reload sound afspelen
+            GameApp.playSound("Reload", 0.8f); // volume iets zachter
+
         }
         if (player.isReloading) {
             long now = System.currentTimeMillis();
@@ -74,23 +78,27 @@ public class Methodes_Rutger {
         // --- TEKENEN VAN DE BROCCOLI ---
         GameApp.drawTexture("brocolli", 100, player.yPlayer, 200, 200);
 
-        // --- SCHIETEN + MUZZLE FLASH + SOUND ---
-        if (GameApp.isKeyJustPressed(Input.Keys.F) && player.ammo > 0 && !player.isReloading) {
-            int broccoliX = 100;
-            int startX = broccoliX + player.spriteWidth;
-            int startY = player.yPlayer + player.spriteHeight / 2;
+// --- SCHIETEN + MUZZLE FLASH + SOUND ---
+        if (GameApp.isKeyJustPressed(Input.Keys.F) && !player.isReloading) {
+            if (player.ammo > 0) {
+                int broccoliX = 100;
+                int startX = broccoliX + player.spriteWidth;
+                int startY = player.yPlayer + player.spriteHeight / 2;
 
-            // Voeg kogel toe
-            bullets.add(new BulletClass(startX, startY));
-            player.ammo--;
+                // Voeg kogel toe
+                bullets.add(new BulletClass(startX, startY));
+                player.ammo--;
 
-            // Start muzzle flash (offset zodat hij bij de loop zit)
-            muzzleFlashes.add(new MuzzleFlash(startX, startY));
+                // Start muzzle flash
+                muzzleFlashes.add(new MuzzleFlash(startX, startY));
 
-            // Geluid afspelen
-            GameApp.playSound("shoot");
-            Methodes_Rutger.registerShot(player); // schot tellen
-
+                // Geluid afspelen
+                GameApp.playSound("shoot");
+                player.shotsFired++; // ✅ schot registreren
+            } else {
+                // Geen ammo → NoAmmo sound
+                GameApp.playSound("NoAmmo", 0.8f);
+            }
         }
 
         // --- MUZZLE FLASH UPDATEN/TEKENEN ---

@@ -28,6 +28,8 @@ public class YourGameScreen extends ScalableGameScreen {
         }
         GameApp.addSound("shoot", "Sounds/Schieten.mp3");
         GameApp.addSound("coin", "Sounds/coin.mp3");
+        GameApp.addSound("Reload", "Sounds/Reload.mp3");
+        GameApp.addSound("NoAmmo", "Sounds/NoAmmo.mp3");
 
         // Nieuwe enemy/projectiel
         enemyClass = new EnemyClass("img/chef.png", "chef", 1100, 150, 100);
