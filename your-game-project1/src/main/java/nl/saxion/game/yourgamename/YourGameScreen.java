@@ -36,6 +36,9 @@ public class YourGameScreen extends ScalableGameScreen {
         PlayerClass.worldX += 300 * delta; // sneller in game
         Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(PlayerClass.worldX, getWorldWidth());
 
+        // ★ NIEUW: keuken-platform segmenten
+        Methodes_Lucas.LucasLevelSegments.updateAndDrawSegments(player, delta);
+
         Methodes_Rutger.update(player, player.filepath);
         Methodes_Rutger.spawnCoins();
         Methodes_Rutger.updateCoins(player);
@@ -48,5 +51,9 @@ public class YourGameScreen extends ScalableGameScreen {
     @Override
     public void hide() {
         Methodes_Lucas.LucasParallaxMethods.disposeParallax();
+        Methodes_Lucas.LucasLevelSegments.dispose();
     }
+
+
+
 }
