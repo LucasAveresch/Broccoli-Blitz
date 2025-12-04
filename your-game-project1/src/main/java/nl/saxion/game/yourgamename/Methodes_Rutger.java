@@ -17,6 +17,7 @@ public class Methodes_Rutger {
     private static long lastCoinSpawnTime = 0;
 
 
+    // Speler update (springen, bukken, tekenen)
     public static void update(PlayerClass Player, String filepath) {
         // --- SPRINGEN ---
         if (GameApp.isKeyJustPressed(Input.Keys.SPACE)) {
@@ -32,15 +33,11 @@ public class Methodes_Rutger {
             currentGravity = Player.gravity * 3;
         }
 
-        // --- GRAVITY + vallen ---
         Player.velocity -= currentGravity;
         Player.yPlayer += Player.velocity;
 
-        // ★ NIEUW: grondhoogte op basis van Lucas level-segmenten
-        int effectiveGround = Methodes_Lucas.LucasLevelSegments.getGroundYAtPlayer(Player);
-
-        if (Player.yPlayer < effectiveGround) {
-            Player.yPlayer = effectiveGround;
+        if (Player.yPlayer < Player.groundLevel) {
+            Player.yPlayer = Player.groundLevel;
             Player.velocity = 0;
             Player.jumpCount = 0;
         }
@@ -52,13 +49,22 @@ public class Methodes_Rutger {
         }
         if (Player.isReloading) {
             long now = System.currentTimeMillis();
-            if (now - Player.reloadStartTime >= 250) { // 0.25 seconde
+            if (now - Player.reloadStartTime >= 250) { // 1.5 seconden
                 Player.ammo = Player.maxAmmo;
                 Player.isReloading = false;
             }
         }
 
-        // --- KOGELS UPDATEN + TEKENEN ---
+        // --- SCHIETEN ---
+        if (GameApp.isKeyJustPressed(Input.Keys.F) && Player.ammo > 0 && !Player.isReloading) {
+            int broccoliX = 100;
+            int startX = broccoliX + Player.spriteWidth;
+            int startY = Player.yPlayer + Player.spriteHeight / 2;
+            bullets.add(new BulletClass(startX, startY));
+            Player.ammo--; // verlaag kogels
+        }
+
+        // --- KOGELS UPDATEN ---
         for (int i = 0; i < bullets.size(); i++) {
             BulletClass b = bullets.get(i);
             b.x += b.velocity;
@@ -69,9 +75,9 @@ public class Methodes_Rutger {
                 i--;
             }
         }
-
         // --- TEKENEN VAN DE BROCCOLI ---
-        GameApp.drawTexture("brocolli", 100, Player.yPlayer, 200, 200);
+        GameApp.drawTexture("brocolli", 100, Player.yPlayer,200,200);
+
     }
 
     public static void updateCoins(PlayerClass player) {
@@ -255,24 +261,5 @@ public class Methodes_Rutger {
         int textWidth = (int) GameApp.getTextWidth(fontKey, text); // breedte van de tekst
         int x = (int) (GameApp.getWorldWidth() - marginRight - textWidth); // corrigeer zodat tekst rechts staat
         GameApp.drawText(fontKey, text, x, y, color);
-    }
-
-    public static void shoot(PlayerClass player) {
-        // Check of speler mag schieten
-        if (GameApp.isKeyJustPressed(Input.Keys.F) && player.ammo > 0 && !player.isReloading) {
-            int broccoliX = 100; // vaste X van speler
-            int startX = broccoliX + player.spriteWidth; // beginpositie kogel rechts van speler
-            int startY = player.yPlayer + player.spriteHeight / 2; // midden van sprite
-
-            // Voeg nieuwe kogel toe
-            bullets.add(new BulletClass(startX, startY));
-
-            // Verminder ammo
-            player.ammo--;
-
-            // 🔥 Hier kun je straks een vuur-animatie of geluid triggeren
-            // Bijvoorbeeld: GameApp.playSound("shoot");
-            // Of: GameApp.drawTexture("fire", startX, startY, 64, 64);
-        }
     }
     }
