@@ -262,4 +262,21 @@ public class Methodes_Rutger {
         int x = (int) (GameApp.getWorldWidth() - marginRight - textWidth); // corrigeer zodat tekst rechts staat
         GameApp.drawText(fontKey, text, x, y, color);
     }
+
+    public static void checkBulletHitsEnemy(EnemyClass enemy) {
+        for (int i = 0; i < bullets.size(); i++) {
+            BulletClass bullet = bullets.get(i);
+
+            // AABB collision check
+            boolean overlapX = bullet.x < enemy.enemyXPos + 100 && bullet.x + 90 > enemy.enemyXPos;
+            boolean overlapY = bullet.y < enemy.enemyYPos + 100 && bullet.y + 75 > enemy.enemyYPos;
+
+            if (overlapX && overlapY && !enemy.enemyIsDead) {
+                enemy.enemyIsDead = true;
+                bullets.remove(i); // verwijder de kogel
+                i--; // index corrigeren
+                break; // enemy geraakt, klaar
+            }
+        }
+    }
     }

@@ -21,10 +21,19 @@ public class Methodes_Maxje {
     }
 
     public static void addMes(float delta, ProjectileClass projectileClass, EnemyClass enemyClass) {
+        // Stop als enemy dood is
+        if (enemyClass.enemyIsDead) return;
+
         projectileClass.spawnTimer += delta;
         if (projectileClass.spawnTimer > projectileClass.spawnInterval) {
             projectileClass.spawnTimer = 0f;
-            ProjectileClass newknife = new ProjectileClass("img/mes.png", "mes", enemyClass.enemyXPos, enemyClass.enemyYPos + 30, 300);
+
+            ProjectileClass newknife = new ProjectileClass(
+                    "img/mes.png", "mes",
+                    enemyClass.enemyXPos,
+                    enemyClass.enemyYPos + 30,
+                    300
+            );
 
             projectileClass.projectiles.add(newknife);
             GameApp.drawTexture(newknife.textureKey, newknife.xposition, newknife.yposition);
