@@ -20,6 +20,8 @@ public class ProjectileClass {
         this.xposition = xposition;
         this.yposition = yposition;
         this.textureKey = textureKey;
+        this.spawnInterval = 3.5f;
+        this.spawnTimer = 3f;
 
         GameApp.addTexture(textureKey, filepath);
     }
