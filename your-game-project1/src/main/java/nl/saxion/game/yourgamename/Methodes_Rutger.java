@@ -18,41 +18,42 @@ public class Methodes_Rutger {
     private static long lastCoinSpawnTime = 0;
 
 
-    // Speler update (springen, bukken, tekenen)
-    public static void update(PlayerClass Player, String filepath) {
+    // Speler update (springen, bukken, tekenen, schieten)
+    public static void update(PlayerClass player) {
         // --- SPRINGEN ---
         if (GameApp.isKeyJustPressed(Input.Keys.SPACE)) {
-            if (Player.jumpCount < 2) {
-                Player.velocity = 20;
-                Player.jumpCount++;
+            if (player.jumpCount < 2) {
+                player.velocity = 20;
+                player.jumpCount++;
             }
         }
 
         // --- BUKKEN ---
-        int currentGravity = Player.gravity;
+        int currentGravity = player.gravity;
         if (GameApp.isKeyPressed(Input.Keys.SHIFT_LEFT) || GameApp.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
-            currentGravity = Player.gravity * 3;
+            currentGravity = player.gravity * 3;
         }
 
-        Player.velocity -= currentGravity;
-        Player.yPlayer += Player.velocity;
+        // --- BEWEGING VERTICAAL ---
+        player.velocity -= currentGravity;
+        player.yPlayer += player.velocity;
 
-        if (Player.yPlayer < Player.groundLevel) {
-            Player.yPlayer = Player.groundLevel;
-            Player.velocity = 0;
-            Player.jumpCount = 0;
+        if (player.yPlayer < player.groundLevel) {
+            player.yPlayer = player.groundLevel;
+            player.velocity = 0;
+            player.jumpCount = 0;
         }
 
         // --- RELOAD ---
-        if (GameApp.isKeyJustPressed(Input.Keys.R) && !Player.isReloading) {
-            Player.isReloading = true;
-            Player.reloadStartTime = System.currentTimeMillis();
+        if (GameApp.isKeyJustPressed(Input.Keys.R) && !player.isReloading) {
+            player.isReloading = true;
+            player.reloadStartTime = System.currentTimeMillis();
         }
-        if (Player.isReloading) {
+        if (player.isReloading) {
             long now = System.currentTimeMillis();
-            if (now - Player.reloadStartTime >= 250) { // 1.5 seconden
-                Player.ammo = Player.maxAmmo;
-                Player.isReloading = false;
+            if (now - player.reloadStartTime >= 1500) { // 1.5 seconden
+                player.ammo = player.maxAmmo;
+                player.isReloading = false;
             }
         }
 
@@ -67,49 +68,50 @@ public class Methodes_Rutger {
                 i--;
             }
         }
+
         // --- TEKENEN VAN DE BROCCOLI ---
-        GameApp.drawTexture("brocolli", 100, Player.yPlayer,200,200);
+        GameApp.drawTexture("brocolli", 100, player.yPlayer, 200, 200);
 
-        // --- SCHIETEN ---
-        if (GameApp.isKeyJustPressed(Input.Keys.F) && Player.ammo > 0 && !Player.isReloading) {
+        // --- SCHIETEN + MUZZLE FLASH + SOUND ---
+        if (GameApp.isKeyJustPressed(Input.Keys.F) && player.ammo > 0 && !player.isReloading) {
             int broccoliX = 100;
-            int startX = broccoliX + Player.spriteWidth;
-            int startY = Player.yPlayer + Player.spriteHeight / 2;
+            int startX = broccoliX + player.spriteWidth;
+            int startY = player.yPlayer + player.spriteHeight / 2;
 
+            // Voeg kogel toe
             bullets.add(new BulletClass(startX, startY));
-            Player.ammo--;
+            player.ammo--;
 
+            // Start muzzle flash (offset zodat hij bij de loop zit)
             muzzleFlashes.add(new MuzzleFlash(startX, startY));
-        }
-        // --- Muzzle Flash ---
-        if (GameApp.isKeyJustPressed(Input.Keys.F) && Player.ammo > 0 && !Player.isReloading) {
-            int broccoliX = 100;
-            int startX = broccoliX + Player.spriteWidth;
-            int startY = Player.yPlayer + Player.spriteHeight / 2;
-            bullets.add(new BulletClass(startX, startY));
-            Player.ammo--;
 
-            // Start muzzle flash
-            muzzleFlashes.add(new MuzzleFlash(startX, startY));
+            // Geluid afspelen
+            GameApp.playSound("shoot");
         }
+
+        // --- MUZZLE FLASH UPDATEN/TEKENEN ---
         for (int i = 0; i < muzzleFlashes.size(); i++) {
             MuzzleFlash flash = muzzleFlashes.get(i);
 
-            // Gebruik GameApp.getDeltaTime()
+            // Tijd bijwerken
             flash.timer += GameApp.getDeltaTime();
             if (flash.timer >= MuzzleFlash.FRAME_DURATION) {
                 flash.timer = 0;
                 flash.frameIndex++;
             }
 
+            // Frame tekenen zolang we binnen range zitten
             if (flash.frameIndex < MuzzleFlash.TOTAL_FRAMES) {
-                GameApp.drawTexture("muzzleFlash" + flash.frameIndex, flash.x+75, flash.y-22, 64, 64);
+                // Pas desnoods deze offsets aan voor perfecte uitlijning
+                int drawX = flash.x + 75;   // kleine offset naar rechts vanaf broccoli
+                int drawY = flash.y - 22;   // kleine offset omlaag richting loop
+                GameApp.drawTexture("muzzleFlash" + flash.frameIndex, drawX, drawY, 64, 64);
             } else {
+                // Animatie klaar -> verwijderen
                 muzzleFlashes.remove(i);
                 i--;
             }
         }
-
     }
 
     public static void updateCoins(PlayerClass player) {
@@ -137,6 +139,7 @@ public class Methodes_Rutger {
                 if (overlap) {
                     coin.isCollected = true;
                     player.coinsPickedUp++;
+                    GameApp.playSound("coin", 0.25f);
                 }
 
                 // Verwijder munt als hij uit beeld is
@@ -267,6 +270,9 @@ public class Methodes_Rutger {
         // Spatie activeert beweging
         if (!isStarting && GameApp.isKeyJustPressed(Input.Keys.SPACE)) {
             isStarting = true;
+            // 🔊 Start sound afspelen bij game start
+            GameApp.playSound("start", 0.8f); // iets zachter volume
+
         }
         return isStarting; // geef de bijgewerkte waarde terug
     }

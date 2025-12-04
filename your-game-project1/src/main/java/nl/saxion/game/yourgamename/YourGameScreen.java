@@ -24,6 +24,9 @@ public class YourGameScreen extends ScalableGameScreen {
         for (int i = 0; i < MuzzleFlash.TOTAL_FRAMES; i++) {
             GameApp.addTexture("muzzleFlash" + i, "img/MuzzleFlash/muzzle_flash_" + i + ".png");
         }
+        GameApp.addSound("shoot", "Sounds/Schieten.mp3");
+        GameApp.addSound("coin", "Sounds/coin.mp3");
+
     }
 
     private float Worldx;
@@ -43,7 +46,7 @@ public class YourGameScreen extends ScalableGameScreen {
         PlayerClass.worldX += 300 * delta; // sneller in game
         Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(PlayerClass.worldX, getWorldWidth());
 
-        Methodes_Rutger.update(player, player.filepath);
+        Methodes_Rutger.update(player);
         Methodes_Rutger.spawnCoins();
         Methodes_Rutger.updateCoins(player);
         Methodes_Rutger.updateScore(player, delta);

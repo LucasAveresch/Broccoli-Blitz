@@ -23,6 +23,7 @@ public class MainMenuScreen extends ScalableGameScreen {
         GameApp.addFont("small", "fonts/basic.ttf", 30); // kleiner font voor HUD
         Methodes_Lucas.LucasParallaxMethods.initParallax(0);
         GameApp.addTexture("brocolli", "img/brocolli3.png");
+        GameApp.addSound("start", "Sounds/Start.mp3");
 
         broccoliX = getWorldWidth() / 2f - player.spriteWidth / 2f - 50;
         isStarting = false;
