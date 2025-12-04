@@ -17,7 +17,6 @@ public class Methodes_Rutger {
     private static long lastCoinSpawnTime = 0;
 
 
-    // Speler update (springen, bukken, tekenen)
     public static void update(PlayerClass Player, String filepath) {
         // --- SPRINGEN ---
         if (GameApp.isKeyJustPressed(Input.Keys.SPACE)) {
@@ -33,11 +32,15 @@ public class Methodes_Rutger {
             currentGravity = Player.gravity * 3;
         }
 
+        // --- GRAVITY + vallen ---
         Player.velocity -= currentGravity;
         Player.yPlayer += Player.velocity;
 
-        if (Player.yPlayer < Player.groundLevel) {
-            Player.yPlayer = Player.groundLevel;
+        // ★ NIEUW: grondhoogte op basis van Lucas level-segmenten
+        int effectiveGround = Methodes_Lucas.LucasLevelSegments.getGroundYAtPlayer(Player);
+
+        if (Player.yPlayer < effectiveGround) {
+            Player.yPlayer = effectiveGround;
             Player.velocity = 0;
             Player.jumpCount = 0;
         }
@@ -49,16 +52,13 @@ public class Methodes_Rutger {
         }
         if (Player.isReloading) {
             long now = System.currentTimeMillis();
-            if (now - Player.reloadStartTime >= 250) { // 1.5 seconden
+            if (now - Player.reloadStartTime >= 250) { // 0.25 seconde
                 Player.ammo = Player.maxAmmo;
                 Player.isReloading = false;
             }
         }
 
-        // --- SCHIETEN ---
-            shoot(Player);
-
-        // --- KOGELS UPDATEN ---
+        // --- KOGELS UPDATEN + TEKENEN ---
         for (int i = 0; i < bullets.size(); i++) {
             BulletClass b = bullets.get(i);
             b.x += b.velocity;
@@ -69,9 +69,9 @@ public class Methodes_Rutger {
                 i--;
             }
         }
-        // --- TEKENEN VAN DE BROCCOLI ---
-        GameApp.drawTexture("brocolli", 100, Player.yPlayer,200,200);
 
+        // --- TEKENEN VAN DE BROCCOLI ---
+        GameApp.drawTexture("brocolli", 100, Player.yPlayer, 200, 200);
     }
 
     public static void updateCoins(PlayerClass player) {
