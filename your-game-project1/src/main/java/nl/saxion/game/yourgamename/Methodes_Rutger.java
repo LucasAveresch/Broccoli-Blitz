@@ -14,6 +14,7 @@ public class Methodes_Rutger {
     // Lijst van kogels
     public static ArrayList<BulletClass> bullets = new ArrayList<>();
     public static ArrayList<CoinClass> coins = new ArrayList<>();
+    public static ArrayList<MuzzleFlash> muzzleFlashes = new ArrayList<>();
     private static long lastCoinSpawnTime = 0;
 
 
@@ -60,8 +61,39 @@ public class Methodes_Rutger {
             int broccoliX = 100;
             int startX = broccoliX + Player.spriteWidth;
             int startY = Player.yPlayer + Player.spriteHeight / 2;
+
             bullets.add(new BulletClass(startX, startY));
-            Player.ammo--; // verlaag kogels
+            Player.ammo--;
+
+            muzzleFlashes.add(new MuzzleFlash(startX, startY));
+        }
+        // --- Muzzle Flash ---
+        if (GameApp.isKeyJustPressed(Input.Keys.F) && Player.ammo > 0 && !Player.isReloading) {
+            int broccoliX = 100;
+            int startX = broccoliX + Player.spriteWidth;
+            int startY = Player.yPlayer + Player.spriteHeight / 2;
+            bullets.add(new BulletClass(startX, startY));
+            Player.ammo--;
+
+            // Start muzzle flash
+            muzzleFlashes.add(new MuzzleFlash(startX, startY));
+        }
+        for (int i = 0; i < muzzleFlashes.size(); i++) {
+            MuzzleFlash flash = muzzleFlashes.get(i);
+
+            // Gebruik GameApp.getDeltaTime()
+            flash.timer += GameApp.getDeltaTime();
+            if (flash.timer >= MuzzleFlash.FRAME_DURATION) {
+                flash.timer = 0;
+                flash.frameIndex++;
+            }
+
+            if (flash.frameIndex < MuzzleFlash.TOTAL_FRAMES) {
+                GameApp.drawTexture("muzzleFlash" + flash.frameIndex, flash.x, flash.y, 64, 64);
+            } else {
+                muzzleFlashes.remove(i);
+                i--;
+            }
         }
 
         // --- KOGELS UPDATEN ---

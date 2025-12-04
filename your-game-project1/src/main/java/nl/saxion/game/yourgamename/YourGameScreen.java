@@ -21,6 +21,9 @@ public class YourGameScreen extends ScalableGameScreen {
         GameApp.addTexture("kogel", "img/kogel.png");
         GameApp.addTexture("brocolli", "img/brocolli3.png");
         GameApp.addTexture("coin", "img/munt.png");
+        for (int i = 0; i < MuzzleFlash.TOTAL_FRAMES; i++) {
+            GameApp.addTexture("muzzleFlash" + i, "img/MuzzleFlash/muzzle_flash_" + i + ".png");
+        }
     }
 
     private float Worldx;
