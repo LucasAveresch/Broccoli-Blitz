@@ -56,13 +56,7 @@ public class Methodes_Rutger {
         }
 
         // --- SCHIETEN ---
-        if (GameApp.isKeyJustPressed(Input.Keys.F) && Player.ammo > 0 && !Player.isReloading) {
-            int broccoliX = 100;
-            int startX = broccoliX + Player.spriteWidth;
-            int startY = Player.yPlayer + Player.spriteHeight / 2;
-            bullets.add(new BulletClass(startX, startY));
-            Player.ammo--; // verlaag kogels
-        }
+            shoot(Player);
 
         // --- KOGELS UPDATEN ---
         for (int i = 0; i < bullets.size(); i++) {
@@ -261,5 +255,24 @@ public class Methodes_Rutger {
         int textWidth = (int) GameApp.getTextWidth(fontKey, text); // breedte van de tekst
         int x = (int) (GameApp.getWorldWidth() - marginRight - textWidth); // corrigeer zodat tekst rechts staat
         GameApp.drawText(fontKey, text, x, y, color);
+    }
+
+    public static void shoot(PlayerClass player) {
+        // Check of speler mag schieten
+        if (GameApp.isKeyJustPressed(Input.Keys.F) && player.ammo > 0 && !player.isReloading) {
+            int broccoliX = 100; // vaste X van speler
+            int startX = broccoliX + player.spriteWidth; // beginpositie kogel rechts van speler
+            int startY = player.yPlayer + player.spriteHeight / 2; // midden van sprite
+
+            // Voeg nieuwe kogel toe
+            bullets.add(new BulletClass(startX, startY));
+
+            // Verminder ammo
+            player.ammo--;
+
+            // 🔥 Hier kun je straks een vuur-animatie of geluid triggeren
+            // Bijvoorbeeld: GameApp.playSound("shoot");
+            // Of: GameApp.drawTexture("fire", startX, startY, 64, 64);
+        }
     }
     }
