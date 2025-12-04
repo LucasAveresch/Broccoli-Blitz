@@ -1,5 +1,6 @@
  package nl.saxion.game;
 
+import nl.saxion.game.yourgamename.DeathScreen;
 import nl.saxion.game.yourgamename.PlayerClass;
 import nl.saxion.game.yourgamename.YourGameScreen;
 import nl.saxion.game.yourgamename.MainMenuScreen;
@@ -14,6 +15,7 @@ public class Main {
         PlayerClass player = new PlayerClass();
         GameApp.addScreen("MainMenuScreen", new MainMenuScreen(player));
         GameApp.addScreen("YourGameScreen", new YourGameScreen(player));
+        GameApp.addScreen("DeathScreen", new DeathScreen(player));
 
         // Start game loop and show main menu screen
         GameApp.start("Broccoli blitz", 1800, 800, 60, false, "MainMenuScreen");

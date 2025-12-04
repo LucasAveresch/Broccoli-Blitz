@@ -60,7 +60,7 @@ public class Methodes_Maxje {
             }
         }
         if(collsionx && collsiony){
-            GameApp.switchScreen("MainMenuScreen");
+            GameApp.switchScreen("DeathScreen");
         }
     }
     public static void checkCollisionEnemy(PlayerClass playerClass, EnemyClass enemyClass){

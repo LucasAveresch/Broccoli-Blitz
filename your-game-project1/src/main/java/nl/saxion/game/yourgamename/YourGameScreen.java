@@ -61,7 +61,6 @@ public class YourGameScreen extends ScalableGameScreen {
         Methodes_Maxje.checkCollsionMes(projectileClass,player);
         Methodes_Maxje.checkCollisionEnemy(player,enemyClass);
 
-
         GameApp.endSpriteRendering();
     }
 

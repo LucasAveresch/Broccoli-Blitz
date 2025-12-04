@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import nl.saxion.gameapp.GameApp;
 import nl.saxion.gameapp.screens.ScalableGameScreen;
 
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ public class Methodes_Rutger {
     public static ArrayList<CoinClass> coins = new ArrayList<>();
     public static ArrayList<MuzzleFlash> muzzleFlashes = new ArrayList<>();
     private static long lastCoinSpawnTime = 0;
+
 
 
     // Speler update (springen, bukken, tekenen, schieten)
@@ -223,8 +225,8 @@ public class Methodes_Rutger {
             player.ammo = player.maxAmmo;
             player.distanceTravelled = 0;
 
-            // Terug naar main menu
-            GameApp.switchScreen("MainMenuScreen");
+            // Naar deathscreen
+            GameApp.switchScreen("DeathScreen");
             return true;
         }
         return false;
