@@ -5,6 +5,8 @@ import nl.saxion.gameapp.screens.ScalableGameScreen;
 
 public class YourGameScreen extends ScalableGameScreen {
     public PlayerClass player;
+    public EnemyClass enemyClass;
+    public ProjectileClass projectileClass;
 
     public YourGameScreen(PlayerClass player) {
         super(1280, 720);
@@ -17,6 +19,8 @@ public class YourGameScreen extends ScalableGameScreen {
         GameApp.addTexture("kogel", "img/kogel.png");
         GameApp.addTexture("brocolli", "img/brocolli3.png");
         GameApp.addTexture("coin", "img/munt.png");
+        enemyClass = new EnemyClass("img/chef.png", "chef", 1200, 150, 300);
+        projectileClass = new ProjectileClass("img/mes.png", "mes", enemyClass.enemyXPos, 150, 500);
     }
 
     private float Worldx;
