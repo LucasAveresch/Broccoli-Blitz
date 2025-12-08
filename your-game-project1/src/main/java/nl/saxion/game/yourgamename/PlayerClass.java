@@ -18,13 +18,15 @@ public class PlayerClass {
     long reloadStartTime = 0; // tijdstip herladen
 
     // --- Nieuwe variabele ---
-    public double speed = 1; // snelheid waarmee munten naar links bewegen
-    public double distanceTravelled = 0; // totaal aantal meters gelopen
-    public static float worldX = 0; // gedeelde parallax offset
+    public double speed = 1;
+    public double distanceTravelled = 0;
+    public static float worldX = 0;
 
-    public int totalCoins = 0;       // alle munten over meerdere rondes
-    public double highScore = 0;     // hoogste afstand ooit gehaald
+    public int totalCoins = 0;
+    public double highScore = 0;
 
-
+    // --- Statistieken voor DeathScreen ---
+    public int enemiesDefeated = 0;    // aantal verslagen enemies
+    public int shotsFired = 0;         // aantal keer geschoten
+    public float survivalTime = 0;     // tijd in seconden
 }
-

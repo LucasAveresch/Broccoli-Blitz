@@ -15,12 +15,26 @@ public class YourGameScreen extends ScalableGameScreen {
 
     @Override
     public void show() {
+        // Schoon starten
+        Methodes_Rutger.resetRoundStats(player);
+
+        // Assets
         Methodes_Lucas.LucasParallaxMethods.initParallax(0);
-        enemyClass = new EnemyClass("img/chef.png", "chef", 1100, 150, 100);
-        projectileClass = new ProjectileClass("img/mes.png", "mes", enemyClass.enemyXPos, enemyClass.enemyYPos +20 ,  500);
         GameApp.addTexture("kogel", "img/kogel.png");
         GameApp.addTexture("brocolli", "img/brocolli3.png");
         GameApp.addTexture("coin", "img/munt.png");
+        for (int i = 0; i < MuzzleFlash.TOTAL_FRAMES; i++) {
+            GameApp.addTexture("muzzleFlash" + i, "img/MuzzleFlash/muzzle_flash_" + i + ".png");
+        }
+        GameApp.addSound("shoot", "Sounds/Schieten.mp3");
+        GameApp.addSound("coin", "Sounds/coin.mp3");
+        GameApp.addSound("Reload", "Sounds/Reload.mp3");
+        GameApp.addSound("NoAmmo", "Sounds/NoAmmo.mp3");
+
+        // Nieuwe enemy/projectiel
+        enemyClass = new EnemyClass("img/chef.png", "chef", 1100, 150, 100);
+        projectileClass = new ProjectileClass("img/mes.png", "mes",
+                enemyClass.enemyXPos, enemyClass.enemyYPos + 20, 500);
     }
 
     private float Worldx;
@@ -40,18 +54,21 @@ public class YourGameScreen extends ScalableGameScreen {
         PlayerClass.worldX += 300 * delta; // sneller in game
         Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(PlayerClass.worldX, getWorldWidth());
 
-        Methodes_Rutger.update(player, player.filepath);
+        Methodes_Rutger.update(player);
         Methodes_Rutger.spawnCoins();
         Methodes_Rutger.updateCoins(player);
         Methodes_Rutger.updateScore(player, delta);
         Methodes_Rutger.drawGameHud(player);
 
-        Methodes_Maxje.updateEnenmy(delta, enemyClass);
+        if (!enemyClass.enemyIsDead) {
+            Methodes_Maxje.updateEnenmy(delta, enemyClass);
+            Methodes_Rutger.checkBulletHitsEnemy(player, enemyClass);
+        }
         Methodes_Maxje.addMes(delta,projectileClass,enemyClass);
         Methodes_Maxje.updateMes(delta, projectileClass,enemyClass);
         Methodes_Maxje.checkCollsionMes(projectileClass,player);
         Methodes_Maxje.checkCollisionEnemy(player,enemyClass);
-
+        Methodes_Rutger.updateSurvivalTime(player, delta);
 
         GameApp.endSpriteRendering();
     }

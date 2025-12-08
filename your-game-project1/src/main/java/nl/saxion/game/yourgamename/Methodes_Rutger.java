@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import nl.saxion.gameapp.GameApp;
 import nl.saxion.gameapp.screens.ScalableGameScreen;
 
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
@@ -14,54 +15,52 @@ public class Methodes_Rutger {
     // Lijst van kogels
     public static ArrayList<BulletClass> bullets = new ArrayList<>();
     public static ArrayList<CoinClass> coins = new ArrayList<>();
+    public static ArrayList<MuzzleFlash> muzzleFlashes = new ArrayList<>();
     private static long lastCoinSpawnTime = 0;
 
 
-    // Speler update (springen, bukken, tekenen)
-    public static void update(PlayerClass Player, String filepath) {
+
+    // Speler update (springen, bukken, tekenen, schieten)
+    public static void update(PlayerClass player) {
         // --- SPRINGEN ---
         if (GameApp.isKeyJustPressed(Input.Keys.SPACE)) {
-            if (Player.jumpCount < 2) {
-                Player.velocity = 20;
-                Player.jumpCount++;
+            if (player.jumpCount < 2) {
+                player.velocity = 20;
+                player.jumpCount++;
             }
         }
 
         // --- BUKKEN ---
-        int currentGravity = Player.gravity;
+        int currentGravity = player.gravity;
         if (GameApp.isKeyPressed(Input.Keys.SHIFT_LEFT) || GameApp.isKeyPressed(Input.Keys.SHIFT_RIGHT)) {
-            currentGravity = Player.gravity * 3;
+            currentGravity = player.gravity * 3;
         }
 
-        Player.velocity -= currentGravity;
-        Player.yPlayer += Player.velocity;
+        // --- BEWEGING VERTICAAL ---
+        player.velocity -= currentGravity;
+        player.yPlayer += player.velocity;
 
-        if (Player.yPlayer < Player.groundLevel) {
-            Player.yPlayer = Player.groundLevel;
-            Player.velocity = 0;
-            Player.jumpCount = 0;
+        if (player.yPlayer < player.groundLevel) {
+            player.yPlayer = player.groundLevel;
+            player.velocity = 0;
+            player.jumpCount = 0;
         }
 
         // --- RELOAD ---
-        if (GameApp.isKeyJustPressed(Input.Keys.R) && !Player.isReloading) {
-            Player.isReloading = true;
-            Player.reloadStartTime = System.currentTimeMillis();
-        }
-        if (Player.isReloading) {
-            long now = System.currentTimeMillis();
-            if (now - Player.reloadStartTime >= 250) { // 1.5 seconden
-                Player.ammo = Player.maxAmmo;
-                Player.isReloading = false;
-            }
-        }
+        if (GameApp.isKeyJustPressed(Input.Keys.R) && !player.isReloading) {
+            player.isReloading = true;
+            player.reloadStartTime = System.currentTimeMillis();
 
-        // --- SCHIETEN ---
-        if (GameApp.isKeyJustPressed(Input.Keys.F) && Player.ammo > 0 && !Player.isReloading) {
-            int broccoliX = 100;
-            int startX = broccoliX + Player.spriteWidth;
-            int startY = Player.yPlayer + Player.spriteHeight / 2;
-            bullets.add(new BulletClass(startX, startY));
-            Player.ammo--; // verlaag kogels
+            // 🔊 Reload sound afspelen
+            GameApp.playSound("Reload", 0.8f); // volume iets zachter
+
+        }
+        if (player.isReloading) {
+            long now = System.currentTimeMillis();
+            if (now - player.reloadStartTime >= 1500) { // 1.5 seconden
+                player.ammo = player.maxAmmo;
+                player.isReloading = false;
+            }
         }
 
         // --- KOGELS UPDATEN ---
@@ -75,9 +74,56 @@ public class Methodes_Rutger {
                 i--;
             }
         }
-        // --- TEKENEN VAN DE BROCCOLI ---
-        GameApp.drawTexture("brocolli", 100, Player.yPlayer,200,200);
 
+        // --- TEKENEN VAN DE BROCCOLI ---
+        GameApp.drawTexture("brocolli", 100, player.yPlayer, 200, 200);
+
+// --- SCHIETEN + MUZZLE FLASH + SOUND ---
+        if (GameApp.isKeyJustPressed(Input.Keys.F) && !player.isReloading) {
+            if (player.ammo > 0) {
+                int broccoliX = 100;
+                int startX = broccoliX + player.spriteWidth;
+                int startY = player.yPlayer + player.spriteHeight / 2;
+
+                // Voeg kogel toe
+                bullets.add(new BulletClass(startX, startY));
+                player.ammo--;
+
+                // Start muzzle flash
+                muzzleFlashes.add(new MuzzleFlash(startX, startY));
+
+                // Geluid afspelen
+                GameApp.playSound("shoot");
+                player.shotsFired++; // ✅ schot registreren
+            } else {
+                // Geen ammo → NoAmmo sound
+                GameApp.playSound("NoAmmo", 0.8f);
+            }
+        }
+
+        // --- MUZZLE FLASH UPDATEN/TEKENEN ---
+        for (int i = 0; i < muzzleFlashes.size(); i++) {
+            MuzzleFlash flash = muzzleFlashes.get(i);
+
+            // Tijd bijwerken
+            flash.timer += GameApp.getDeltaTime();
+            if (flash.timer >= MuzzleFlash.FRAME_DURATION) {
+                flash.timer = 0;
+                flash.frameIndex++;
+            }
+
+            // Frame tekenen zolang we binnen range zitten
+            if (flash.frameIndex < MuzzleFlash.TOTAL_FRAMES) {
+                // Pas desnoods deze offsets aan voor perfecte uitlijning
+                int drawX = flash.x + 75;   // kleine offset naar rechts vanaf broccoli
+                int drawY = flash.y - 22;   // kleine offset omlaag richting loop
+                GameApp.drawTexture("muzzleFlash" + flash.frameIndex, drawX, drawY, 64, 64);
+            } else {
+                // Animatie klaar -> verwijderen
+                muzzleFlashes.remove(i);
+                i--;
+            }
+        }
     }
 
     public static void updateCoins(PlayerClass player) {
@@ -105,6 +151,7 @@ public class Methodes_Rutger {
                 if (overlap) {
                     coin.isCollected = true;
                     player.coinsPickedUp++;
+                    GameApp.playSound("coin", 0.25f);
                 }
 
                 // Verwijder munt als hij uit beeld is
@@ -174,22 +221,14 @@ public class Methodes_Rutger {
 
     public static boolean checkDeath(PlayerClass player) {
         if (GameApp.isKeyPressed(Input.Keys.ESCAPE) && GameApp.isKeyPressed(Input.Keys.NUM_9)) {
-            // Munten en highscore bijwerken
+            // Tellen bij einde ronde
             player.totalCoins += player.coinsPickedUp;
             if (player.distanceTravelled > player.highScore) {
                 player.highScore = player.distanceTravelled;
             }
 
-            // Reset ronde waarden
-            player.yPlayer = player.groundLevel;
-            player.velocity = 0;
-            player.jumpCount = 0;
-            player.coinsPickedUp = 0;
-            player.ammo = player.maxAmmo;
-            player.distanceTravelled = 0;
-
-            // Terug naar main menu
-            GameApp.switchScreen("MainMenuScreen");
+            // Niet resetten hier -> eerst tonen in DeathScreen
+            GameApp.switchScreen("DeathScreen");
             return true;
         }
         return false;
@@ -235,6 +274,9 @@ public class Methodes_Rutger {
         // Spatie activeert beweging
         if (!isStarting && GameApp.isKeyJustPressed(Input.Keys.SPACE)) {
             isStarting = true;
+            // 🔊 Start sound afspelen bij game start
+            GameApp.playSound("start", 0.8f); // iets zachter volume
+
         }
         return isStarting; // geef de bijgewerkte waarde terug
     }
@@ -261,5 +303,65 @@ public class Methodes_Rutger {
         int textWidth = (int) GameApp.getTextWidth(fontKey, text); // breedte van de tekst
         int x = (int) (GameApp.getWorldWidth() - marginRight - textWidth); // corrigeer zodat tekst rechts staat
         GameApp.drawText(fontKey, text, x, y, color);
+    }
+
+    public static void checkBulletHitsEnemy(PlayerClass player, EnemyClass enemy) {
+        for (int i = 0; i < bullets.size(); i++) {
+            BulletClass bullet = bullets.get(i);
+
+            boolean overlapX = bullet.x < enemy.enemyXPos + 100 && bullet.x + 90 > enemy.enemyXPos;
+            boolean overlapY = bullet.y < enemy.enemyYPos + 100 && bullet.y + 75 > enemy.enemyYPos;
+
+            if (overlapX && overlapY && !enemy.enemyIsDead) {
+                enemy.enemyIsDead = true;
+                bullets.remove(i);
+                i--;
+
+                player.enemiesDefeated++; // ✅ kill registreren
+                break;
+            }
+        }
+    }
+
+    public static void registerEnemyKill(PlayerClass player) {
+        player.enemiesDefeated++;
+    }
+    public static void registerShot(PlayerClass player) {
+        player.shotsFired++;
+    }
+    public static void updateSurvivalTime(PlayerClass player, float delta) {
+        player.survivalTime += delta;
+    }
+    public static void drawDeathStats(PlayerClass player, ScalableGameScreen screen) {
+        float leftX = 50;
+        float topY = screen.getWorldHeight() - 100;
+        float line = 40;
+
+        GameApp.drawText("basic", "GAME OVER", leftX, topY, "white");
+        GameApp.drawText("small", "Coins: " + player.totalCoins, leftX, topY - line * 1, "white");
+        GameApp.drawText("small", "Score: " + String.format("%.1f", player.distanceTravelled), leftX, topY - line * 2, "white");
+        GameApp.drawText("small", "Verslagen enemies: " + player.enemiesDefeated, leftX, topY - line * 3, "white");
+        GameApp.drawText("small", "Aantal keer geschoten: " + player.shotsFired, leftX, topY - line * 4, "white");
+        GameApp.drawText("small", "Overlevingstijd: " + (int) player.survivalTime + "s", leftX, topY - line * 5, "white");
+        GameApp.drawText("small", "Druk [M] voor hoofdmenu", leftX, topY - line * 7, "white");
+    }
+    public static void resetRoundStats(PlayerClass player) {
+        // Ronde-specifieke statistieken
+        player.coinsPickedUp = 0;
+        player.enemiesDefeated = 0;
+        player.shotsFired = 0;
+        player.survivalTime = 0f;
+        player.distanceTravelled = 0.0;
+
+        // Spelerstatus
+        player.yPlayer = player.groundLevel;
+        player.velocity = 0;
+        player.jumpCount = 0;
+        player.ammo = player.maxAmmo;
+
+        // Lijsten opruimen
+        bullets.clear();
+        coins.clear();
+        muzzleFlashes.clear();
     }
     }

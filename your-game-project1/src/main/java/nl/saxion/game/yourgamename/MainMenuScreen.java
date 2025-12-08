@@ -23,6 +23,7 @@ public class MainMenuScreen extends ScalableGameScreen {
         GameApp.addFont("small", "fonts/basic.ttf", 30); // kleiner font voor HUD
         Methodes_Lucas.LucasParallaxMethods.initParallax(0);
         GameApp.addTexture("brocolli", "img/brocolli3.png");
+        GameApp.addSound("start", "Sounds/Start.mp3");
 
         broccoliX = getWorldWidth() / 2f - player.spriteWidth / 2f - 50;
         isStarting = false;
@@ -35,16 +36,25 @@ public class MainMenuScreen extends ScalableGameScreen {
 
         GameApp.clearScreen("black");
         GameApp.startSpriteRendering();
-// Starter
+
+        // Starter
         isStarting = Methodes_Rutger.handleMenuStart(isStarting);
-// Springen
+
+        // Springen
         Methodes_Rutger.updateJump(player);
-// Achtergrond
+
+        // Achtergrond bewegen zolang we nog niet gestart zijn
+        if (!isStarting) {
+            PlayerClass.worldX += 100 * delta; // langzame scroll in menu
+        }
         Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(PlayerClass.worldX, getWorldWidth());
-// Broccoli bewegen + tekenen
+
+        // Broccoli bewegen + tekenen
         broccoliX = Methodes_Rutger.handleMenuBroccoli(player, broccoliX, isStarting, delta);
-// Tekst
+
+        // Tekst
         Methodes_Rutger.drawMenuText(this, player);
+
         GameApp.endSpriteRendering();
     }
 
