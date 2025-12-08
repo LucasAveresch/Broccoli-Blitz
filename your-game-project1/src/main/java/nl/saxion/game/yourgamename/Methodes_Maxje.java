@@ -51,33 +51,61 @@ public class Methodes_Maxje {
         boolean collsionx = false;
         boolean collsiony = false;
         for (ProjectileClass knife : projectileClass.projectiles) {
-            if(knife.xposition > 100 + playerClass.spriteWidth && knife.xposition < 120 + playerClass.spriteWidth){
+            if (knife.xposition > 100 + playerClass.spriteWidth && knife.xposition < 120 + playerClass.spriteWidth) {
                 collsionx = true;
             }
-            if(knife.yposition < playerClass.yPlayer + playerClass.spriteHeight
-            && knife.yposition  + 16 > playerClass.yPlayer ){
+            if (knife.yposition < playerClass.yPlayer + playerClass.spriteHeight
+                    && knife.yposition + 16 > playerClass.yPlayer) {
                 collsiony = true;
             }
         }
-        if(collsionx && collsiony){
+        if (collsionx && collsiony) {
             GameApp.switchScreen("DeathScreen");
         }
     }
-    public static void checkCollisionEnemy(PlayerClass playerClass, EnemyClass enemyClass){
+
+    public static void checkCollisionEnemy(PlayerClass playerClass, EnemyClass enemyClass) {
         boolean collisionX = false;
         boolean collisionY = false;
-        if(enemyClass.enemyXPos < 100 + playerClass.spriteWidth && enemyClass.enemyXPos > 100){
+        if (enemyClass.enemyXPos < 100 + playerClass.spriteWidth && enemyClass.enemyXPos > 100) {
             collisionX = true;
         }
-        if (enemyClass.enemyYPos < playerClass.yPlayer + playerClass.spriteHeight && enemyClass.enemyYPos > playerClass.yPlayer){
+        if (enemyClass.enemyYPos < playerClass.yPlayer + playerClass.spriteHeight && enemyClass.enemyYPos > playerClass.yPlayer) {
             collisionY = true;
         }
-        if(collisionX && collisionY){
+        if (collisionX && collisionY) {
             GameApp.switchScreen("DeathScreen");
         }
+        if(collisionX && collisionY);
     }
-    public static void addSchildPowerup(PowerupClass powerUp){
-        boolean schildPickedUp = false;
 
+    public static void updateSchildPowerup(float delta, PowerupClass powerUp, PlayerClass player) {
+        if (!powerUp.powerupPickedup) {
+            powerUp.xPosition -= powerUp.speed * delta;
+
+            if (powerUp.xPosition < 0) {
+                return;
+            }
+            GameApp.drawTexture(powerUp.textureName, powerUp.xPosition, powerUp.yposition);
+        }
+        if (powerUp.powerupPickedup) {
+            GameApp.addTexture();
+        }
+
+    }
+
+    public static void checkForPowerupPickup(PlayerClass player, PowerupClass powerUp) {
+        boolean yCollision = player.yPlayer < powerUp.yposition + powerUp.spriteHeight &&
+                player.yPlayer + player.spriteHeight > powerUp.yposition;
+
+        boolean xCollision = player.groundLevel < powerUp.xPosition + powerUp.spriteWidth &&
+                player.groundLevel + player.groundLevel > powerUp.xPosition;
+
+        if (yCollision && xCollision) {
+            powerUp.powerupPickedup = true;
+        }
+    }
+    public static void checkforCollionSchild(){
+        if()
     }
 }

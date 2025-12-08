@@ -7,6 +7,7 @@ public class YourGameScreen extends ScalableGameScreen {
     public PlayerClass player;
     public EnemyClass enemyClass;
     public ProjectileClass projectileClass;
+    public PowerupClass powerupClassSchild;
 
     public YourGameScreen(PlayerClass player) {
         super(1280, 720);
@@ -34,7 +35,8 @@ public class YourGameScreen extends ScalableGameScreen {
         // Nieuwe enemy/projectiel
         enemyClass = new EnemyClass("img/chef.png", "chef", 1100, 150, 100);
         projectileClass = new ProjectileClass("img/mes.png", "mes",
-                enemyClass.enemyXPos, enemyClass.enemyYPos + 20, 500);
+          enemyClass.enemyXPos, enemyClass.enemyYPos + 20, 500);
+        powerupClassSchild = new PowerupClass("img/schild.png", "schild");
     }
 
     private float Worldx;
@@ -64,10 +66,12 @@ public class YourGameScreen extends ScalableGameScreen {
             Methodes_Maxje.updateEnenmy(delta, enemyClass);
             Methodes_Rutger.checkBulletHitsEnemy(player, enemyClass);
         }
-        Methodes_Maxje.addMes(delta,projectileClass,enemyClass);
+        /*Methodes_Maxje.addMes(delta,projectileClass,enemyClass);
         Methodes_Maxje.updateMes(delta, projectileClass,enemyClass);
         Methodes_Maxje.checkCollsionMes(projectileClass,player);
-        Methodes_Maxje.checkCollisionEnemy(player,enemyClass);
+        Methodes_Maxje.checkCollisionEnemy(player,enemyClass);*/
+        Methodes_Maxje.updateSchildPowerup(delta, powerupClassSchild);
+        Methodes_Maxje.checkForPowerupPickup(player,powerupClassSchild);
         Methodes_Rutger.updateSurvivalTime(player, delta);
 
         GameApp.endSpriteRendering();
