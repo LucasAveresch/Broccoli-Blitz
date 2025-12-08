@@ -1,5 +1,7 @@
 package nl.saxion.game.yourgamename;
 
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import nl.saxion.gameapp.GameApp;
 import nl.saxion.game.yourgamename.PlayerClass.*;
 
@@ -9,6 +11,11 @@ public class Methodes_Maxje {
 
 
     public static void updateEnenmy(float delta, EnemyClass enemyClass) {
+        Texture enemysheet = new Texture("");
+        TextureRegion[] loopanimatie = new TextureRegion[4];
+        for (int i= 0; i < 4; i++ ){
+            loopanimatie[i] = new TextureRegion(enemysheet, i * 128, 0, 128, 128);
+        }
         enemyClass.enemyXPos -= enemyClass.enemyspeed * delta;
 
         if (enemyClass.enemyXPos < 0) {
