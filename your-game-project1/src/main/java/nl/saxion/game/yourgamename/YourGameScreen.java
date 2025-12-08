@@ -27,6 +27,10 @@ public class YourGameScreen extends ScalableGameScreen {
         for (int i = 0; i < MuzzleFlash.TOTAL_FRAMES; i++) {
             GameApp.addTexture("muzzleFlash" + i, "img/MuzzleFlash/muzzle_flash_" + i + ".png");
         }
+        for (int i = 1; i <= 10; i++) {
+            GameApp.addTexture("bom" + i, "img/Bom/bom" + i + ".png"); // hoofdletter B!
+        }
+
         GameApp.addSound("shoot", "Sounds/Schieten.mp3");
         GameApp.addSound("coin", "Sounds/coin.mp3");
         GameApp.addSound("Reload", "Sounds/Reload.mp3");
@@ -61,6 +65,7 @@ public class YourGameScreen extends ScalableGameScreen {
         Methodes_Rutger.updateCoins(player);
         Methodes_Rutger.updateScore(player, delta);
         Methodes_Rutger.drawGameHud(player);
+        Methodes_Rutger.drawBombCooldown();
 
         if (!enemyClass.enemyIsDead) {
             Methodes_Maxje.updateEnenmy(delta, enemyClass);
@@ -73,6 +78,8 @@ public class YourGameScreen extends ScalableGameScreen {
         Methodes_Maxje.updateSchildPowerup(delta, powerupClassSchild);
         Methodes_Maxje.checkForPowerupPickup(player,powerupClassSchild);
         Methodes_Rutger.updateSurvivalTime(player, delta);
+        Methodes_Rutger.updateBomb(player, enemyClass);
+
 
         GameApp.endSpriteRendering();
     }

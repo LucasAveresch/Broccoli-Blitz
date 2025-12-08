@@ -17,6 +17,10 @@ public class Methodes_Rutger {
     public static ArrayList<CoinClass> coins = new ArrayList<>();
     public static ArrayList<MuzzleFlash> muzzleFlashes = new ArrayList<>();
     private static long lastCoinSpawnTime = 0;
+    private static boolean bombOnCooldown = false;
+    private static long lastBombTime = 0;
+    private static ArrayList<BombClass> bombs = new ArrayList<>();
+
 
 
 
@@ -364,4 +368,84 @@ public class Methodes_Rutger {
         coins.clear();
         muzzleFlashes.clear();
     }
+    public static void updateBomb(PlayerClass player, EnemyClass enemy) {
+        // Bom spawnen
+        if (GameApp.isKeyJustPressed(Input.Keys.G) && !bombOnCooldown) {
+            int startX = 100 + player.spriteWidth;
+            int startY = player.yPlayer + player.spriteHeight / 2;
+
+            bombs.add(new BombClass(startX, startY));
+            bombOnCooldown = true;
+            lastBombTime = System.currentTimeMillis();
+        }
+
+        if (bombOnCooldown) {
+            long now = System.currentTimeMillis();
+            if (now - lastBombTime >= 10000) {
+                bombOnCooldown = false;
+            }
+        }
+
+        // Update en teken bommen
+        for (int i = 0; i < bombs.size(); i++) {
+            BombClass bomb = bombs.get(i);
+            bomb.update();
+
+            // Collision checks (grond/enemy)
+            if (!bomb.exploded && bomb.y <= player.groundLevel) {
+                bomb.exploded = true;
+                bomb.frameIndex = 5;
+            }
+
+            if (!bomb.exploded && !enemy.enemyIsDead) {
+                boolean overlapX = bomb.x < enemy.enemyXPos + 100 &&
+                        bomb.x + 128 > enemy.enemyXPos;
+                boolean overlapY = bomb.y < enemy.enemyYPos + 100 &&
+                        bomb.y + 128 > enemy.enemyYPos;
+
+                if (overlapX && overlapY) {
+                    bomb.exploded = true;
+                    bomb.frameIndex = 5;
+                    enemy.enemyIsDead = true;
+                    player.enemiesDefeated++;
+                }
+            }
+
+            // Tekenen
+            if (bomb.frameIndex <= BombClass.TOTAL_FRAMES) {
+                GameApp.drawTexture("bom" + bomb.frameIndex, bomb.x, bomb.y, 128, 128);
+            }
+
+            // Verwijderen zodra animatie klaar is
+            if (bomb.exploded && bomb.frameIndex >= BombClass.TOTAL_FRAMES) {
+                bombs.remove(i);
+                i--;
+            }
+        }
     }
+    public static int getBombCooldownRemaining() {
+        if (!bombOnCooldown) {
+            return 0; // direct beschikbaar
+        }
+        long now = System.currentTimeMillis();
+        long elapsed = now - lastBombTime;
+        int remaining = (int) ((10000 - elapsed) / 1000); // in seconden
+        return Math.max(0, remaining);
+    }
+    public static void drawBombCooldown() {
+        int margin = 20;
+        int topY = (int) GameApp.getWorldHeight();
+
+        int remaining = getBombCooldownRemaining();
+
+        String text;
+        if (remaining == 0) {
+            text = "Bomb: READY";
+        } else {
+            text = "Bomb: " + remaining + "s";
+        }
+
+        GameApp.drawText("small", text, margin, topY - 30, "white");
+    }
+
+}
