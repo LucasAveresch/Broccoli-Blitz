@@ -73,7 +73,11 @@ public class Methodes_Maxje {
             collisionY = true;
         }
         if(collisionX && collisionY){
-            GameApp.switchScreen("MainMenuScreen");
+            GameApp.switchScreen("DeathScreen");
         }
+    }
+    public static void addSchildPowerup(PowerupClass powerUp){
+        boolean schildPickedUp = false;
+
     }
 }
