@@ -79,7 +79,7 @@ public class Methodes_Maxje {
         if(collisionX && collisionY);
     }
 
-    public static void updateSchildPowerup(float delta, PowerupClass powerUp, PlayerClass player) {
+    public static void updateSchildPowerup(float delta, PowerupClass powerUp, PlayerClass player, SchildClass schildClass) {
         if (!powerUp.powerupPickedup) {
             powerUp.xPosition -= powerUp.speed * delta;
 
@@ -89,9 +89,9 @@ public class Methodes_Maxje {
             GameApp.drawTexture(powerUp.textureName, powerUp.xPosition, powerUp.yposition);
         }
         if (powerUp.powerupPickedup) {
-            GameApp.addTexture();
+            schildClass.isactive = true;
+            powerUp.powerupPickedup = false;
         }
-
     }
 
     public static void checkForPowerupPickup(PlayerClass player, PowerupClass powerUp) {
@@ -105,7 +105,20 @@ public class Methodes_Maxje {
             powerUp.powerupPickedup = true;
         }
     }
-    public static void checkforCollionSchild(){
-        if()
+
+    public static void activeSchildUpdate(SchildClass schildClass, PlayerClass playerClass){
+        if(schildClass.isactive){
+            if(schildClass.HP == 2){
+                GameApp.drawTexture(schildClass.spriteName, 100, playerClass.yPlayer);
+            }
+            else if(schildClass.HP == 1){
+                GameApp.drawTexture(schildClass.spritename2,100,playerClass.yPlayer);
+            }
+        }
+
     }
+
+
+
+
 }
