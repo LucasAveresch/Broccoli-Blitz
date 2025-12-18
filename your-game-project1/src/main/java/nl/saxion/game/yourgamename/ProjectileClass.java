@@ -13,6 +13,7 @@ public class ProjectileClass {
     public String textureKey;
     public String filepath;
     public boolean projectileOffScreen;
+    public boolean remove;
     public ArrayList<ProjectileClass> projectiles = new ArrayList<>();
 
     public ProjectileClass(String filepath, String textureKey, float xposition, float yposition, float speed){

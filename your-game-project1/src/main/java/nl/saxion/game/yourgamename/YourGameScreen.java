@@ -42,7 +42,7 @@ public class YourGameScreen extends ScalableGameScreen {
         projectileClass = new ProjectileClass("img/mes.png", "mes",
           enemyClass.enemyXPos, enemyClass.enemyYPos + 20, 500);
         powerupClassSchild = new PowerupClass("img/schild.png", "schild");
-        schildClass = new SchildClass("img/activeSchild.png", "Fullschild", "img/activeCrackedShield.png", "crackedSchild");
+        schildClass = new SchildClass("img/activeSchild.png", "fullschild", "crackedSchild","img/activeCrackedShield.png");
     }
 
     private float Worldx;
@@ -77,8 +77,10 @@ public class YourGameScreen extends ScalableGameScreen {
         Methodes_Maxje.updateMes(delta, projectileClass,enemyClass);
         Methodes_Maxje.checkCollsionMes(projectileClass,player);
         Methodes_Maxje.checkCollisionEnemy(player,enemyClass);
-        Methodes_Maxje.updateSchildPowerup(delta, powerupClassSchild,player);
         Methodes_Maxje.checkForPowerupPickup(player,powerupClassSchild);
+        Methodes_Maxje.updateSchildPowerup(delta, powerupClassSchild,player,schildClass);
+        Methodes_Maxje.activeSchildUpdate(schildClass,player);
+        Methodes_Maxje.checkShieldCollisionKnife(schildClass,projectileClass);
         Methodes_Rutger.updateSurvivalTime(player, delta);
         Methodes_Rutger.updateBomb(player, enemyClass);
 

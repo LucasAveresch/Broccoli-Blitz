@@ -1,5 +1,7 @@
 package nl.saxion.game.yourgamename;
 
+import nl.saxion.gameapp.GameApp;
+
 public class SchildClass {
     float Xposition;
     float YPosition;
@@ -10,15 +12,17 @@ public class SchildClass {
     String spriteName;
     String filepath;
     String spritename2;
-    String getFilepath2;
+    String filepath2;
     boolean isactive;
 
     public SchildClass(String filepath, String spriteName, String spriteName2, String Filepath2){
         this.spriteName = spriteName;
         this.filepath = filepath;
-        this.getFilepath2 = Filepath2;
+        this.filepath2 = Filepath2;
         this.spritename2 = spriteName2;
 
 
+        GameApp.addTexture(spriteName,filepath);
+        GameApp.addTexture(spriteName2,Filepath2);
     }
 }

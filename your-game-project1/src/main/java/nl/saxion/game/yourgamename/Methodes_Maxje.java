@@ -76,7 +76,7 @@ public class Methodes_Maxje {
         if (collisionX && collisionY) {
             GameApp.switchScreen("DeathScreen");
         }
-        if(collisionX && collisionY);
+        if (collisionX && collisionY) ;
     }
 
     public static void updateSchildPowerup(float delta, PowerupClass powerUp, PlayerClass player, SchildClass schildClass) {
@@ -90,7 +90,6 @@ public class Methodes_Maxje {
         }
         if (powerUp.powerupPickedup) {
             schildClass.isactive = true;
-            powerUp.powerupPickedup = false;
         }
     }
 
@@ -106,19 +105,49 @@ public class Methodes_Maxje {
         }
     }
 
-    public static void activeSchildUpdate(SchildClass schildClass, PlayerClass playerClass){
-        if(schildClass.isactive){
-            if(schildClass.HP == 2){
-                GameApp.drawTexture(schildClass.spriteName, 100, playerClass.yPlayer);
+    public static void activeSchildUpdate(SchildClass schildClass, PlayerClass playerClass) {
+        if (schildClass.isactive) {
+            GameApp.getSpriteBatch().setColor(1, 1, 1, 0.5f);
+            if (schildClass.HP == 2) {
+                GameApp.drawTexture(schildClass.spriteName, 65, playerClass.yPlayer - 10);
+            } else if (schildClass.HP == 1) {
+                GameApp.drawTexture(schildClass.spritename2, 65, playerClass.yPlayer - 10);
             }
-            else if(schildClass.HP == 1){
-                GameApp.drawTexture(schildClass.spritename2,100,playerClass.yPlayer);
+            else {
+                schildClass.isactive = false;
             }
+            GameApp.getSpriteBatch().setColor(1, 1, 1, 1);
         }
 
     }
 
+    public static void checkShieldCollisionKnife(SchildClass schildClass, ProjectileClass projectileClass) {
+        if (schildClass.isactive) {
+            for (ProjectileClass p : projectileClass.projectiles) {
 
+                float mesRechts = p.xposition + 50;
+                float mesLinks = p.xposition;
+                float mesTop = p.yposition + 50;
+                float mesBottom = p.yposition;
 
+                float schildRechts = schildClass.Xposition + 250;
+                float schildLinks = schildClass.Xposition;
+                float schildTop = schildClass.YPosition + 250;
+                float schildBottom = schildClass.YPosition;
 
+                boolean hit =
+                        mesLinks < schildRechts &&
+                                mesRechts > schildLinks &&
+                                mesBottom < schildTop &&
+                                mesTop > schildBottom;
+
+                if (hit) {
+                    schildClass.HP--;
+                    p.remove = true;
+                }
+            }
+
+            projectileClass.projectiles.removeIf(p -> p.remove);
+        }
+    }
 }
