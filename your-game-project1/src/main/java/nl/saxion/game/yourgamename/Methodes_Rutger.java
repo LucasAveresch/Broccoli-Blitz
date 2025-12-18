@@ -448,4 +448,84 @@ public class Methodes_Rutger {
         GameApp.drawText("small", text, margin, topY - 30, "white");
     }
 
+
+// --- Tutorial instructies tekenen ---
+public static void drawTutorialText(ScalableGameScreen screen, int step) {
+    int centerX = (int) (GameApp.getWorldWidth() / 2);
+    int centerY = (int) (GameApp.getWorldHeight() / 2);
+
+    String text = "";
+    switch (step) {
+        case 1: text = "Press [F] to SHOOT"; break;
+        case 2: text = "Press [R] to RELOAD"; break;
+        case 3: text = "Press [G] to throw a BOMB"; break;
+        case 4: text = "Collect the COIN"; break;
+        case 5: text = "Defeat the ENEMY"; break;
+        default: text = "Tutorial complete! Press [M] for Menu"; break;
+    }
+
+    GameApp.drawTextCentered("basic", text, centerX, centerY, "white");
 }
+
+// --- Tutorial logica per stap ---
+public static boolean tutorialShoot(PlayerClass player) {
+    if (GameApp.isKeyJustPressed(Input.Keys.F) && player.ammo > 0) {
+        bullets.add(new BulletClass(100 + player.spriteWidth, player.yPlayer + player.spriteHeight / 2));
+        player.ammo--;
+        GameApp.playSound("shoot");
+        return true; // stap gehaald
+    }
+    return false;
+}
+
+public static boolean tutorialReload(PlayerClass player) {
+    if (GameApp.isKeyJustPressed(Input.Keys.R)) {
+        player.isReloading = true;
+        player.reloadStartTime = System.currentTimeMillis();
+        GameApp.playSound("Reload", 0.8f);
+        return true;
+    }
+    return false;
+}
+
+public static boolean tutorialBomb(PlayerClass player, EnemyClass enemy) {
+    if (GameApp.isKeyJustPressed(Input.Keys.G)) {
+        bombs.add(new BombClass(100 + player.spriteWidth, player.yPlayer + player.spriteHeight / 2));
+        GameApp.playSound("shoot");
+        return true;
+    }
+    return false;
+}
+    public static boolean tutorialCoin(PlayerClass player) {
+        // Spawn coin alleen één keer
+        spawnTutorialCoin();
+
+        updateCoins(player);
+
+        return player.coinsPickedUp > 0;
+    }
+
+public static boolean tutorialEnemy(PlayerClass player, EnemyClass enemy) {
+    if (!enemy.enemyIsDead) {
+        checkBulletHitsEnemy(player, enemy);
+    }
+    return enemy.enemyIsDead;
+}
+    // --- Tutorial coin spawn (eenmalig) ---
+    private static boolean tutorialCoinSpawned = false;
+
+    public static void spawnTutorialCoin() {
+        if (!tutorialCoinSpawned) {
+            int x = (int) GameApp.getWorldWidth() - 200;
+            int y = (int) (GameApp.getWorldHeight() / 2);
+            coins.add(new CoinClass(x, y));
+            tutorialCoinSpawned = true;
+        }
+    }
+
+    // Reset flag zodat coin opnieuw kan verschijnen bij nieuwe ronde/tutorial
+    public static void resetTutorialCoin() {
+        tutorialCoinSpawned = false;
+    }
+}
+
