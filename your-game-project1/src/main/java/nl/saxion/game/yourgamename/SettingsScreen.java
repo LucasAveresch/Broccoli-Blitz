@@ -42,9 +42,7 @@ public class SettingsScreen extends ScalableGameScreen {
         GameApp.addSound("coin", "Sounds/coin.mp3");
         GameApp.addSound("NoAmmo", "Sounds/NoAmmo.mp3");
 
-        // Enemy voor tutorial
-        enemy = new EnemyClass("img/chef.png", "chef", 900, 150, 100);
-        enemy.enemyIsDead = false; // zeker weten dat hij leeft
+        // Enemy wordt pas gespawned bij stap 5 → dus hier niet aanmaken
 
         // Parallax achtergrond
         Methodes_Lucas.LucasParallaxMethods.initParallax(0);
@@ -65,7 +63,9 @@ public class SettingsScreen extends ScalableGameScreen {
 
         // Player update (springen, vallen, schieten, reload, muzzle flash, bommen, etc.)
         Methodes_Rutger.update(player);
-        Methodes_Rutger.updateBomb(player, enemy);
+        if (enemy != null) {
+            Methodes_Rutger.updateBomb(player, enemy);
+        }
         Methodes_Rutger.updateCoins(player);
 
         // HUD tekenen (ammo + coins + distance + highscore)
@@ -77,11 +77,30 @@ public class SettingsScreen extends ScalableGameScreen {
         // Tutorial tekst en checks
         Methodes_Rutger.drawTutorialText(this, tutorialStep);
         switch (tutorialStep) {
-            case 1: if (Methodes_Rutger.tutorialShoot(player)) tutorialStep++; break;
-            case 2: if (Methodes_Rutger.tutorialReload(player)) tutorialStep++; break;
-            case 3: if (Methodes_Rutger.tutorialBomb(player, enemy)) tutorialStep++; break;
-            case 4: if (Methodes_Rutger.tutorialCoin(player)) tutorialStep++; break;
-            case 5: if (Methodes_Rutger.tutorialEnemy(player, enemy)) tutorialStep++; break;
+            case 1:
+                if (Methodes_Rutger.tutorialShoot(player)) tutorialStep++;
+                break;
+            case 2:
+                if (Methodes_Rutger.tutorialReload(player)) tutorialStep++;
+                break;
+            case 3:
+                if (Methodes_Rutger.tutorialBomb(player, enemy)) tutorialStep++;
+                break;
+            case 4:
+                if (Methodes_Rutger.tutorialCoin(player)) tutorialStep++;
+                break;
+            case 5:
+                // Enemy pas aanmaken bij stap 5
+                if (enemy == null) {
+                    enemy = new EnemyClass("img/chef.png", "chef", 900, 150, 100);
+                    enemy.enemyIsDead = false;
+                }
+                // Enemy tekenen zolang hij leeft
+                if (!enemy.enemyIsDead) {
+                    GameApp.drawTexture(enemy.textureKey, enemy.enemyXPos, enemy.enemyYPos);
+                }
+                if (Methodes_Rutger.tutorialEnemy(player, enemy)) tutorialStep++;
+                break;
         }
 
         GameApp.endSpriteRendering();
