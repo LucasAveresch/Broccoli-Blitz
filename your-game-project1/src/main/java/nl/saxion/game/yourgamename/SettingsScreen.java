@@ -8,6 +8,7 @@ public class SettingsScreen extends ScalableGameScreen {
     private PlayerClass player;
     private EnemyClass enemy;
     private int tutorialStep = 1;
+    unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass = new unlimitedAmmoPowerupClass();
 
     // voor parallax beweging
     private float worldX = 0;
@@ -62,7 +63,7 @@ public class SettingsScreen extends ScalableGameScreen {
         Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(worldX, getWorldWidth());
 
         // Player update (springen, vallen, schieten, reload, muzzle flash, bommen, etc.)
-        Methodes_Rutger.update(player);
+        Methodes_Rutger.update(player,unlimitedAmmoPowerupClass);
         if (enemy != null) {
             Methodes_Rutger.updateBomb(player, enemy);
         }
@@ -92,7 +93,7 @@ public class SettingsScreen extends ScalableGameScreen {
             case 5:
                 // Enemy pas aanmaken bij stap 5
                 if (enemy == null) {
-                    enemy = new EnemyClass("img/chef.png", "chef", 900, 150, 100);
+                    enemy = new EnemyClass("img/chef.png", "chef","enemey2", "img/enemy2.png", 900, 150, 100);
                     enemy.enemyIsDead = false;
                 }
                 // Enemy tekenen zolang hij leeft

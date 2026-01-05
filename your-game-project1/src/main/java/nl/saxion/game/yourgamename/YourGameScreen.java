@@ -9,6 +9,7 @@ public class YourGameScreen extends ScalableGameScreen {
     public ProjectileClass projectileClass;
     public PowerupClass powerupClassSchild;
     public SchildClass schildClass;
+    public unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass;
 
     public YourGameScreen(PlayerClass player) {
         super(1280, 720);
@@ -38,11 +39,12 @@ public class YourGameScreen extends ScalableGameScreen {
         GameApp.addSound("NoAmmo", "Sounds/NoAmmo.mp3");
 
         // Nieuwe enemy/projectiel
-        enemyClass = new EnemyClass("img/chef.png", "chef", 1100, 150, 100);
+        enemyClass = new EnemyClass("img/chef.png", "chef","img/enemy2.png","enemy2",1100, 150, 50);
         projectileClass = new ProjectileClass("img/mes.png", "mes",
-          enemyClass.enemyXPos, enemyClass.enemyYPos + 20, 500);
-        powerupClassSchild = new PowerupClass("img/schild.png", "schild");
+          enemyClass.enemyXPos, enemyClass.enemyYPos + 20, 750);
+        powerupClassSchild = new PowerupClass("img/schild.png", "schild","img/unlimitedKogels.png","unlimitedkogels");
         schildClass = new SchildClass("img/activeSchild.png", "fullschild", "crackedSchild","img/activeCrackedShield.png");
+        unlimitedAmmoPowerupClass = new unlimitedAmmoPowerupClass();
     }
 
     private float Worldx;
@@ -62,7 +64,7 @@ public class YourGameScreen extends ScalableGameScreen {
         PlayerClass.worldX += 300 * delta; // sneller in game
         Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(PlayerClass.worldX, getWorldWidth());
 
-        Methodes_Rutger.update(player);
+        Methodes_Rutger.update(player,unlimitedAmmoPowerupClass);
         Methodes_Rutger.spawnCoins();
         Methodes_Rutger.updateCoins(player);
         Methodes_Rutger.updateScore(player, delta);
@@ -70,20 +72,23 @@ public class YourGameScreen extends ScalableGameScreen {
         Methodes_Rutger.drawBombCooldown();
 
         if (!enemyClass.enemyIsDead) {
-            Methodes_Maxje.updateEnenmy(delta, enemyClass);
+            Methodes_Maxje.updateEnemies(delta,enemyClass);
             Methodes_Rutger.checkBulletHitsEnemy(player, enemyClass);
         }
-        Methodes_Maxje.addMes(delta,projectileClass,enemyClass);
-        Methodes_Maxje.updateMes(delta, projectileClass,enemyClass);
+
         Methodes_Maxje.checkCollsionMes(projectileClass,player);
         Methodes_Maxje.checkCollisionEnemy(player,enemyClass);
         Methodes_Maxje.checkForPowerupPickup(player,powerupClassSchild);
-        Methodes_Maxje.updateSchildPowerup(delta, powerupClassSchild,player,schildClass);
+        Methodes_Maxje.updateSchildPowerup(delta, powerupClassSchild,schildClass);
+        Methodes_Maxje.updateunlimitedKogels(delta,powerupClassSchild, unlimitedAmmoPowerupClass);
+        Methodes_Maxje.unlimitedKogelsLogic(delta,unlimitedAmmoPowerupClass,player,powerupClassSchild);
         Methodes_Maxje.activeSchildUpdate(schildClass,player);
-        Methodes_Maxje.checkShieldCollisionKnife(schildClass,projectileClass);
+        Methodes_Maxje.selectEnemyWillekeurig(delta,enemyClass);
+        Methodes_Maxje.checkShieldCollisionKnife(schildClass,projectileClass, player);
         Methodes_Rutger.updateSurvivalTime(player, delta);
         Methodes_Rutger.updateBomb(player, enemyClass);
-
+        Methodes_Maxje.addMes(delta,projectileClass,enemyClass);
+        Methodes_Maxje.updateMes(delta, projectileClass,enemyClass);
 
         GameApp.endSpriteRendering();
     }
