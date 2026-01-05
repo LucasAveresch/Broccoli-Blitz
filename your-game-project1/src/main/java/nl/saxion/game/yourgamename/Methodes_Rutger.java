@@ -388,7 +388,38 @@ public class Methodes_Rutger {
         muzzleFlashes.clear();
     }
     public static void updateBomb(PlayerClass player, EnemyClass enemy) {
-        // Bom spawnen
+
+        // --- TUTORIAL MODE: enemy bestaat nog niet ---
+        if (enemy == null) {
+
+            for (int i = 0; i < bombs.size(); i++) {
+                BombClass bomb = bombs.get(i);
+                bomb.update();
+
+                // Grond collision
+                if (!bomb.exploded && bomb.y <= player.groundLevel) {
+                    bomb.y = player.groundLevel;
+                    bomb.exploded = true;
+                    bomb.frameIndex = 5;
+                    GameApp.playSound("Bomb");
+                }
+
+                // Tekenen (alleen geldige frames)
+                if (bomb.frameIndex >= 1 && bomb.frameIndex <= BombClass.TOTAL_FRAMES) {
+                    GameApp.drawTexture("bom" + bomb.frameIndex, bomb.x, bomb.y, 128, 128);
+                }
+
+                // Verwijderen zodra animatie klaar is
+                if (bomb.exploded && bomb.frameIndex == BombClass.TOTAL_FRAMES) {
+                    bombs.remove(i);
+                    i--;
+                }
+            }
+
+            return;
+        }
+
+        // --- NORMALE GAME: bom gooien ---
         if (GameApp.isKeyJustPressed(Input.Keys.G) && !bombOnCooldown) {
             int startX = 100 + player.spriteWidth;
             int startY = player.yPlayer + player.spriteHeight / 2;
@@ -398,6 +429,7 @@ public class Methodes_Rutger {
             lastBombTime = System.currentTimeMillis();
         }
 
+        // Cooldown resetten
         if (bombOnCooldown) {
             long now = System.currentTimeMillis();
             if (now - lastBombTime >= 10000) {
@@ -405,21 +437,20 @@ public class Methodes_Rutger {
             }
         }
 
-        // Update en teken bommen
+        // --- Bommen updaten ---
         for (int i = 0; i < bombs.size(); i++) {
             BombClass bomb = bombs.get(i);
             bomb.update();
 
-            // Collision checks (grond/enemy)
+            // Grond collision
             if (!bomb.exploded && bomb.y <= player.groundLevel) {
+                bomb.y = player.groundLevel;
                 bomb.exploded = true;
                 bomb.frameIndex = 5;
-
-                GameApp.addSound("Bomb","Sounds/explosie.mp3");
                 GameApp.playSound("Bomb");
             }
 
-
+            // Enemy collision
             if (!bomb.exploded && !enemy.enemyIsDead) {
                 boolean overlapX = bomb.x < enemy.enemyXPos + 100 &&
                         bomb.x + 128 > enemy.enemyXPos;
@@ -431,22 +462,19 @@ public class Methodes_Rutger {
                     bomb.frameIndex = 5;
                     enemy.enemyIsDead = true;
                     player.enemiesDefeated++;
-                    GameApp.addSound("Bomb","Sounds/explosie.mp3");
                     GameApp.playSound("Bomb");
-
                 }
             }
 
-            // Tekenen
+            // Tekenen (alleen geldige frames)
             if (bomb.frameIndex <= BombClass.TOTAL_FRAMES) {
                 GameApp.drawTexture("bom" + bomb.frameIndex, bomb.x, bomb.y, 128, 128);
             }
 
             // Verwijderen zodra animatie klaar is
-            if (bomb.exploded && bomb.frameIndex >= BombClass.TOTAL_FRAMES) {
+            if (bomb.exploded && bomb.frameIndex == BombClass.TOTAL_FRAMES) {
                 bombs.remove(i);
                 i--;
-
             }
         }
     }

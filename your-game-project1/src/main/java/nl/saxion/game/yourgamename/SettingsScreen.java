@@ -42,6 +42,7 @@ public class SettingsScreen extends ScalableGameScreen {
         GameApp.addSound("Reload", "Sounds/Reload.mp3");
         GameApp.addSound("coin", "Sounds/coin.mp3");
         GameApp.addSound("NoAmmo", "Sounds/NoAmmo.mp3");
+        GameApp.addSound("Bomb", "Sounds/explosie.mp3");
 
         // Enemy wordt pas gespawned bij stap 5 → dus hier niet aanmaken
 
@@ -64,9 +65,7 @@ public class SettingsScreen extends ScalableGameScreen {
 
         // Player update (springen, vallen, schieten, reload, muzzle flash, bommen, etc.)
         Methodes_Rutger.update(player,unlimitedAmmoPowerupClass);
-        if (enemy != null) {
-            Methodes_Rutger.updateBomb(player, enemy);
-        }
+        Methodes_Rutger.updateBomb(player, enemy);
         Methodes_Rutger.updateCoins(player);
 
         // HUD tekenen (ammo + coins + distance + highscore)
