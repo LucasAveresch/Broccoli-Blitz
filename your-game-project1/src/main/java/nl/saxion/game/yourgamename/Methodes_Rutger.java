@@ -554,5 +554,29 @@ public static boolean tutorialEnemy(PlayerClass player, EnemyClass enemy) {
     public static void resetTutorialCoin() {
         tutorialCoinSpawned = false;
     }
+    public static void checkBulletHitsTutorialEnemy(PlayerClass player, EnemyClass enemy) {
+        // simpele hit-detectie voor EEN enkele enemy (geen allEnemies-lijst)
+        for (int i = 0; i < player.bullets.size(); i++) {
+            BulletClass bullet = player.bullets.get(i);
+
+            boolean overlapX = bullet.x < enemy.enemyXPos + 100 && bullet.x + 90 > enemy.enemyXPos;
+            boolean overlapY = bullet.y < enemy.enemyYPos + 100 && bullet.y + 75 > enemy.enemyYPos;
+
+            if (overlapX && overlapY && !enemy.enemyIsDead) {
+                // kogel verwijderen
+                player.bullets.remove(i);
+                i--;
+
+                // sound + stats
+                GameApp.addSound("Enemydood", "Sounds/enemydoosounds.mp3");
+                GameApp.playSound("Enemydood");
+                player.enemiesDefeated++;
+
+                // enemy markeren als dood
+                enemy.enemyIsDead = true;
+                break;
+            }
+        }
+    }
 }
 
