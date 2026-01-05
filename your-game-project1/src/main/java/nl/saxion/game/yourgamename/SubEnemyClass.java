@@ -1,12 +1,10 @@
 package nl.saxion.game.yourgamename;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import nl.saxion.gameapp.GameApp;
 
 import java.util.ArrayList;
 
-public class EnemyClass {
+public class SubEnemyClass {
     public float enemyXPos;
     public float enemyYPos;
     public float enemyspeed;
@@ -16,10 +14,9 @@ public class EnemyClass {
     public int type = 1;
     public float currentTimer = 5f;
     public float spawnInterval = 10f;
-    ArrayList<EnemyClass> allEnemies = new ArrayList<>();
     ArrayList<EnemyClass> subEnemies = new ArrayList<>();
 
-    public EnemyClass(String filepath, String textureKey,String filepath2, String textureKey2, float startX, float startY, float speed) {
+    public SubEnemyClass(String filepath, String textureKey,String filepath2, String textureKey2, float startX, float startY, float speed) {
         this.textureKey = textureKey;
         this.textureKey2 = textureKey2;
         this.enemyXPos = startX;
@@ -30,4 +27,3 @@ public class EnemyClass {
         GameApp.addTexture(textureKey2,filepath2);
     }
 }
-

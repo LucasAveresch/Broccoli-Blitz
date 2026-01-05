@@ -1,5 +1,7 @@
 package nl.saxion.game.yourgamename;
 
+import java.util.ArrayList;
+
 public class PlayerClass {
     int coinsPickedUp;
     String filepath = "img/brocolli3.png";
@@ -10,7 +12,7 @@ public class PlayerClass {
     int jumpCount = 0;
     int spriteHeight = 120;
     int spriteWidth = 80;
-
+    ArrayList<BulletClass> bullets= new ArrayList<>();
     // --- Magazijn ---
     int ammo = 5;             // huidige kogels
     int maxAmmo = 5;          // maximale kogels

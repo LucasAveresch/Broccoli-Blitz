@@ -56,6 +56,11 @@ public class MainMenuScreen extends ScalableGameScreen {
         Methodes_Rutger.drawMenuText(this, player);
 
         GameApp.endSpriteRendering();
+
+        // 🔑 ESCAPE → naar SettingsScreen
+        if (GameApp.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            GameApp.switchScreen("SettingsScreen");
+        }
     }
 
     @Override

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public class Methodes_Rutger {
     // Lijst van kogels
-    public static ArrayList<BulletClass> bullets = new ArrayList<>();
+    //public static ArrayList<BulletClass> bullets = new ArrayList<>();
     public static ArrayList<CoinClass> coins = new ArrayList<>();
     public static ArrayList<MuzzleFlash> muzzleFlashes = new ArrayList<>();
     private static long lastCoinSpawnTime = 0;
@@ -25,7 +25,7 @@ public class Methodes_Rutger {
 
 
     // Speler update (springen, bukken, tekenen, schieten)
-    public static void update(PlayerClass player) {
+    public static void update(PlayerClass player, unlimitedAmmoPowerupClass powerupClass) {
         // --- SPRINGEN ---
         if (GameApp.isKeyJustPressed(Input.Keys.SPACE)) {
             if (player.jumpCount < 2) {
@@ -68,15 +68,15 @@ public class Methodes_Rutger {
         }
 
         // --- KOGELS UPDATEN ---
-        for (int i = 0; i < bullets.size(); i++) {
-            BulletClass b = bullets.get(i);
-            b.x += b.velocity;
-            GameApp.drawTexture("kogel", b.x, b.y, 90, 75);
+            for (int i = 0; i < player.bullets.size(); i++) {
+                BulletClass b = player.bullets.get(i);
+                b.x += b.velocity;
+                GameApp.drawTexture("kogel", b.x, b.y, 90, 75);
 
-            if (b.x > GameApp.getWorldWidth()) {
-                bullets.remove(i);
-                i--;
-            }
+                if (b.x > GameApp.getWorldWidth()) {
+                    player.bullets.remove(i);
+                    i--;
+                }
         }
 
         // --- TEKENEN VAN DE BROCCOLI ---
@@ -90,7 +90,7 @@ public class Methodes_Rutger {
                 int startY = player.yPlayer + player.spriteHeight / 2;
 
                 // Voeg kogel toe
-                bullets.add(new BulletClass(startX, startY));
+                player.bullets.add(new BulletClass(startX, startY));
                 player.ammo--;
 
                 // Start muzzle flash
@@ -310,19 +310,38 @@ public class Methodes_Rutger {
     }
 
     public static void checkBulletHitsEnemy(PlayerClass player, EnemyClass enemy) {
-        for (int i = 0; i < bullets.size(); i++) {
-            BulletClass bullet = bullets.get(i);
+        if (enemy.allEnemies.isEmpty()) return;
+        EnemyClass currentenemy = enemy.allEnemies.get(0);
+        for (int i = 0; i < player.bullets.size(); i++) {
+            BulletClass bullet = player.bullets.get(i);
+            if (currentenemy.type == 1) {
 
-            boolean overlapX = bullet.x < enemy.enemyXPos + 100 && bullet.x + 90 > enemy.enemyXPos;
-            boolean overlapY = bullet.y < enemy.enemyYPos + 100 && bullet.y + 75 > enemy.enemyYPos;
 
-            if (overlapX && overlapY && !enemy.enemyIsDead) {
-                enemy.enemyIsDead = true;
-                bullets.remove(i);
-                i--;
+                boolean overlapX = bullet.x < currentenemy.enemyXPos + 100 && bullet.x + 90 > currentenemy.enemyXPos;
+                boolean overlapY = bullet.y < currentenemy.enemyYPos + 100 && bullet.y + 75 > currentenemy.enemyYPos;
 
-                player.enemiesDefeated++; // ✅ kill registreren
-                break;
+                if (overlapX && overlapY && !enemy.allEnemies.isEmpty()) {
+                    player.bullets.remove(i);
+                    GameApp.addSound("Enemydood", "Sounds/enemydoosounds.mp3");
+                    GameApp.playSound("Enemydood");
+                    i--;
+
+                    player.enemiesDefeated++; // ✅ kill registreren
+                    enemy.allEnemies.remove(0);
+                }
+            } else if (currentenemy.type == 2) {
+                boolean overlapX = bullet.x < currentenemy.enemyXPos + 100 && bullet.x + 90 > currentenemy.enemyXPos;
+                boolean overlapY = bullet.y < currentenemy.enemyYPos + 100 && bullet.y + 75 > currentenemy.enemyYPos;
+
+                if (overlapX && overlapY && !enemy.allEnemies.isEmpty()) {
+                    player.bullets.remove(i);
+                    GameApp.addSound("Enemydood", "Sounds/enemydoosounds.mp3");
+                    GameApp.playSound("Enemydood");
+                    i--;
+
+                    player.enemiesDefeated++; // ✅ kill registreren
+                    enemy.allEnemies.remove(0);
+                }
             }
         }
     }
@@ -364,7 +383,7 @@ public class Methodes_Rutger {
         player.ammo = player.maxAmmo;
 
         // Lijsten opruimen
-        bullets.clear();
+        player.bullets.clear();
         coins.clear();
         muzzleFlashes.clear();
     }
@@ -395,7 +414,11 @@ public class Methodes_Rutger {
             if (!bomb.exploded && bomb.y <= player.groundLevel) {
                 bomb.exploded = true;
                 bomb.frameIndex = 5;
+
+                GameApp.addSound("Bomb","Sounds/explosie.mp3");
+                GameApp.playSound("Bomb");
             }
+
 
             if (!bomb.exploded && !enemy.enemyIsDead) {
                 boolean overlapX = bomb.x < enemy.enemyXPos + 100 &&
@@ -408,6 +431,9 @@ public class Methodes_Rutger {
                     bomb.frameIndex = 5;
                     enemy.enemyIsDead = true;
                     player.enemiesDefeated++;
+                    GameApp.addSound("Bomb","Sounds/explosie.mp3");
+                    GameApp.playSound("Bomb");
+
                 }
             }
 
@@ -420,6 +446,7 @@ public class Methodes_Rutger {
             if (bomb.exploded && bomb.frameIndex >= BombClass.TOTAL_FRAMES) {
                 bombs.remove(i);
                 i--;
+
             }
         }
     }
@@ -448,4 +475,84 @@ public class Methodes_Rutger {
         GameApp.drawText("small", text, margin, topY - 30, "white");
     }
 
+
+// --- Tutorial instructies tekenen ---
+public static void drawTutorialText(ScalableGameScreen screen, int step) {
+    int centerX = (int) (GameApp.getWorldWidth() / 2);
+    int centerY = (int) (GameApp.getWorldHeight() / 2);
+
+    String text = "";
+    switch (step) {
+        case 1: text = "Press [F] to SHOOT"; break;
+        case 2: text = "Press [R] to RELOAD"; break;
+        case 3: text = "Press [G] to throw a BOMB"; break;
+        case 4: text = "Collect the COIN"; break;
+        case 5: text = "Defeat the ENEMY"; break;
+        default: text = "Tutorial complete! Press [M] for Menu"; break;
+    }
+
+    GameApp.drawTextCentered("basic", text, centerX, centerY, "white");
 }
+
+// --- Tutorial logica per stap ---
+public static boolean tutorialShoot(PlayerClass player) {
+    if (GameApp.isKeyJustPressed(Input.Keys.F) && player.ammo > 0) {
+        player.bullets.add(new BulletClass(100 + player.spriteWidth, player.yPlayer + player.spriteHeight / 2));
+        player.ammo--;
+        GameApp.playSound("shoot");
+        return true; // stap gehaald
+    }
+    return false;
+}
+
+public static boolean tutorialReload(PlayerClass player) {
+    if (GameApp.isKeyJustPressed(Input.Keys.R)) {
+        player.isReloading = true;
+        player.reloadStartTime = System.currentTimeMillis();
+        GameApp.playSound("Reload", 0.8f);
+        return true;
+    }
+    return false;
+}
+
+public static boolean tutorialBomb(PlayerClass player, EnemyClass enemy) {
+    if (GameApp.isKeyJustPressed(Input.Keys.G)) {
+        bombs.add(new BombClass(100 + player.spriteWidth, player.yPlayer + player.spriteHeight / 2));
+        GameApp.playSound("shoot");
+        return true;
+    }
+    return false;
+}
+    public static boolean tutorialCoin(PlayerClass player) {
+        // Spawn coin alleen één keer
+        spawnTutorialCoin();
+
+        updateCoins(player);
+
+        return player.coinsPickedUp > 0;
+    }
+
+public static boolean tutorialEnemy(PlayerClass player, EnemyClass enemy) {
+    if (!enemy.enemyIsDead) {
+        checkBulletHitsEnemy(player, enemy);
+    }
+    return enemy.enemyIsDead;
+}
+    // --- Tutorial coin spawn (eenmalig) ---
+    private static boolean tutorialCoinSpawned = false;
+
+    public static void spawnTutorialCoin() {
+        if (!tutorialCoinSpawned) {
+            int x = (int) GameApp.getWorldWidth() - 200;
+            int y = (int) (GameApp.getWorldHeight() / 2);
+            coins.add(new CoinClass(x, y));
+            tutorialCoinSpawned = true;
+        }
+    }
+
+    // Reset flag zodat coin opnieuw kan verschijnen bij nieuwe ronde/tutorial
+    public static void resetTutorialCoin() {
+        tutorialCoinSpawned = false;
+    }
+}
+
