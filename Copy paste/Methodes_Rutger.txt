@@ -1,26 +1,771 @@
- package nl.saxion.game;
+package nl.saxion.game.yourgamename;
 
-import nl.saxion.game.yourgamename.*;
+public class BulletClass {
+    int x;
+    int y;
+    int velocity = 15; // snelheid naar rechts
+
+    public BulletClass(int startX, int startY) {
+        this.x = startX;
+        this.y = startY-23;
+    }
+
+
+}package nl.saxion.game.yourgamename;
+
+ public class CoinClass {
+     int x;
+     int y;
+     int width = 100;
+     int height = 100;
+     boolean isCollected = false;
+
+     public CoinClass(int x, int y) {
+         this.x = x;
+         this.y = y;
+     }
+ }package nl.saxion.game.yourgamename;
+
+  import com.badlogic.gdx.Gdx;
+  import com.badlogic.gdx.graphics.Texture;
+  import nl.saxion.gameapp.GameApp;
+
+  import java.util.ArrayList;
+
+  public class EnemyClass {
+      public float enemyXPos;
+      public float enemyYPos;
+      public float enemyspeed;
+      public boolean enemyIsDead = false;
+      public String textureKey;
+      public String textureKey2;
+      public int type = 1;
+      public float currentTimer = 5f;
+      public float spawnInterval = 10f;
+      ArrayList<EnemyClass> allEnemies = new ArrayList<>();
+      ArrayList<EnemyClass> subEnemies = new ArrayList<>();
+
+      public EnemyClass(String filepath, String textureKey,String filepath2, String textureKey2, float startX, float startY, float speed) {
+          this.textureKey = textureKey;
+          this.textureKey2 = textureKey2;
+          this.enemyXPos = startX;
+          this.enemyYPos = startY;
+          this.enemyspeed = speed;
+
+          GameApp.addTexture(textureKey, filepath);
+          GameApp.addTexture(textureKey2,filepath2);
+      }
+  }
+
+package nl.saxion.game.yourgamename;
+
 import nl.saxion.gameapp.GameApp;
-import static nl.saxion.game.yourgamename.Methodes_Rutger.*;
-import static nl.saxion.game.yourgamename.Methodes_Maxje.*;
-import static nl.saxion.game.yourgamename.Methodes_Lucas.*;
+import nl.saxion.game.yourgamename.PlayerClass.*;
 
-public class Main {
-    public static void main(String[] args) {
-        // Add screens
-        PlayerClass player = new PlayerClass();
-        GameApp.addScreen("MainMenuScreen", new MainMenuScreen(player));
-        GameApp.addScreen("YourGameScreen", new YourGameScreen(player));
-        GameApp.addScreen("DeathScreen", new DeathScreen(player));
-        GameApp.addScreen("SettingsScreen", new SettingsScreen(player));
+import javax.swing.border.EmptyBorder;
+import java.util.Random;
 
-        // Start game loop and show main menu screen
-        GameApp.start("Broccoli blitz", 1800, 800, 60, false, "MainMenuScreen");
+public class Methodes_Maxje {
+
+
+    public static void updateEnemies(float delta, EnemyClass enemyClass) {
+        if (enemyClass.allEnemies.size() == 1) {
+            if (enemyClass.allEnemies.isEmpty()) return;
+            EnemyClass enemy = enemyClass.allEnemies.get(0);
+            if (enemy.type == 1) {
+                enemy.enemyXPos -= enemy.enemyspeed * delta;
+
+                if (enemy.enemyXPos < 0) {
+                    enemyClass.allEnemies.remove(0);
+                    return;
+
+
+                }
+
+                GameApp.drawTexture(enemy.textureKey, enemy.enemyXPos, enemy.enemyYPos);
+            }
+
+             else if (enemy.type == 2) {
+                enemy.enemyXPos -= enemy.enemyspeed * delta;
+
+                if (enemy.enemyXPos < 0) {
+                    enemyClass.allEnemies.remove(0);
+                    return;
+                }
+
+                GameApp.drawTexture(enemy.textureKey2, enemy.enemyXPos, enemy.enemyYPos);
+            }
+        }
+    }
+
+    public static void selectEnemyWillekeurig(float delta, EnemyClass enemyClass){
+        Random r = new Random();
+        boolean spawnNewEnemy = false;
+
+        enemyClass.currentTimer += delta;
+
+        if(enemyClass.currentTimer >= enemyClass.spawnInterval){
+            spawnNewEnemy = true;
+            enemyClass.currentTimer = 0f;
+        }
+        if(enemyClass.allEnemies.isEmpty() && spawnNewEnemy){
+            int randomnumber = r.nextInt(1, 3);
+
+            EnemyClass enemyClass1 = new EnemyClass("img/chef.png", "chef","img/enemy2.png","enemy2",1100, 150, 50);
+            enemyClass1.type = randomnumber;
+            if(enemyClass1.type == 2){
+                enemyClass1.enemyYPos = enemyClass1.enemyYPos + 200;
+            }
+
+            enemyClass.allEnemies.add(enemyClass1);
+            spawnNewEnemy = false;
+        }
+    }
+
+
+
+    public static void addMes(float delta, ProjectileClass projectileClass, EnemyClass enemyClass) {
+        if (enemyClass.allEnemies.isEmpty() || enemyClass.allEnemies.get(0).type != 1) return;
+
+        projectileClass.spawnTimer += delta;
+        if (projectileClass.spawnTimer > projectileClass.spawnInterval) {
+            projectileClass.spawnTimer = 0f;
+
+            ProjectileClass newknife = new ProjectileClass(
+                    "img/mes.png", "mes",
+                    enemyClass.allEnemies.get(0).enemyXPos,
+                    enemyClass.enemyYPos + 30,
+                    300
+            );
+
+            projectileClass.projectiles.add(newknife);
+            GameApp.drawTexture(newknife.textureKey, newknife.xposition, newknife.yposition);
+        }
+    }
+
+    public static void updateMes(float delta, ProjectileClass projectileClass, EnemyClass enemyClass) {
+        for (ProjectileClass knife : projectileClass.projectiles) {
+            knife.xposition -= knife.speed * delta;
+            GameApp.drawTexture(knife.textureKey, knife.xposition, knife.yposition);
+        }
+    }
+
+    public static void checkCollsionMes(ProjectileClass projectileClass, PlayerClass playerClass) {
+        boolean collsionx = false;
+        boolean collsiony = false;
+        for (ProjectileClass knife : projectileClass.projectiles) {
+            if (knife.xposition > 100 + playerClass.spriteWidth && knife.xposition < 120 + playerClass.spriteWidth) {
+                collsionx = true;
+            }
+            if (knife.yposition < playerClass.yPlayer + playerClass.spriteHeight
+                    && knife.yposition + 16 > playerClass.yPlayer) {
+                collsiony = true;
+            }
+        }
+        if (collsionx && collsiony) {
+            GameApp.switchScreen("DeathScreen");
+        }
+    }
+
+    public static void checkCollisionEnemy(PlayerClass playerClass, EnemyClass enemyClass) {
+        if(enemyClass.type == 1) {
+            boolean collisionX = false;
+            boolean collisionY = false;
+            if (enemyClass.enemyXPos < 100 + playerClass.spriteWidth && enemyClass.enemyXPos > 100) {
+                collisionX = true;
+            }
+            if (enemyClass.enemyYPos < playerClass.yPlayer + playerClass.spriteHeight && enemyClass.enemyYPos > playerClass.yPlayer) {
+                collisionY = true;
+            }
+            if (collisionX && collisionY) {
+                GameApp.switchScreen("DeathScreen");
+            }
+        } else if (enemyClass.type == 2){
+            boolean collisionX = false;
+            boolean collisionY = false;
+            if (enemyClass.enemyXPos < 100 + playerClass.spriteWidth && enemyClass.enemyXPos > 100) {
+                collisionX = true;
+            }
+            if (enemyClass.enemyYPos < playerClass.yPlayer + playerClass.spriteHeight && enemyClass.enemyYPos > playerClass.yPlayer) {
+                collisionY = true;
+            }
+            if (collisionX && collisionY) {
+                GameApp.switchScreen("DeathScreen");
+            }
+        }
+    }
+
+
+    public static void updateSchildPowerup(float delta, PowerupClass powerUp, SchildClass schildClass) {
+        if (!powerUp.powerupPickedup && powerUp.type == 1) {
+            powerUp.xPosition -= powerUp.speed * delta;
+
+            if (powerUp.xPosition < 0) {
+                return;
+            }
+            GameApp.drawTexture(powerUp.textureName, powerUp.xPosition, powerUp.yposition);
+        }
+        if (powerUp.powerupPickedup && powerUp.type == 1) {
+            schildClass.isactive = true;
+        }
 
     }
-}
+    public static void updateunlimitedKogels(float delta, PowerupClass powerUp,unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass) {
+        if (!powerUp.powerupPickedup && powerUp.type == 2) {
+            powerUp.xPosition -= powerUp.speed * delta;
 
+            if (powerUp.xPosition < 0) {
+                return;
+            }
+            GameApp.drawTexture(powerUp.texurename2, powerUp.xPosition, powerUp.yposition);
+        }
+        if (powerUp.powerupPickedup && powerUp.type == 2) {
+            unlimitedAmmoPowerupClass.isactive = true;
+            powerUp.xPosition = -100;
+        }
+    }
+    public static void unlimitedKogelsLogic(float delta, unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass,
+                                            PlayerClass player,PowerupClass powerupClass){
+
+        if(unlimitedAmmoPowerupClass.isactive) {
+            player.maxAmmo = 100;
+            player.ammo = 100;
+            if (unlimitedAmmoPowerupClass.currentTime < unlimitedAmmoPowerupClass.maxTime) {
+                unlimitedAmmoPowerupClass.currentTime += delta;
+                System.out.println(unlimitedAmmoPowerupClass.currentTime);
+            } else if (unlimitedAmmoPowerupClass.currentTime >= unlimitedAmmoPowerupClass.maxTime) {
+                unlimitedAmmoPowerupClass.isactive = false;
+                player.ammo = 5;
+                player.maxAmmo = 5;
+                unlimitedAmmoPowerupClass.currentTime = 0f;
+                powerupClass.powerupPickedup = false;
+
+            }
+
+        }
+    }
+
+
+
+    public static void checkForPowerupPickup(PlayerClass player, PowerupClass powerUp) {
+        boolean yCollision = player.yPlayer < powerUp.yposition + powerUp.spriteHeight &&
+                player.yPlayer + player.spriteHeight > powerUp.yposition;
+
+        boolean xCollision = player.groundLevel < powerUp.xPosition + powerUp.spriteWidth &&
+                player.groundLevel + player.groundLevel > powerUp.xPosition;
+
+        if (yCollision && xCollision) {
+            powerUp.powerupPickedup = true;
+        }
+
+    }
+
+    public static void activeSchildUpdate(SchildClass schildClass, PlayerClass playerClass) {
+        if (schildClass.isactive) {
+            GameApp.getSpriteBatch().setColor(1, 1, 1, 0.5f);
+            if (schildClass.HP == 2) {
+                GameApp.drawTexture(schildClass.spriteName, 65, playerClass.yPlayer - 10);
+            } else if (schildClass.HP == 1) {
+                GameApp.drawTexture(schildClass.spritename2, 65, playerClass.yPlayer - 10);
+            }
+            else {
+                schildClass.isactive = false;
+            }
+            GameApp.getSpriteBatch().setColor(1, 1, 1, 1);
+        }
+
+
+    }
+
+    public static void checkShieldCollisionKnife(SchildClass schildClass, ProjectileClass projectileClass, PlayerClass playerClass) {
+
+        if (schildClass.isactive) {
+            for (ProjectileClass p : projectileClass.projectiles) {
+
+                float mesRechts = p.xposition + 50;
+                float mesLinks = p.xposition;
+                float mesTop = p.yposition + 50;
+                float mesBottom = p.yposition;
+
+                float schildRechts = 65 + 250;
+                float schildLinks = 65 + 75;
+                float schildTop = playerClass.yPlayer + 100 ;
+                float schildBottom = playerClass.yPlayer;
+
+                boolean hit =
+                        mesLinks < schildRechts &&
+                                mesRechts > schildLinks &&
+                                mesBottom < schildTop &&
+                                mesTop > schildBottom;
+
+                if (hit) {
+                    schildClass.HP--;
+                    p.remove = true;
+                    GameApp.addSound("SchildPickup","Sounds/shieldPickup.mp3");
+                    GameApp.playSound("SchildPickup");
+
+                }
+            }
+
+            projectileClass.projectiles.removeIf(p -> p.remove);
+        }
+    }
+}
+package nl.saxion.game.yourgamename;
+
+import com.badlogic.gdx.Input;
+import nl.saxion.gameapp.GameApp;
+import nl.saxion.gameapp.screens.ScalableGameScreen;
+
+public class DeathScreen extends ScalableGameScreen {
+    private PlayerClass player;
+    private long deathSoundId; // hier bewaren we het ID
+
+    public DeathScreen(PlayerClass player) {
+        super(1280, 720);
+        this.player = player;
+
+
+    }
+
+    @Override
+    public void show() {
+        GameApp.addFont("basic", "fonts/basic.ttf", 100);
+        GameApp.addFont("small", "fonts/basic.ttf", 30);
+
+        GameApp.addSound("death", "Sounds/DeadSound.mp3");
+        GameApp.addTexture("DeathScreen", "img/DeathScreen.png");
+        deathSoundId = GameApp.playSound("death", 0.8f); // ID opslaan
+
+    }
+
+    @Override
+    public void render(float delta) {
+        super.render(delta);
+        GameApp.clearScreen("black");
+        GameApp.startSpriteRendering();
+
+        // Achtergrond + stats
+        GameApp.drawTexture("DeathScreen", 0, 0, getWorldWidth(), getWorldHeight());
+        Methodes_Rutger.drawDeathStats(player, this);
+
+        GameApp.endSpriteRendering();
+
+        // Exit naar menu: eerst sound stoppen, dan resetten, dan switch
+        if (GameApp.isKeyJustPressed(Input.Keys.M)) {
+            GameApp.stopSound(deathSoundId);
+            Methodes_Rutger.resetRoundStats(player);
+            GameApp.switchScreen("MainMenuScreen");
+        }
+    }
+
+    @Override
+    public void hide() {
+        GameApp.disposeFont("basic");
+        GameApp.disposeFont("small");
+    }
+
+    @Override
+    public void dispose() {
+        // eventueel resources opruimen
+    }
+}
+package nl.saxion.game.yourgamename;
+
+import java.util.ArrayList;
+
+public class PlayerClass {
+    int coinsPickedUp;
+    String filepath = "img/brocolli3.png";
+    int velocity = 0;
+    int gravity = 1;
+    int groundLevel = 100;
+    int yPlayer = 100;
+    int jumpCount = 0;
+    int spriteHeight = 120;
+    int spriteWidth = 80;
+    ArrayList<BulletClass> bullets= new ArrayList<>();
+    // --- Magazijn ---
+    int ammo = 5;             // huidige kogels
+    int maxAmmo = 5;          // maximale kogels
+    boolean isReloading = false;
+    long reloadStartTime = 0; // tijdstip herladen
+
+    // --- Nieuwe variabele ---
+    public double speed = 1;
+    public double distanceTravelled = 0;
+    public static float worldX = 0;
+
+    public int totalCoins = 0;
+    public double highScore = 0;
+
+    // --- Statistieken voor DeathScreen ---
+    public int enemiesDefeated = 0;    // aantal verslagen enemies
+    public int shotsFired = 0;         // aantal keer geschoten
+    public float survivalTime = 0;     // tijd in seconden
+}
+package nl.saxion.game.yourgamename;
+
+import com.badlogic.gdx.Input;
+import nl.saxion.gameapp.GameApp;
+import nl.saxion.gameapp.screens.ScalableGameScreen;
+
+public class MainMenuScreen extends ScalableGameScreen {
+    private PlayerClass player;
+    private float worldX; // voor parallax beweging
+    private float broccoliX;
+    private boolean isStarting = false;
+    private boolean justDied = false; // nieuwe flag
+
+    public MainMenuScreen(PlayerClass player) {
+        super(1280, 720);
+        this.player = player;
+
+    }
+
+    @Override
+    public void show() {
+        GameApp.addFont("basic", "fonts/basic.ttf", 100);
+        GameApp.addFont("small", "fonts/basic.ttf", 30); // kleiner font voor HUD
+        Methodes_Lucas.LucasParallaxMethods.initParallax(0);
+        GameApp.addTexture("brocolli", "img/brocolli3.png");
+        GameApp.addSound("start", "Sounds/Start.mp3");
+
+        broccoliX = getWorldWidth() / 2f - player.spriteWidth / 2f - 50;
+        isStarting = false;
+
+    }
+
+    @Override
+    public void render(float delta) {
+        super.render(delta);
+
+        GameApp.clearScreen("black");
+        GameApp.startSpriteRendering();
+
+        // Starter
+        isStarting = Methodes_Rutger.handleMenuStart(isStarting);
+
+        // Springen
+        Methodes_Rutger.updateJump(player);
+
+        // Achtergrond bewegen zolang we nog niet gestart zijn
+        if (!isStarting) {
+            PlayerClass.worldX += 100 * delta; // langzame scroll in menu
+        }
+        Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(PlayerClass.worldX, getWorldWidth());
+
+        // Broccoli bewegen + tekenen
+        broccoliX = Methodes_Rutger.handleMenuBroccoli(player, broccoliX, isStarting, delta);
+
+        // Tekst
+        Methodes_Rutger.drawMenuText(this, player);
+
+        GameApp.endSpriteRendering();
+
+        // 🔑 ESCAPE → naar SettingsScreen
+        if (GameApp.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            GameApp.switchScreen("SettingsScreen");
+        }
+    }
+
+    @Override
+    public void hide() {
+        GameApp.disposeFont("basic");
+        Methodes_Lucas.LucasParallaxMethods.disposeParallax();
+    }
+}
+package nl.saxion.game.yourgamename;
+
+public class MuzzleFlash {
+    public int x, y;
+    public int frameIndex = 0;
+    public static final int TOTAL_FRAMES = 5;   // aantal frames in je sheet
+    public static final float FRAME_DURATION = 0.05f; // tijd per frame (50 ms)
+    float timer = 0f;
+    public boolean active = true;
+
+    public MuzzleFlash(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public void update(float delta) {
+        timer += delta;
+        if (timer >= FRAME_DURATION) {
+            timer = 0;
+            frameIndex++;
+            if (frameIndex >= TOTAL_FRAMES) {
+                active = false; // animatie klaar
+            }
+        }
+    }
+}
+package nl.saxion.game.yourgamename;
+
+import nl.saxion.gameapp.GameApp;
+import nl.saxion.gameapp.screens.ScalableGameScreen;
+
+public class YourGameScreen extends ScalableGameScreen {
+    public PlayerClass player;
+    public EnemyClass enemyClass;
+    public ProjectileClass projectileClass;
+    public PowerupClass powerupClassSchild;
+    public SchildClass schildClass;
+    public unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass;
+
+    public YourGameScreen(PlayerClass player) {
+        super(1280, 720);
+        this.player = player;
+    }
+
+    @Override
+    public void show() {
+        // Schoon starten
+        Methodes_Rutger.resetRoundStats(player);
+
+        // Assets
+        Methodes_Lucas.LucasParallaxMethods.initParallax(0);
+        GameApp.addTexture("kogel", "img/kogel.png");
+        GameApp.addTexture("brocolli", "img/brocolli3.png");
+        GameApp.addTexture("coin", "img/munt.png");
+        for (int i = 0; i < MuzzleFlash.TOTAL_FRAMES; i++) {
+            GameApp.addTexture("muzzleFlash" + i, "img/MuzzleFlash/muzzle_flash_" + i + ".png");
+        }
+        for (int i = 1; i <= 10; i++) {
+            GameApp.addTexture("bom" + i, "img/Bom/bom" + i + ".png"); // hoofdletter B!
+        }
+
+        GameApp.addSound("shoot", "Sounds/Schieten.mp3");
+        GameApp.addSound("coin", "Sounds/coin.mp3");
+        GameApp.addSound("Reload", "Sounds/Reload.mp3");
+        GameApp.addSound("NoAmmo", "Sounds/NoAmmo.mp3");
+
+        // Nieuwe enemy/projectiel
+        enemyClass = new EnemyClass("img/chef.png", "chef","img/enemy2.png","enemy2",1100, 150, 50);
+        projectileClass = new ProjectileClass("img/mes.png", "mes",
+          enemyClass.enemyXPos, enemyClass.enemyYPos + 20, 750);
+        powerupClassSchild = new PowerupClass("img/schild.png", "schild","img/unlimitedKogels.png","unlimitedkogels");
+        schildClass = new SchildClass("img/activeSchild.png", "fullschild", "crackedSchild","img/activeCrackedShield.png");
+        unlimitedAmmoPowerupClass = new unlimitedAmmoPowerupClass();
+    }
+
+    private float Worldx;
+
+    @Override
+    public void render(float delta) {
+        super.render(delta);
+
+        // --- Dood gaan check ---
+        if (Methodes_Rutger.checkDeath(player)) {
+            return; // stop render zodat er niet verder getekend wordt
+        }
+
+        GameApp.clearScreen("black");
+        GameApp.startSpriteRendering();
+
+        PlayerClass.worldX += 300 * delta; // sneller in game
+        Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(PlayerClass.worldX, getWorldWidth());
+
+        Methodes_Rutger.update(player,unlimitedAmmoPowerupClass);
+        Methodes_Rutger.spawnCoins();
+        Methodes_Rutger.updateCoins(player);
+        Methodes_Rutger.updateScore(player, delta);
+        Methodes_Rutger.drawGameHud(player);
+        Methodes_Rutger.drawBombCooldown();
+
+        if (!enemyClass.enemyIsDead) {
+            Methodes_Maxje.updateEnemies(delta,enemyClass);
+            Methodes_Rutger.checkBulletHitsEnemy(player, enemyClass);
+        }
+
+        Methodes_Maxje.checkCollsionMes(projectileClass,player);
+        Methodes_Maxje.checkCollisionEnemy(player,enemyClass);
+        Methodes_Maxje.checkForPowerupPickup(player,powerupClassSchild);
+        Methodes_Maxje.updateSchildPowerup(delta, powerupClassSchild,schildClass);
+        Methodes_Maxje.updateunlimitedKogels(delta,powerupClassSchild, unlimitedAmmoPowerupClass);
+        Methodes_Maxje.unlimitedKogelsLogic(delta,unlimitedAmmoPowerupClass,player,powerupClassSchild);
+        Methodes_Maxje.activeSchildUpdate(schildClass,player);
+        Methodes_Maxje.selectEnemyWillekeurig(delta,enemyClass);
+        Methodes_Maxje.checkShieldCollisionKnife(schildClass,projectileClass, player);
+        Methodes_Rutger.updateSurvivalTime(player, delta);
+        Methodes_Rutger.updateBomb(player, enemyClass);
+        Methodes_Maxje.addMes(delta,projectileClass,enemyClass);
+        Methodes_Maxje.updateMes(delta, projectileClass,enemyClass);
+
+        GameApp.endSpriteRendering();
+    }
+
+    @Override
+    public void hide() {
+        Methodes_Lucas.LucasParallaxMethods.disposeParallax();
+    }
+}
+package nl.saxion.game.yourgamename;
+
+import nl.saxion.gameapp.GameApp;
+
+public class BombClass {
+    public int x, y;
+    public int frameIndex = 1;
+    public float timer = 0;
+
+    // Bewegingsvariabelen
+    public float velocityX = 12;
+    public float velocityY = 20;
+    public float gravity = -1.0f;
+
+    public boolean exploded = false; // nieuwe flag
+
+    public static final int TOTAL_FRAMES = 10;
+    public static final float FRAME_DURATION = 0.2f;
+
+    public BombClass(int startX, int startY) {
+        this.x = startX;
+        this.y = startY;
+    }
+
+    public void update() {
+        if (!exploded) {
+            // Parabolische beweging
+            x += velocityX;
+            y += velocityY;
+            velocityY += gravity;
+        }
+
+        // Animatie frames alleen als hij geëxplodeerd is
+        if (exploded) {
+            timer += GameApp.getDeltaTime();
+            if (timer >= FRAME_DURATION) {
+                timer = 0;
+                if (frameIndex < TOTAL_FRAMES) {
+                    frameIndex++;
+                }
+            }
+        }
+    }
+}
+package nl.saxion.game.yourgamename;
+
+import com.badlogic.gdx.Input;
+import nl.saxion.gameapp.GameApp;
+import nl.saxion.gameapp.screens.ScalableGameScreen;
+
+public class SettingsScreen extends ScalableGameScreen {
+    private PlayerClass player;
+    private EnemyClass enemy;
+    private int tutorialStep = 1;
+    unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass = new unlimitedAmmoPowerupClass();
+
+    // voor parallax beweging
+    private float worldX = 0;
+
+    public SettingsScreen(PlayerClass player) {
+        super(1280, 720);
+        this.player = player;
+    }
+
+    @Override
+    public void show() {
+        GameApp.addFont("basic", "fonts/basic.ttf", 60);
+
+        // Textures
+        GameApp.addTexture("brocolli", "img/brocolli3.png");
+        GameApp.addTexture("coin", "img/munt.png");
+        GameApp.addTexture("kogel", "img/kogel.png");
+
+        // Muzzle flash frames
+        for (int i = 0; i < MuzzleFlash.TOTAL_FRAMES; i++) {
+            GameApp.addTexture("muzzleFlash" + i, "img/MuzzleFlash/muzzle_flash_" + i + ".png");
+        }
+
+        // Bomb frames
+        for (int i = 1; i <= BombClass.TOTAL_FRAMES; i++) {
+            GameApp.addTexture("bom" + i, "img/Bom/bom" + i + ".png");
+        }
+
+        // Sounds
+        GameApp.addSound("shoot", "Sounds/Schieten.mp3");
+        GameApp.addSound("Reload", "Sounds/Reload.mp3");
+        GameApp.addSound("coin", "Sounds/coin.mp3");
+        GameApp.addSound("NoAmmo", "Sounds/NoAmmo.mp3");
+
+        // Enemy wordt pas gespawned bij stap 5 → dus hier niet aanmaken
+
+        // Parallax achtergrond
+        Methodes_Lucas.LucasParallaxMethods.initParallax(0);
+
+        // Reset tutorial coin flag
+        Methodes_Rutger.resetTutorialCoin();
+    }
+
+    @Override
+    public void render(float delta) {
+        super.render(delta);
+        GameApp.clearScreen("black");
+        GameApp.startSpriteRendering();
+
+        // Achtergrond bewegen
+        worldX += 200 * delta;
+        Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(worldX, getWorldWidth());
+
+        // Player update (springen, vallen, schieten, reload, muzzle flash, bommen, etc.)
+        Methodes_Rutger.update(player,unlimitedAmmoPowerupClass);
+        if (enemy != null) {
+            Methodes_Rutger.updateBomb(player, enemy);
+        }
+        Methodes_Rutger.updateCoins(player);
+
+        // HUD tekenen (ammo + coins + distance + highscore)
+        Methodes_Rutger.drawGameHud(player);
+
+        // Bomb cooldown tekst
+        Methodes_Rutger.drawBombCooldown();
+
+        // Tutorial tekst en checks
+        Methodes_Rutger.drawTutorialText(this, tutorialStep);
+        switch (tutorialStep) {
+            case 1:
+                if (Methodes_Rutger.tutorialShoot(player)) tutorialStep++;
+                break;
+            case 2:
+                if (Methodes_Rutger.tutorialReload(player)) tutorialStep++;
+                break;
+            case 3:
+                if (Methodes_Rutger.tutorialBomb(player, enemy)) tutorialStep++;
+                break;
+            case 4:
+                if (Methodes_Rutger.tutorialCoin(player)) tutorialStep++;
+                break;
+            case 5:
+                // Enemy pas aanmaken bij stap 5
+                if (enemy == null) {
+                    enemy = new EnemyClass("img/chef.png", "chef","enemey2", "img/enemy2.png", 900, 150, 100);
+                    enemy.enemyIsDead = false;
+                }
+                // Enemy tekenen zolang hij leeft
+                if (!enemy.enemyIsDead) {
+                    GameApp.drawTexture(enemy.textureKey, enemy.enemyXPos, enemy.enemyYPos);
+                }
+                if (Methodes_Rutger.tutorialEnemy(player, enemy)) tutorialStep++;
+                break;
+        }
+
+        GameApp.endSpriteRendering();
+
+        // Exit naar menu
+        if (GameApp.isKeyJustPressed(Input.Keys.M)) {
+            GameApp.switchScreen("MainMenuScreen");
+        }
+    }
+
+    @Override
+    public void hide() {
+        GameApp.disposeFont("basic");
+        // Parallax resources opruimen
+        Methodes_Lucas.LucasParallaxMethods.disposeParallax();
+    }
+}
 package nl.saxion.game.yourgamename;
 
 import com.badlogic.gdx.Game;
@@ -36,7 +781,7 @@ import java.util.ArrayList;
 
 public class Methodes_Rutger {
     // Lijst van kogels
-    public static ArrayList<BulletClass> bullets = new ArrayList<>();
+    //public static ArrayList<BulletClass> bullets = new ArrayList<>();
     public static ArrayList<CoinClass> coins = new ArrayList<>();
     public static ArrayList<MuzzleFlash> muzzleFlashes = new ArrayList<>();
     private static long lastCoinSpawnTime = 0;
@@ -48,7 +793,7 @@ public class Methodes_Rutger {
 
 
     // Speler update (springen, bukken, tekenen, schieten)
-    public static void update(PlayerClass player) {
+    public static void update(PlayerClass player, unlimitedAmmoPowerupClass powerupClass) {
         // --- SPRINGEN ---
         if (GameApp.isKeyJustPressed(Input.Keys.SPACE)) {
             if (player.jumpCount < 2) {
@@ -91,15 +836,15 @@ public class Methodes_Rutger {
         }
 
         // --- KOGELS UPDATEN ---
-        for (int i = 0; i < bullets.size(); i++) {
-            BulletClass b = bullets.get(i);
-            b.x += b.velocity;
-            GameApp.drawTexture("kogel", b.x, b.y, 90, 75);
+            for (int i = 0; i < player.bullets.size(); i++) {
+                BulletClass b = player.bullets.get(i);
+                b.x += b.velocity;
+                GameApp.drawTexture("kogel", b.x, b.y, 90, 75);
 
-            if (b.x > GameApp.getWorldWidth()) {
-                bullets.remove(i);
-                i--;
-            }
+                if (b.x > GameApp.getWorldWidth()) {
+                    player.bullets.remove(i);
+                    i--;
+                }
         }
 
         // --- TEKENEN VAN DE BROCCOLI ---
@@ -113,7 +858,7 @@ public class Methodes_Rutger {
                 int startY = player.yPlayer + player.spriteHeight / 2;
 
                 // Voeg kogel toe
-                bullets.add(new BulletClass(startX, startY));
+                player.bullets.add(new BulletClass(startX, startY));
                 player.ammo--;
 
                 // Start muzzle flash
@@ -333,19 +1078,38 @@ public class Methodes_Rutger {
     }
 
     public static void checkBulletHitsEnemy(PlayerClass player, EnemyClass enemy) {
-        for (int i = 0; i < bullets.size(); i++) {
-            BulletClass bullet = bullets.get(i);
+        if (enemy.allEnemies.isEmpty()) return;
+        EnemyClass currentenemy = enemy.allEnemies.get(0);
+        for (int i = 0; i < player.bullets.size(); i++) {
+            BulletClass bullet = player.bullets.get(i);
+            if (currentenemy.type == 1) {
 
-            boolean overlapX = bullet.x < enemy.enemyXPos + 100 && bullet.x + 90 > enemy.enemyXPos;
-            boolean overlapY = bullet.y < enemy.enemyYPos + 100 && bullet.y + 75 > enemy.enemyYPos;
 
-            if (overlapX && overlapY && !enemy.enemyIsDead) {
-                enemy.enemyIsDead = true;
-                bullets.remove(i);
-                i--;
+                boolean overlapX = bullet.x < currentenemy.enemyXPos + 100 && bullet.x + 90 > currentenemy.enemyXPos;
+                boolean overlapY = bullet.y < currentenemy.enemyYPos + 100 && bullet.y + 75 > currentenemy.enemyYPos;
 
-                player.enemiesDefeated++; // ✅ kill registreren
-                break;
+                if (overlapX && overlapY && !enemy.allEnemies.isEmpty()) {
+                    player.bullets.remove(i);
+                    GameApp.addSound("Enemydood", "Sounds/enemydoosounds.mp3");
+                    GameApp.playSound("Enemydood");
+                    i--;
+
+                    player.enemiesDefeated++; // ✅ kill registreren
+                    enemy.allEnemies.remove(0);
+                }
+            } else if (currentenemy.type == 2) {
+                boolean overlapX = bullet.x < currentenemy.enemyXPos + 100 && bullet.x + 90 > currentenemy.enemyXPos;
+                boolean overlapY = bullet.y < currentenemy.enemyYPos + 100 && bullet.y + 75 > currentenemy.enemyYPos;
+
+                if (overlapX && overlapY && !enemy.allEnemies.isEmpty()) {
+                    player.bullets.remove(i);
+                    GameApp.addSound("Enemydood", "Sounds/enemydoosounds.mp3");
+                    GameApp.playSound("Enemydood");
+                    i--;
+
+                    player.enemiesDefeated++; // ✅ kill registreren
+                    enemy.allEnemies.remove(0);
+                }
             }
         }
     }
@@ -387,7 +1151,7 @@ public class Methodes_Rutger {
         player.ammo = player.maxAmmo;
 
         // Lijsten opruimen
-        bullets.clear();
+        player.bullets.clear();
         coins.clear();
         muzzleFlashes.clear();
     }
@@ -418,7 +1182,11 @@ public class Methodes_Rutger {
             if (!bomb.exploded && bomb.y <= player.groundLevel) {
                 bomb.exploded = true;
                 bomb.frameIndex = 5;
+
+                GameApp.addSound("Bomb","Sounds/explosie.mp3");
+                GameApp.playSound("Bomb");
             }
+
 
             if (!bomb.exploded && !enemy.enemyIsDead) {
                 boolean overlapX = bomb.x < enemy.enemyXPos + 100 &&
@@ -431,6 +1199,9 @@ public class Methodes_Rutger {
                     bomb.frameIndex = 5;
                     enemy.enemyIsDead = true;
                     player.enemiesDefeated++;
+                    GameApp.addSound("Bomb","Sounds/explosie.mp3");
+                    GameApp.playSound("Bomb");
+
                 }
             }
 
@@ -443,6 +1214,7 @@ public class Methodes_Rutger {
             if (bomb.exploded && bomb.frameIndex >= BombClass.TOTAL_FRAMES) {
                 bombs.remove(i);
                 i--;
+
             }
         }
     }
@@ -493,7 +1265,7 @@ public static void drawTutorialText(ScalableGameScreen screen, int step) {
 // --- Tutorial logica per stap ---
 public static boolean tutorialShoot(PlayerClass player) {
     if (GameApp.isKeyJustPressed(Input.Keys.F) && player.ammo > 0) {
-        bullets.add(new BulletClass(100 + player.spriteWidth, player.yPlayer + player.spriteHeight / 2));
+        player.bullets.add(new BulletClass(100 + player.spriteWidth, player.yPlayer + player.spriteHeight / 2));
         player.ammo--;
         GameApp.playSound("shoot");
         return true; // stap gehaald
@@ -552,100 +1324,25 @@ public static boolean tutorialEnemy(PlayerClass player, EnemyClass enemy) {
     }
 }
 
-package nl.saxion.game.yourgamename;
+ package nl.saxion.game;
 
-import com.badlogic.gdx.Input;
+import nl.saxion.game.yourgamename.*;
 import nl.saxion.gameapp.GameApp;
-import nl.saxion.gameapp.screens.ScalableGameScreen;
+import static nl.saxion.game.yourgamename.Methodes_Rutger.*;
+import static nl.saxion.game.yourgamename.Methodes_Maxje.*;
+import static nl.saxion.game.yourgamename.Methodes_Lucas.*;
 
-public class SettingsScreen extends ScalableGameScreen {
-    private PlayerClass player;
-    private EnemyClass enemy;
-    private int tutorialStep = 1;
+public class Main {
+    public static void main(String[] args) {
+        // Add screens
+        PlayerClass player = new PlayerClass();
+        GameApp.addScreen("MainMenuScreen", new MainMenuScreen(player));
+        GameApp.addScreen("YourGameScreen", new YourGameScreen(player));
+        GameApp.addScreen("DeathScreen", new DeathScreen(player));
+        GameApp.addScreen("SettingsScreen", new SettingsScreen(player));
 
-    // voor parallax beweging
-    private float worldX = 0;
+        // Start game loop and show main menu screen
+        GameApp.start("Broccoli blitz", 1800, 800, 60, false, "MainMenuScreen");
 
-    public SettingsScreen(PlayerClass player) {
-        super(1280, 720);
-        this.player = player;
-    }
-
-    @Override
-    public void show() {
-        GameApp.addFont("basic", "fonts/basic.ttf", 60);
-
-        // Textures
-        GameApp.addTexture("brocolli", "img/brocolli3.png");
-        GameApp.addTexture("coin", "img/munt.png");
-        GameApp.addTexture("kogel", "img/kogel.png");
-
-        // Muzzle flash frames
-        for (int i = 0; i < MuzzleFlash.TOTAL_FRAMES; i++) {
-            GameApp.addTexture("muzzleFlash" + i, "img/MuzzleFlash/muzzle_flash_" + i + ".png");
-        }
-
-        // Bomb frames
-        for (int i = 1; i <= BombClass.TOTAL_FRAMES; i++) {
-            GameApp.addTexture("bom" + i, "img/Bom/bom" + i + ".png");
-        }
-
-        // Sounds
-        GameApp.addSound("shoot", "Sounds/Schieten.mp3");
-        GameApp.addSound("Reload", "Sounds/Reload.mp3");
-        GameApp.addSound("coin", "Sounds/coin.mp3");
-        GameApp.addSound("NoAmmo", "Sounds/NoAmmo.mp3");
-
-        enemy = new EnemyClass("img/chef.png", "chef", 900, 150, 100);
-
-        // Parallax achtergrond
-        Methodes_Lucas.LucasParallaxMethods.initParallax(0);
-        Methodes_Rutger.resetTutorialCoin();
-    }
-
-    @Override
-    public void render(float delta) {
-        super.render(delta);
-        GameApp.clearScreen("black");
-        GameApp.startSpriteRendering();
-
-        // Achtergrond bewegen
-        worldX += 200 * delta;
-        Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(worldX, getWorldWidth());
-
-        // Player update (springen, vallen, schieten, reload, muzzle flash, bommen, etc.)
-        Methodes_Rutger.update(player);
-        Methodes_Rutger.updateBomb(player, enemy);
-        Methodes_Rutger.updateCoins(player);
-
-        // HUD tekenen (ammo + coins + distance + highscore)
-        Methodes_Rutger.drawGameHud(player);
-
-        // Bomb cooldown tekst
-        Methodes_Rutger.drawBombCooldown();
-
-        // Tutorial tekst en checks
-        Methodes_Rutger.drawTutorialText(this, tutorialStep);
-        switch (tutorialStep) {
-            case 1: if (Methodes_Rutger.tutorialShoot(player)) tutorialStep++; break;
-            case 2: if (Methodes_Rutger.tutorialReload(player)) tutorialStep++; break;
-            case 3: if (Methodes_Rutger.tutorialBomb(player, enemy)) tutorialStep++; break;
-            case 4: if (Methodes_Rutger.tutorialCoin(player)) tutorialStep++; break;
-            case 5: if (Methodes_Rutger.tutorialEnemy(player, enemy)) tutorialStep++; break;
-        }
-
-        GameApp.endSpriteRendering();
-
-        // Exit naar menu
-        if (GameApp.isKeyJustPressed(Input.Keys.M)) {
-            GameApp.switchScreen("MainMenuScreen");
-        }
-    }
-
-    @Override
-    public void hide() {
-        GameApp.disposeFont("basic");
-        // 🔧 Parallax resources opruimen
-        Methodes_Lucas.LucasParallaxMethods.disposeParallax();
     }
 }

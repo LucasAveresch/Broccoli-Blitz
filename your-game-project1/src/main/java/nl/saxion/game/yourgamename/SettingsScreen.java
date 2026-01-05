@@ -93,14 +93,30 @@ public class SettingsScreen extends ScalableGameScreen {
             case 5:
                 // Enemy pas aanmaken bij stap 5
                 if (enemy == null) {
-                    enemy = new EnemyClass("img/chef.png", "chef","enemey2", "img/enemy2.png", 900, 150, 100);
+                    enemy = new EnemyClass(
+                            "img/chef.png",      // filepath 1
+                            "chef",              // textureKey 1
+                            "img/enemy2.png",    // filepath 2
+                            "enemy2",            // textureKey 2
+                            900,                 // startX
+                            150,                 // startY
+                            100                  // speed
+                    );
                     enemy.enemyIsDead = false;
                 }
+
                 // Enemy tekenen zolang hij leeft
                 if (!enemy.enemyIsDead) {
                     GameApp.drawTexture(enemy.textureKey, enemy.enemyXPos, enemy.enemyYPos);
+
+                    // Bullet-collision specifiek voor tutorial-enemy
+                    Methodes_Rutger.checkBulletHitsTutorialEnemy(player, enemy);
                 }
-                if (Methodes_Rutger.tutorialEnemy(player, enemy)) tutorialStep++;
+
+                // Ga door naar volgende tutorial stap als enemy dood is
+                if (enemy.enemyIsDead) {
+                    tutorialStep++;
+                }
                 break;
         }
 
