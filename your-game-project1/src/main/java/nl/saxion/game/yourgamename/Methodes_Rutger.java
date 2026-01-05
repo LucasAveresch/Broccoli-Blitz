@@ -129,42 +129,44 @@ public class Methodes_Rutger {
             }
         }
     }
+        public static void updateCoins(PlayerClass player) {
+            int broccoliX = 100;
+            int broccoliYTop = player.yPlayer;
+            int broccoliYBottom = player.yPlayer + player.spriteHeight;
 
-    public static void updateCoins(PlayerClass player) {
-        int broccoliX = 100;
-        int broccoliYTop = player.yPlayer;
-        int broccoliYBottom = player.yPlayer + player.spriteHeight;
+            for (int i = 0; i < coins.size(); i++) {
+                CoinClass coin = coins.get(i);
 
-        for (int i = 0; i < coins.size(); i++) {
-            CoinClass coin = coins.get(i);
+                if (!coin.isCollected) {
+                    // Munten bewegen naar links
+                    coin.x -= player.speed * 5;
 
-            if (!coin.isCollected) {
-                // Munten bewegen naar links
-                coin.x -= player.speed * 5;
+                    // Teken munt
+                    GameApp.drawTexture("coin", coin.x, coin.y, coin.width, coin.height);
 
-                // Teken munt
-                GameApp.drawTexture("coin", coin.x, coin.y, coin.width, coin.height);
+                    // Collision check (AABB)
+                    boolean overlap =
+                            broccoliX < coin.x + coin.width &&
+                                    broccoliX + player.spriteWidth > coin.x &&
+                                    broccoliYTop < coin.y + coin.height &&
+                                    broccoliYBottom > coin.y;
 
-                // Collision check (AABB)
-                boolean overlap =
-                        broccoliX < coin.x + coin.width &&
-                                broccoliX + player.spriteWidth > coin.x &&
-                                broccoliYTop < coin.y + coin.height &&
-                                broccoliYBottom > coin.y;
+                    if (overlap) {
+                        coin.isCollected = true;
+                        player.coinsPickedUp++;
+                        GameApp.playSound("coin", 0.25f);
+                    }
 
-                if (overlap) {
-                    coin.isCollected = true;
-                    player.coinsPickedUp++;
-                    GameApp.playSound("coin", 0.25f);
-                }
-
-                // Verwijder munt als hij uit beeld is
-                if (coin.x + coin.width < 0) {
-                    coin.isCollected = true;
+                    // Verwijder munt als hij uit beeld is
+                    if (coin.x + coin.width < 0) {
+                        coin.isCollected = true;
+                    }
                 }
             }
+
+            // HIER: echt uit de lijst slopen
+            coins.removeIf(c -> c.isCollected || c.x + c.width < 0);
         }
-    }
 
 
     public static void spawnCoins() {
@@ -552,11 +554,17 @@ public static boolean tutorialBomb(PlayerClass player, EnemyClass enemy) {
     return false;
 }
     public static boolean tutorialCoin(PlayerClass player) {
-        // Spawn coin alleen één keer
-        spawnTutorialCoin();
+        // Als er GEEN coins meer zijn → spawn er één nieuwe
+        if (coins.isEmpty()) {
+            int x = (int) GameApp.getWorldWidth() - 200;
+            int y = (int) (GameApp.getWorldHeight() / 2);
+            coins.add(new CoinClass(x, y));
+        }
 
+        // Coins bewegen + collision
         updateCoins(player);
 
+        // Ga door naar volgende stap zodra speler er één heeft gepakt
         return player.coinsPickedUp > 0;
     }
 
@@ -605,6 +613,24 @@ public static boolean tutorialEnemy(PlayerClass player, EnemyClass enemy) {
                 break;
             }
         }
+    }
+    public static void resetTutorial(PlayerClass player) {
+        // Reset tutorial stap
+        player.coinsPickedUp = 0;
+
+        // Reset coin systeem
+        coins.clear();
+        tutorialCoinSpawned = false;
+
+        // Reset bommen
+        bombs.clear();
+
+        // Reset speler stats
+        player.bullets.clear();
+        player.enemiesDefeated = 0;
+        player.shotsFired = 0;
+
+        // Reset enemy gerelateerde dingen gebeuren in SettingsScreen zelf
     }
 }
 

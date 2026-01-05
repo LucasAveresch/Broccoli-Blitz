@@ -50,7 +50,9 @@ public class SettingsScreen extends ScalableGameScreen {
         Methodes_Lucas.LucasParallaxMethods.initParallax(0);
 
         // Reset tutorial coin flag
-        Methodes_Rutger.resetTutorialCoin();
+        Methodes_Rutger.resetTutorial(player);
+        tutorialStep = 1;
+        enemy = null;
     }
 
     @Override
