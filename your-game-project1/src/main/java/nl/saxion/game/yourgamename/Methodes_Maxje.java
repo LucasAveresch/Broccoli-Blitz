@@ -217,7 +217,9 @@ public class Methodes_Maxje {
         }
 
     }
-    public static void updateunlimitedKogels(float delta, PowerupClass powerUp,unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass,PlayerClass player) {
+    public static void updateunlimitedKogels(float delta, PowerupClass powerUp,
+                                             unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass, PlayerClass player) {
+
         if (!powerUp.powerupPickedup && powerUp.type == 2) {
             powerUp.xPosition -= powerUp.speed * delta;
 
@@ -226,11 +228,18 @@ public class Methodes_Maxje {
             }
             GameApp.drawTexture(powerUp.texurename2, powerUp.xPosition, powerUp.yposition);
         }
+
         if (powerUp.powerupPickedup && powerUp.type == 2) {
             unlimitedAmmoPowerupClass.isactive = true;
-            powerUp.xPosition = -100;
-            player.maxAmmo = 25;
+
+            // ❗ FIX: reload direct stoppen
+            player.isReloading = false;
+            player.reloadStartTime = 0;
+
+            // ❗ FIX: ammo instellen op powerup waarden
             player.ammo = 25;
+
+            powerUp.xPosition = -100;
             powerUp.powerupPickedup = false;
         }
     }
@@ -241,7 +250,6 @@ public class Methodes_Maxje {
 
              if (player.ammo == 0) {
                 unlimitedAmmoPowerupClass.isactive = false;
-                player.maxAmmo = 5;
                 unlimitedAmmoPowerupClass.currentTime = 0f;
                 powerupClass.powerupPickedup = false;
                 unlimitedAmmoPowerupClass.isactive = false;

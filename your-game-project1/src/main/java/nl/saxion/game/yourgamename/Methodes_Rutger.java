@@ -50,22 +50,19 @@ public class Methodes_Rutger {
             player.jumpCount = 0;
         }
 
-        // --- RELOAD ---
-        if(!powerupClass.isactive) {
-            if (GameApp.isKeyJustPressed(Input.Keys.R)) {
-                player.isReloading = true;
-                player.reloadStartTime = System.currentTimeMillis();
+// --- RELOAD ---
+// Reload ALTIJD toestaan wanneer ammo < maxAmmo
+        if (GameApp.isKeyJustPressed(Input.Keys.R) && player.ammo < player.maxAmmo) {
+            player.isReloading = true;
+            player.reloadStartTime = System.currentTimeMillis();
+            GameApp.playSound("Reload", 0.8f);
+        }
 
-                // 🔊 Reload sound afspelen
-                GameApp.playSound("Reload", 0.8f); // volume iets zachter
-
-            }
-            if (player.isReloading && !powerupClass.isactive) {
-                long now = System.currentTimeMillis();
-                if (now - player.reloadStartTime >= 1500) { // 1.5 seconden
-                    player.ammo = player.maxAmmo;
-                    player.isReloading = false;
-                }
+        if (player.isReloading) {
+            long now = System.currentTimeMillis();
+            if (now - player.reloadStartTime >= 1500) {
+                player.ammo = player.maxAmmo;  // altijd 5
+                player.isReloading = false;
             }
         }
         // --- KOGELS UPDATEN ---
@@ -83,26 +80,48 @@ public class Methodes_Rutger {
         // --- TEKENEN VAN DE BROCCOLI ---
         GameApp.drawTexture("brocolli", 100, player.yPlayer, 200, 200);
 
-// --- SCHIETEN + MUZZLE FLASH + SOUND ---
+// --- SCHIETEN ---
         if (GameApp.isKeyJustPressed(Input.Keys.F) && !player.isReloading) {
-            if (player.ammo > 0) {
+
+            if (powerupClass.isactive) {
+                // Powerup actief → altijd schieten zolang ammo > 0
                 int broccoliX = 100;
                 int startX = broccoliX + player.spriteWidth;
                 int startY = player.yPlayer + player.spriteHeight / 2;
 
-                // Voeg kogel toe
                 player.bullets.add(new BulletClass(startX, startY));
-                player.ammo--;
+                player.ammo--; // telt af van 25 naar 0
 
-                // Start muzzle flash
                 muzzleFlashes.add(new MuzzleFlash(startX, startY));
-
-                // Geluid afspelen
                 GameApp.playSound("shoot");
-                player.shotsFired++; // ✅ schot registreren
+                player.shotsFired++;
+
             } else {
-                // Geen ammo → NoAmmo sound
-                GameApp.playSound("NoAmmo", 0.8f);
+                // Normale modus
+                if (player.ammo > 0) {
+                    int broccoliX = 100;
+                    int startX = broccoliX + player.spriteWidth;
+                    int startY = player.yPlayer + player.spriteHeight / 2;
+
+                    player.bullets.add(new BulletClass(startX, startY));
+                    player.ammo--;
+
+                    muzzleFlashes.add(new MuzzleFlash(startX, startY));
+                    GameApp.playSound("shoot");
+                    player.shotsFired++;
+
+                } else {
+                    GameApp.playSound("NoAmmo", 0.8f);
+                }
+            }
+        }
+        // --- POWERUP AMMO CHECK ---
+        if (powerupClass.isactive) {
+            // Als ammo op is → powerup eindigt
+            if (player.ammo <= 0) {
+                powerupClass.isactive = false;
+                player.maxAmmo = 5;
+                player.isReloading = false; // voor de zekerheid
             }
         }
 
@@ -415,37 +434,7 @@ public class Methodes_Rutger {
     }
     public static void updateBomb(PlayerClass player, EnemyClass enemy) {
 
-        // --- TUTORIAL MODE: enemy bestaat nog niet ---
-        if (enemy == null) {
-
-            for (int i = 0; i < bombs.size(); i++) {
-                BombClass bomb = bombs.get(i);
-                bomb.update();
-
-                // Grond collision
-                if (!bomb.exploded && bomb.y <= player.groundLevel) {
-                    bomb.y = player.groundLevel;
-                    bomb.exploded = true;
-                    bomb.frameIndex = 5;
-                    GameApp.playSound("Bomb");
-                }
-
-                // Tekenen (alleen geldige frames)
-                if (bomb.frameIndex >= 1 && bomb.frameIndex <= BombClass.TOTAL_FRAMES) {
-                    GameApp.drawTexture("bom" + bomb.frameIndex, bomb.x, bomb.y, 128, 128);
-                }
-
-                // Verwijderen zodra animatie klaar is
-                if (bomb.exploded && bomb.frameIndex == BombClass.TOTAL_FRAMES) {
-                    bombs.remove(i);
-                    i--;
-                }
-            }
-
-            return;
-        }
-
-        // --- NORMALE GAME: bom gooien ---
+        // --- ALTIJD: bom gooien als G en niet op cooldown ---
         if (GameApp.isKeyJustPressed(Input.Keys.G) && !bombOnCooldown) {
             int startX = 100 + player.spriteWidth;
             int startY = player.yPlayer + player.spriteHeight / 2;
@@ -455,7 +444,7 @@ public class Methodes_Rutger {
             lastBombTime = System.currentTimeMillis();
         }
 
-        // Cooldown resetten
+        // --- Cooldown resetten ---
         if (bombOnCooldown) {
             long now = System.currentTimeMillis();
             if (now - lastBombTime >= 10000) {
@@ -463,7 +452,7 @@ public class Methodes_Rutger {
             }
         }
 
-        // --- Bommen updaten ---
+        // --- Bommen updaten + tekenen + collisions ---
         for (int i = 0; i < bombs.size(); i++) {
             BombClass bomb = bombs.get(i);
             bomb.update();
@@ -476,24 +465,31 @@ public class Methodes_Rutger {
                 GameApp.playSound("Bomb");
             }
 
-            // Enemy collision
-            if (!bomb.exploded && !enemy.enemyIsDead) {
-                boolean overlapX = bomb.x < enemy.enemyXPos + 100 &&
-                        bomb.x + 128 > enemy.enemyXPos;
-                boolean overlapY = bomb.y < enemy.enemyYPos + 100 &&
-                        bomb.y + 128 > enemy.enemyYPos;
+            // Enemy collision alleen als er een enemy is
+            if (!bomb.exploded && enemy != null && !enemy.allEnemies.isEmpty()) {
+                EnemyClass currentEnemy = enemy.allEnemies.get(0);
+
+                boolean overlapX =
+                        bomb.x < currentEnemy.enemyXPos + 100 &&
+                                bomb.x + 128 > currentEnemy.enemyXPos;
+                boolean overlapY =
+                        bomb.y < currentEnemy.enemyYPos + 100 &&
+                                bomb.y + 128 > currentEnemy.enemyYPos;
 
                 if (overlapX && overlapY) {
                     bomb.exploded = true;
                     bomb.frameIndex = 5;
-                    enemy.enemyIsDead = true;
+
+                    currentEnemy.enemyIsDead = true;
                     player.enemiesDefeated++;
                     GameApp.playSound("Bomb");
+
+                    enemy.allEnemies.remove(0);
                 }
             }
 
             // Tekenen (alleen geldige frames)
-            if (bomb.frameIndex <= BombClass.TOTAL_FRAMES) {
+            if (bomb.frameIndex >= 1 && bomb.frameIndex <= BombClass.TOTAL_FRAMES) {
                 GameApp.drawTexture("bom" + bomb.frameIndex, bomb.x, bomb.y, 128, 128);
             }
 
