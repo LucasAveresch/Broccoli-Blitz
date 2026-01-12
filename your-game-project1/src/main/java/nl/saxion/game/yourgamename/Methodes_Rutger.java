@@ -434,7 +434,7 @@ public class Methodes_Rutger {
     }
     public static void updateBomb(PlayerClass player, EnemyClass enemy) {
 
-        // --- ALTIJD: bom gooien als G en niet op cooldown ---
+        // --- BOM GOOIEN ---
         if (GameApp.isKeyJustPressed(Input.Keys.G) && !bombOnCooldown) {
             int startX = 100 + player.spriteWidth;
             int startY = player.yPlayer + player.spriteHeight / 2;
@@ -444,7 +444,7 @@ public class Methodes_Rutger {
             lastBombTime = System.currentTimeMillis();
         }
 
-        // --- Cooldown resetten ---
+        // --- COOLDOWN RESETTEN ---
         if (bombOnCooldown) {
             long now = System.currentTimeMillis();
             if (now - lastBombTime >= 10000) {
@@ -452,12 +452,12 @@ public class Methodes_Rutger {
             }
         }
 
-        // --- Bommen updaten + tekenen + collisions ---
+        // --- BOMMEN UPDATEN ---
         for (int i = 0; i < bombs.size(); i++) {
             BombClass bomb = bombs.get(i);
             bomb.update();
 
-            // Grond collision
+            // --- IMPACT MET GROND ---
             if (!bomb.exploded && bomb.y <= player.groundLevel) {
                 bomb.y = player.groundLevel;
                 bomb.exploded = true;
@@ -465,35 +465,59 @@ public class Methodes_Rutger {
                 GameApp.playSound("Bomb");
             }
 
-            // Enemy collision alleen als er een enemy is
+            // --- IMPACT MET ENEMY (DIRECTE HIT) ---
             if (!bomb.exploded && enemy != null && !enemy.allEnemies.isEmpty()) {
-                EnemyClass currentEnemy = enemy.allEnemies.get(0);
 
-                boolean overlapX =
-                        bomb.x < currentEnemy.enemyXPos + 100 &&
-                                bomb.x + 128 > currentEnemy.enemyXPos;
-                boolean overlapY =
-                        bomb.y < currentEnemy.enemyYPos + 100 &&
-                                bomb.y + 128 > currentEnemy.enemyYPos;
+                for (int e = 0; e < enemy.allEnemies.size(); e++) {
+                    EnemyClass en = enemy.allEnemies.get(e);
 
-                if (overlapX && overlapY) {
-                    bomb.exploded = true;
-                    bomb.frameIndex = 5;
+                    boolean overlapX = bomb.x < en.enemyXPos + 100 &&
+                            bomb.x + 128 > en.enemyXPos;
 
-                    currentEnemy.enemyIsDead = true;
-                    player.enemiesDefeated++;
-                    GameApp.playSound("Bomb");
+                    boolean overlapY = bomb.y < en.enemyYPos + 100 &&
+                            bomb.y + 128 > en.enemyYPos;
 
-                    enemy.allEnemies.remove(0);
+                    if (overlapX && overlapY) {
+                        bomb.exploded = true;
+                        bomb.frameIndex = 5;
+                        GameApp.playSound("Bomb");
+                        break; // bom is ontploft → klaar
+                    }
                 }
             }
 
-            // Tekenen (alleen geldige frames)
+            // --- RADIUS DAMAGE (ALLEEN NA EXPLOSIE!) ---
+            if (bomb.exploded && enemy != null && !enemy.allEnemies.isEmpty()) {
+
+                float bombCenterX = bomb.x + 64;
+                float bombCenterY = bomb.y + 64;
+
+                for (int e = 0; e < enemy.allEnemies.size(); e++) {
+
+                    EnemyClass en = enemy.allEnemies.get(e);
+
+                    float enemyCenterX = en.enemyXPos + 50;
+                    float enemyCenterY = en.enemyYPos + 50;
+
+                    float dx = bombCenterX - enemyCenterX;
+                    float dy = bombCenterY - enemyCenterY;
+                    float distance = (float)Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance <= BombClass.EXPLOSION_RADIUS) {
+                        en.enemyIsDead = true;
+                        player.enemiesDefeated++;
+                        enemy.allEnemies.remove(e);
+                        e--; // lijst corrigeren
+                    }
+                }
+            }
+
+            // --- BOM TEKENEN ---
             if (bomb.frameIndex >= 1 && bomb.frameIndex <= BombClass.TOTAL_FRAMES) {
                 GameApp.drawTexture("bom" + bomb.frameIndex, bomb.x, bomb.y, 128, 128);
             }
 
-            // Verwijderen zodra animatie klaar is
+            // --- BOM VERWIJDEREN NA ANIMATIE ---
             if (bomb.exploded && bomb.frameIndex == BombClass.TOTAL_FRAMES) {
                 bombs.remove(i);
                 i--;

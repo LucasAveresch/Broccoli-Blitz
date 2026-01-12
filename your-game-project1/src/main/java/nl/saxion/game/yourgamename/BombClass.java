@@ -6,6 +6,7 @@ public class BombClass {
     public int x, y;
     public int frameIndex = 1; // nooit 0!
     public float timer = 0;
+    public static final int EXPLOSION_RADIUS = 200;
 
     // Bewegingsvariabelen
     public float velocityX = 12;
