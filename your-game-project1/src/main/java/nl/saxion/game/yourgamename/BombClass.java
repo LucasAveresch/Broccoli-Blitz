@@ -4,7 +4,7 @@ import nl.saxion.gameapp.GameApp;
 
 public class BombClass {
     public int x, y;
-    public int frameIndex = 1;
+    public int frameIndex = 1; // nooit 0!
     public float timer = 0;
 
     // Bewegingsvariabelen
