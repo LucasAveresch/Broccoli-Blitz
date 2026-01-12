@@ -9,8 +9,8 @@ import java.util.Random;
 public class Methodes_Maxje {
 
 
-    public static void updateEnemies(float delta, EnemyClass enemyClass) {
-        if (enemyClass.allEnemies.size() == 1) {
+    public static void updateEnemies(float delta, EnemyClass enemyClass, SubEnemyClass subEnemyClass) {
+
             if (enemyClass.allEnemies.isEmpty()) return;
             EnemyClass enemy = enemyClass.allEnemies.get(0);
             if (enemy.type == 1) {
@@ -18,26 +18,56 @@ public class Methodes_Maxje {
 
                 if (enemy.enemyXPos < 0) {
                     enemyClass.allEnemies.remove(0);
+                    enemy.type = 0;
                     return;
 
 
                 }
 
                 GameApp.drawTexture(enemy.textureKey, enemy.enemyXPos, enemy.enemyYPos);
-            }
-
-             else if (enemy.type == 2) {
+            } else if (enemy.type == 2) {
                 enemy.enemyXPos -= enemy.enemyspeed * delta;
 
                 if (enemy.enemyXPos < 0) {
                     enemyClass.allEnemies.remove(0);
+                    enemy.type = 0;
                     return;
+
                 }
 
                 GameApp.drawTexture(enemy.textureKey2, enemy.enemyXPos, enemy.enemyYPos);
+
+                if (subEnemyClass.subEnemies.isEmpty()) {
+                    subEnemyClass.currentTimer += delta;
+                    if (subEnemyClass.currentTimer >= subEnemyClass.spawnInterval) {
+                        subEnemyClass.currentTimer = 0f;
+                        SubEnemyClass subEnemyClass1 = new SubEnemyClass("img/stokbrood.png", "StokbroodNoLegs", enemy.enemyXPos, enemy.enemyYPos, 100);
+                        subEnemyClass.subEnemies.add(subEnemyClass1);
+                    }
+
+                }
+
             }
         }
-    }
+        public static void updateSubEnemies(SubEnemyClass subEnemyClass, float delta,EnemyClass enemyClass) {
+        if(subEnemyClass.subEnemies.isEmpty()){ return; }
+            SubEnemyClass subenemy  = subEnemyClass.subEnemies.get(0);
+            if (!subEnemyClass.subEnemies.isEmpty()) {
+                subenemy.enemyYPos -= (subEnemyClass.enemyspeed) * delta;
+                if(subenemy.enemyYPos <= 100){
+                    subenemy.enemyYPos = 100;
+                }
+            }
+                if(subenemy.enemyYPos <= 100){
+                subenemy.enemyXPos -= subEnemyClass.enemyspeed * delta;
+                if(subenemy.enemyXPos < 0){
+                    subEnemyClass.subEnemies.remove(subenemy);
+                }
+            }
+            GameApp.drawTexture(subEnemyClass.textureKey, subenemy.enemyXPos, subenemy.enemyYPos);
+
+        }
+
 
     public static void selectEnemyWillekeurig(float delta, EnemyClass enemyClass){
         Random r = new Random();
@@ -52,7 +82,7 @@ public class Methodes_Maxje {
         if(enemyClass.allEnemies.isEmpty() && spawnNewEnemy){
             int randomnumber = r.nextInt(1, 3);
 
-            EnemyClass enemyClass1 = new EnemyClass("img/chef.png", "chef","img/enemy2.png","enemy2",1100, 150, 50);
+            EnemyClass enemyClass1 = new EnemyClass("img/chef.png", "chef","img/enemy2.png","enemy2",1100, 150, 200);
             enemyClass1.type = randomnumber;
             if(enemyClass1.type == 2){
                 enemyClass1.enemyYPos = enemyClass1.enemyYPos + 200;
@@ -76,7 +106,7 @@ public class Methodes_Maxje {
                     "img/mes.png", "mes",
                     enemyClass.allEnemies.get(0).enemyXPos,
                     enemyClass.enemyYPos + 30,
-                    300
+                    600
             );
 
             projectileClass.projectiles.add(newknife);
@@ -108,33 +138,69 @@ public class Methodes_Maxje {
         }
     }
 
-    public static void checkCollisionEnemy(PlayerClass playerClass, EnemyClass enemyClass) {
-        if(enemyClass.type == 1) {
+    public static void checkCollisionEnemy(PlayerClass playerClass, EnemyClass enemyClass, SubEnemyClass subEnemyClass, SchildClass schildClass) {
+        if(!enemyClass.allEnemies.isEmpty()){
+            EnemyClass enemy = enemyClass.allEnemies.get(0);
+        if (enemy.type == 1) {
+            boolean collisionX =
+                    enemy.enemyXPos < 100 + playerClass.spriteWidth &&
+                            enemy.enemyXPos + 50 > 100;
+
+            boolean collisionY =
+                    enemy.enemyYPos < playerClass.yPlayer + playerClass.spriteHeight &&
+                            enemy.enemyYPos + 150 > playerClass.yPlayer;
+
+
+            if (collisionX && collisionY && schildClass.HP == 0) {
+                GameApp.switchScreen("DeathScreen");
+            } else if (collisionY && collisionX){
+                schildClass.HP--;
+                enemyClass.allEnemies.remove(0);
+                System.out.println(enemy.type);
+                GameApp.addSound("SchildPickup","Sounds/shieldPickup.mp3");
+                GameApp.playSound("SchildPickup");
+            }
+        } else if (enemy.type == 2) {
             boolean collisionX = false;
             boolean collisionY = false;
-            if (enemyClass.enemyXPos < 100 + playerClass.spriteWidth && enemyClass.enemyXPos > 100) {
+            if (enemy.enemyXPos < 100 + playerClass.spriteWidth && enemy.enemyXPos > 100) {
                 collisionX = true;
             }
-            if (enemyClass.enemyYPos < playerClass.yPlayer + playerClass.spriteHeight && enemyClass.enemyYPos > playerClass.yPlayer) {
+            if (enemy.enemyYPos < playerClass.yPlayer + playerClass.spriteHeight && enemy.enemyYPos > playerClass.yPlayer) {
                 collisionY = true;
             }
-            if (collisionX && collisionY) {
+            if (collisionX && collisionY && schildClass.HP == 0) {
                 GameApp.switchScreen("DeathScreen");
+            } else if (collisionY && collisionX) {
+                schildClass.HP--;
+                enemyClass.allEnemies.remove(enemy);
+                GameApp.addSound("SchildPickup", "Sounds/shieldPickup.mp3");
+                GameApp.playSound("SchildPickup");
             }
-        } else if (enemyClass.type == 2){
-            boolean collisionX = false;
-            boolean collisionY = false;
-            if (enemyClass.enemyXPos < 100 + playerClass.spriteWidth && enemyClass.enemyXPos > 100) {
-                collisionX = true;
-            }
-            if (enemyClass.enemyYPos < playerClass.yPlayer + playerClass.spriteHeight && enemyClass.enemyYPos > playerClass.yPlayer) {
-                collisionY = true;
-            }
-            if (collisionX && collisionY) {
+        }
+        }
+        if (!subEnemyClass.subEnemies.isEmpty()) {
+            SubEnemyClass subenemy = subEnemyClass.subEnemies.get(0);
+            boolean collisionX =
+                    subenemy.enemyXPos < 125 + playerClass.spriteWidth &&
+                            subenemy.enemyXPos + subenemy.enemyXPos + 100 > 100;
+
+            boolean collisionY =
+                    subenemy.enemyYPos < playerClass.yPlayer + playerClass.spriteHeight &&
+                            subenemy.enemyYPos + subenemy.enemyYPos + 50 > playerClass.yPlayer;
+
+
+            if (collisionX && collisionY && schildClass.HP == 0) {
                 GameApp.switchScreen("DeathScreen");
+            } else if ( collisionY && collisionX){
+                schildClass.HP--;
+                subEnemyClass.subEnemies.remove(0);
+                GameApp.addSound("SchildPickup","Sounds/shieldPickup.mp3");
+                GameApp.playSound("SchildPickup");
             }
         }
     }
+
 
 
     public static void updateSchildPowerup(float delta, PowerupClass powerUp, SchildClass schildClass) {
@@ -151,7 +217,7 @@ public class Methodes_Maxje {
         }
 
     }
-    public static void updateunlimitedKogels(float delta, PowerupClass powerUp,unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass) {
+    public static void updateunlimitedKogels(float delta, PowerupClass powerUp,unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass,PlayerClass player) {
         if (!powerUp.powerupPickedup && powerUp.type == 2) {
             powerUp.xPosition -= powerUp.speed * delta;
 
@@ -163,23 +229,22 @@ public class Methodes_Maxje {
         if (powerUp.powerupPickedup && powerUp.type == 2) {
             unlimitedAmmoPowerupClass.isactive = true;
             powerUp.xPosition = -100;
+            player.maxAmmo = 25;
+            player.ammo = 25;
+            powerUp.powerupPickedup = false;
         }
     }
     public static void unlimitedKogelsLogic(float delta, unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass,
                                             PlayerClass player,PowerupClass powerupClass){
 
         if(unlimitedAmmoPowerupClass.isactive) {
-            player.maxAmmo = 100;
-            player.ammo = 100;
-            if (unlimitedAmmoPowerupClass.currentTime < unlimitedAmmoPowerupClass.maxTime) {
-                unlimitedAmmoPowerupClass.currentTime += delta;
-                System.out.println(unlimitedAmmoPowerupClass.currentTime);
-            } else if (unlimitedAmmoPowerupClass.currentTime >= unlimitedAmmoPowerupClass.maxTime) {
+
+             if (player.ammo == 0) {
                 unlimitedAmmoPowerupClass.isactive = false;
-                player.ammo = 5;
                 player.maxAmmo = 5;
                 unlimitedAmmoPowerupClass.currentTime = 0f;
                 powerupClass.powerupPickedup = false;
+                unlimitedAmmoPowerupClass.isactive = false;
 
             }
 

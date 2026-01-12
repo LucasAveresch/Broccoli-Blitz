@@ -51,22 +51,23 @@ public class Methodes_Rutger {
         }
 
         // --- RELOAD ---
-        if (GameApp.isKeyJustPressed(Input.Keys.R) && !player.isReloading) {
-            player.isReloading = true;
-            player.reloadStartTime = System.currentTimeMillis();
+        if(!powerupClass.isactive) {
+            if (GameApp.isKeyJustPressed(Input.Keys.R)) {
+                player.isReloading = true;
+                player.reloadStartTime = System.currentTimeMillis();
 
-            // 🔊 Reload sound afspelen
-            GameApp.playSound("Reload", 0.8f); // volume iets zachter
+                // 🔊 Reload sound afspelen
+                GameApp.playSound("Reload", 0.8f); // volume iets zachter
 
-        }
-        if (player.isReloading) {
-            long now = System.currentTimeMillis();
-            if (now - player.reloadStartTime >= 1500) { // 1.5 seconden
-                player.ammo = player.maxAmmo;
-                player.isReloading = false;
+            }
+            if (player.isReloading && !powerupClass.isactive) {
+                long now = System.currentTimeMillis();
+                if (now - player.reloadStartTime >= 1500) { // 1.5 seconden
+                    player.ammo = player.maxAmmo;
+                    player.isReloading = false;
+                }
             }
         }
-
         // --- KOGELS UPDATEN ---
             for (int i = 0; i < player.bullets.size(); i++) {
                 BulletClass b = player.bullets.get(i);
@@ -328,6 +329,7 @@ public class Methodes_Rutger {
 
                     player.enemiesDefeated++; // ✅ kill registreren
                     enemy.allEnemies.remove(0);
+                    enemy.type = 0;
                 }
             } else if (currentenemy.type == 2) {
                 boolean overlapX = bullet.x < currentenemy.enemyXPos + 100 && bullet.x + 90 > currentenemy.enemyXPos;
@@ -341,10 +343,32 @@ public class Methodes_Rutger {
 
                     player.enemiesDefeated++; // ✅ kill registreren
                     enemy.allEnemies.remove(0);
+                    enemy.type = 0;
                 }
             }
         }
     }
+    public static void checkKogelCollisionSubEnemy(PlayerClass player,SubEnemyClass subEnemyClass) {
+
+        if (subEnemyClass.subEnemies.isEmpty()) return;
+        SubEnemyClass currentenemy = subEnemyClass.subEnemies.get(0);
+        for (int i = 0; i < player.bullets.size(); i++) {
+            BulletClass bullet = player.bullets.get(i);
+            boolean overlapX = bullet.x < currentenemy.enemyXPos + 100 && bullet.x + 90 > currentenemy.enemyXPos;
+            boolean overlapY = bullet.y < currentenemy.enemyYPos + 100 && bullet.y + 75 > currentenemy.enemyYPos;
+
+            if (overlapX && overlapY) {
+                player.bullets.remove(i);
+                GameApp.addSound("Enemydood", "Sounds/enemydoosounds.mp3");
+                GameApp.playSound("Enemydood");
+                i--;
+
+                player.enemiesDefeated++; // ✅ kill registreren
+                subEnemyClass.subEnemies.remove(0);
+            }
+        }
+    }
+
 
     public static void registerEnemyKill(PlayerClass player) {
         player.enemiesDefeated++;

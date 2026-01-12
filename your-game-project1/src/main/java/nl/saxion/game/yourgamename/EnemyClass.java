@@ -13,11 +13,10 @@ public class EnemyClass {
     public boolean enemyIsDead = false;
     public String textureKey;
     public String textureKey2;
-    public int type = 1;
-    public float currentTimer = 5f;
-    public float spawnInterval = 10f;
+    public int type = 2;
+    public float currentTimer = 0f;
+    public float spawnInterval = 5f;
     ArrayList<EnemyClass> allEnemies = new ArrayList<>();
-    ArrayList<EnemyClass> subEnemies = new ArrayList<>();
 
     public EnemyClass(String filepath, String textureKey,String filepath2, String textureKey2, float startX, float startY, float speed) {
         this.textureKey = textureKey;
