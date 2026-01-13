@@ -676,5 +676,33 @@ public static boolean tutorialEnemy(PlayerClass player, EnemyClass enemy) {
 
         // Reset enemy gerelateerde dingen gebeuren in SettingsScreen zelf
     }
+    public static void updatePowerupTimer(float delta, PowerupClass powerUp, SchildClass schildClass) {
+
+        if (powerUp == null) return;
+        if (!powerUp.hasTimer) return;
+        if (powerUp.timeLeft <= 0) return;
+
+        powerUp.timeLeft -= delta;
+
+        if (powerUp.timeLeft <= 0) {
+            powerUp.timeLeft = 0;
+            powerUp.hasTimer = false;
+
+            schildClass.isactive = false;
+            schildClass.HP = 0;   // ❗ BELANGRIJK
+        }
+    }
+    public static void drawPowerupTimer(PowerupClass powerUp) {
+
+        if (powerUp == null) return;
+        if (!powerUp.hasTimer) return;
+        if (powerUp.timeLeft <= 0) return;
+
+        float topY = GameApp.getWorldHeight();
+
+        String text = "Powerup: " + String.format("%.1f", powerUp.timeLeft) + "s";
+
+        GameApp.drawText("small", text, 20, topY - 65, "white");
+    }
 }
 

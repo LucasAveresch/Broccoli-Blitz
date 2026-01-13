@@ -138,7 +138,7 @@ public class Methodes_Maxje {
         }
     }
 
-    public static void checkCollisionEnemy(PlayerClass playerClass, EnemyClass enemyClass, SubEnemyClass subEnemyClass, SchildClass schildClass) {
+    public static void checkCollisionEnemy(PlayerClass playerClass, EnemyClass enemyClass, SubEnemyClass subEnemyClass, SchildClass schildClass, PowerupClass powerUp) {
         if(!enemyClass.allEnemies.isEmpty()){
             EnemyClass enemy = enemyClass.allEnemies.get(0);
         if (enemy.type == 1) {
@@ -153,10 +153,21 @@ public class Methodes_Maxje {
 
             if (collisionX && collisionY && schildClass.HP == 0) {
                 GameApp.switchScreen("DeathScreen");
-            } else if (collisionY && collisionX){
+            }
+            else if (collisionY && collisionX) {
+
                 schildClass.HP--;
+
+                // ❗ Schild gebroken → timer stoppen
+                if (schildClass.HP <= 0) {
+                    schildClass.isactive = false;
+
+                    powerUp.hasTimer = false;
+                    powerUp.timeLeft = 0;
+                    powerUp.timerStarted = false;
+                }
+
                 enemyClass.allEnemies.remove(0);
-                System.out.println(enemy.type);
                 GameApp.addSound("SchildPickup","Sounds/shieldPickup.mp3");
                 GameApp.playSound("SchildPickup");
             }
@@ -204,18 +215,31 @@ public class Methodes_Maxje {
 
 
     public static void updateSchildPowerup(float delta, PowerupClass powerUp, SchildClass schildClass) {
+
+        // 1. Tekenen zolang hij nog niet is opgepakt
         if (!powerUp.powerupPickedup && powerUp.type == 1) {
             powerUp.xPosition -= powerUp.speed * delta;
 
-            if (powerUp.xPosition < 0) {
-                return;
+            if (powerUp.xPosition > -200) {
+                GameApp.drawTexture(powerUp.textureName, powerUp.xPosition, powerUp.yposition);
             }
-            GameApp.drawTexture(powerUp.textureName, powerUp.xPosition, powerUp.yposition);
-        }
-        if (powerUp.powerupPickedup && powerUp.type == 1) {
-            schildClass.isactive = true;
         }
 
+        // 2. Powerup is opgepakt → activeer shield éénmalig
+        if (powerUp.powerupPickedup && powerUp.type == 1 && !powerUp.timerStarted) {
+
+            schildClass.isactive = true;
+
+            // Timer starten
+            powerUp.hasTimer = true;
+            powerUp.duration = 10f;
+            powerUp.timeLeft = powerUp.duration;
+            powerUp.timerStarted = true;
+
+            // Powerup verstoppen
+            powerUp.xPosition = -9999;
+            powerUp.yposition = -9999;
+        }
     }
     public static void updateunlimitedKogels(float delta, PowerupClass powerUp,
                                              unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass, PlayerClass player) {
@@ -240,7 +264,7 @@ public class Methodes_Maxje {
             player.ammo = 25;
 
             powerUp.xPosition = -100;
-            powerUp.powerupPickedup = false;
+            powerUp.powerupPickedup = true;
         }
     }
     public static void unlimitedKogelsLogic(float delta, unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass,
