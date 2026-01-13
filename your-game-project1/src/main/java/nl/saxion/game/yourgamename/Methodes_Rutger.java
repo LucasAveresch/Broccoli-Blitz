@@ -81,7 +81,7 @@ public class Methodes_Rutger {
         GameApp.drawTexture("brocolli", 100, player.yPlayer, 200, 200);
 
 // --- SCHIETEN ---
-        if (GameApp.isKeyJustPressed(Input.Keys.F) && !player.isReloading) {
+        if (!player.isBlocking && GameApp.isKeyJustPressed(Input.Keys.F) && !player.isReloading) {
 
             if (powerupClass.isactive) {
                 // Powerup actief → altijd schieten zolang ammo > 0
@@ -703,6 +703,20 @@ public static boolean tutorialEnemy(PlayerClass player, EnemyClass enemy) {
         String text = "Powerup: " + String.format("%.1f", powerUp.timeLeft) + "s";
 
         GameApp.drawText("small", text, 20, topY - 65, "white");
+    }
+    public static void updateBlocking(PlayerClass player) {
+
+        // Block aan/uit
+        if (GameApp.isKeyPressed(Input.Keys.E)) {
+            player.isBlocking = true;
+        } else {
+            player.isBlocking = false;
+        }
+
+        // Block sprite tekenen
+        if (player.isBlocking) {
+            GameApp.drawTexture("block", 130, player.yPlayer-50 + 20, 200,150);
+        }
     }
 }
 

@@ -26,6 +26,7 @@ public class YourGameScreen extends ScalableGameScreen {
         Methodes_Lucas.LucasParallaxMethods.initParallax(0);
         GameApp.addTexture("kogel", "img/kogel.png");
         GameApp.addTexture("brocolli", "img/brocolli3.png");
+        GameApp.addTexture("block", "img/block1.png");
         GameApp.addTexture("coin", "img/munt.png");
         for (int i = 0; i < MuzzleFlash.TOTAL_FRAMES; i++) {
             GameApp.addTexture("muzzleFlash" + i, "img/MuzzleFlash/muzzle_flash_" + i + ".png");
@@ -39,6 +40,7 @@ public class YourGameScreen extends ScalableGameScreen {
         GameApp.addSound("Reload", "Sounds/Reload.mp3");
         GameApp.addSound("NoAmmo", "Sounds/NoAmmo.mp3");
         GameApp.addSound("Bomb", "Sounds/explosie.mp3");
+        GameApp.addSound("block", "Sounds/block.mp3");
 
         // Nieuwe enemy/projectiel
         enemyClass = new EnemyClass("img/chef.png", "chef","img/enemy2.png","enemy2",1100, 150, 1000);
@@ -97,6 +99,7 @@ Methodes_Rutger.checkBulletHitsEnemy(player,enemyClass);
         Methodes_Maxje.selectEnemyWillekeurig(delta,enemyClass);
         Methodes_Maxje.checkShieldCollisionKnife(schildClass,projectileClass, player);
         Methodes_Rutger.updateSurvivalTime(player, delta);
+        Methodes_Rutger.updateBlocking(player);
         Methodes_Rutger.updateBomb(player, enemyClass);
         Methodes_Maxje.addMes(delta,projectileClass,enemyClass);
         Methodes_Maxje.updateMes(delta, projectileClass,enemyClass);

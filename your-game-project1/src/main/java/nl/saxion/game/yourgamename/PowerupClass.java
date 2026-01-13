@@ -13,7 +13,7 @@ public class PowerupClass {
     String textureName;
     String filepath2;
     String texurename2;
-    int type = 1;
+    int type = 2;
     boolean powerupPickedup;
     public boolean hasTimer = false;
     public float duration = 0f;

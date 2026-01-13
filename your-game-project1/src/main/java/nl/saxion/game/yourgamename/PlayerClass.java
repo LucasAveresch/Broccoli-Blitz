@@ -31,4 +31,5 @@ public class PlayerClass {
     public int enemiesDefeated = 0;    // aantal verslagen enemies
     public int shotsFired = 0;         // aantal keer geschoten
     public float survivalTime = 0;     // tijd in seconden
+    public boolean isBlocking = false;
 }

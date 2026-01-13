@@ -122,18 +122,34 @@ public class Methodes_Maxje {
     }
 
     public static void checkCollsionMes(ProjectileClass projectileClass, PlayerClass playerClass) {
-        boolean collsionx = false;
-        boolean collsiony = false;
-        for (ProjectileClass knife : projectileClass.projectiles) {
-            if (knife.xposition > 100 + playerClass.spriteWidth && knife.xposition < 120 + playerClass.spriteWidth) {
-                collsionx = true;
+
+        // Stop als er geen messen zijn
+        if (projectileClass.projectiles.isEmpty()) return;
+
+        // We checken alleen het eerste mes (zoals jij al doet)
+        ProjectileClass knife = projectileClass.projectiles.get(0);
+
+        boolean collisionX =
+                knife.xposition > 100 + playerClass.spriteWidth &&
+                        knife.xposition < 120 + playerClass.spriteWidth;
+
+        boolean collisionY =
+                knife.yposition < playerClass.yPlayer + playerClass.spriteHeight &&
+                        knife.yposition + 16 > playerClass.yPlayer;
+
+        if (collisionX && collisionY) {
+
+            // 🟩 BLOCK → mes tegenhouden
+            if (playerClass.isBlocking) {
+
+                GameApp.addSound("block", "Sounds/block.mp3");
+                GameApp.playSound("block", 5.0f);
+
+                projectileClass.projectiles.remove(0); // gewoon simpel verwijderen
+                return;
             }
-            if (knife.yposition < playerClass.yPlayer + playerClass.spriteHeight
-                    && knife.yposition + 16 > playerClass.yPlayer) {
-                collsiony = true;
-            }
-        }
-        if (collsionx && collsiony) {
+
+            // 🟥 GEEN BLOCK → dood
             GameApp.switchScreen("DeathScreen");
         }
     }
