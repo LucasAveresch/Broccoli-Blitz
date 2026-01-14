@@ -74,7 +74,7 @@ public class YourGameScreen extends ScalableGameScreen {
         GameApp.startSpriteRendering();
 
         PlayerClass.worldX += 300 * delta; // sneller in game
-        Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(PlayerClass.worldX, getWorldWidth());
+        Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(PlayerClass.worldX, getWorldWidth(),getWorldHeight());
 
         Methodes_Rutger.update(player,unlimitedAmmoPowerupClass);
         Methodes_Rutger.spawnCoins();
