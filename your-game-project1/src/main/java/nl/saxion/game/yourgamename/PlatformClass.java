@@ -1,6 +1,7 @@
 package nl.saxion.game.yourgamename;
 
 import nl.saxion.gameapp.GameApp;
+import java.util.Random;
 
 public class PlatformClass {
 
@@ -10,10 +11,18 @@ public class PlatformClass {
     public String textureKey;
     public boolean isActive = true;
 
+    // beweging
+    private float moveSpeed;
+    private float moveRange;
+    private float startY;
+    private boolean moveUp;
+
     public PlatformClass(float x, float y,
                          float width, float height,
                          float textureWidth, float textureHeight,
-                         String textureKey) {
+                         String textureKey,
+                         float moveSpeed,
+                         float moveRange) {
 
         this.x = x;
         this.y = y;
@@ -25,10 +34,25 @@ public class PlatformClass {
         this.textureHeight = textureHeight;
 
         this.textureKey = textureKey;
+
+        this.moveSpeed = moveSpeed;
+        this.moveRange = moveRange;
+        this.startY = y;
+        this.moveUp = true;
     }
 
     public void update(float delta) {
+        // horizontale beweging met wereld
         x -= 300 * delta;
+
+        // verticale beweging
+        if (moveUp) {
+            y += moveSpeed * delta;
+            if (y > startY + moveRange) moveUp = false;
+        } else {
+            y -= moveSpeed * delta;
+            if (y < startY - moveRange) moveUp = true;
+        }
     }
 
     public void draw() {

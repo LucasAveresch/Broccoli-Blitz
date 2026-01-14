@@ -19,7 +19,6 @@ public class YourGameScreen extends ScalableGameScreen {
     public PlatformClass platform;
 
     private Random rng = new Random();
-
     private int baseGroundLevel;
 
     public YourGameScreen(PlayerClass player) {
@@ -100,12 +99,17 @@ public class YourGameScreen extends ScalableGameScreen {
                 "obstacle"
         );
 
+        // ⭐ Eerste platform: random grootte + beweging
         platform = new PlatformClass(
                 1800,
                 player.groundLevel + 150,
-                400, 40,
-                400, 60,
-                "platform"
+                300 + rng.nextInt(200),     // breedte 300–500
+                40,
+                300 + rng.nextInt(200),
+                60,
+                "platform",
+                40 + rng.nextInt(40),       // moveSpeed 40–80
+                40 + rng.nextInt(60)        // moveRange 40–100
         );
     }
 
@@ -113,9 +117,7 @@ public class YourGameScreen extends ScalableGameScreen {
     public void render(float delta) {
         super.render(delta);
 
-        if (Methodes_Rutger.checkDeath(player)) {
-            return;
-        }
+        if (Methodes_Rutger.checkDeath(player)) return;
 
         GameApp.clearScreen("black");
         GameApp.startSpriteRendering();
@@ -128,20 +130,14 @@ public class YourGameScreen extends ScalableGameScreen {
                 getWorldHeight()
         );
 
-        // ----------------------------------------------------
-        // RESET groundLevel naar vloer
-        // ----------------------------------------------------
+        // ⭐ Reset groundLevel naar vloer
         player.groundLevel = baseGroundLevel;
 
-        // ----------------------------------------------------
-        // PLATFORM UPDATE + DRAW
-        // ----------------------------------------------------
+        // ⭐ Update + draw platform
         platform.update(delta);
         platform.draw();
 
-        // ----------------------------------------------------
-        // ⭐ PLATFORM COLLISION FIX (BELANGRIJKSTE DEEL)
-        // ----------------------------------------------------
+        // ⭐ PLATFORM COLLISION FIX
         if (platform.playerIsOnTop(player)) {
 
             int platformTop = (int)(platform.y + platform.height);
@@ -153,9 +149,7 @@ public class YourGameScreen extends ScalableGameScreen {
             player.groundLevel = platformTop;
         }
 
-        // ----------------------------------------------------
-        // OBSTAKEL
-        // ----------------------------------------------------
+        // Obstakel
         obstacle.update(delta);
         obstacle.draw();
 
@@ -175,14 +169,10 @@ public class YourGameScreen extends ScalableGameScreen {
             );
         }
 
-        // ----------------------------------------------------
         // ⭐ NU PAS Rutger physics-engine
-        // ----------------------------------------------------
         Methodes_Rutger.update(player, unlimitedAmmoPowerupClass);
 
-        // ----------------------------------------------------
-        // REST VAN JE GAME LOGIC
-        // ----------------------------------------------------
+        // Rest van je game logic
         Methodes_Rutger.spawnCoins();
         Methodes_Rutger.updateCoins(player);
         Methodes_Rutger.updateScore(player, delta);
@@ -214,28 +204,37 @@ public class YourGameScreen extends ScalableGameScreen {
         Methodes_Maxje.genereerRandomPowerup(powerupClassSchild, delta);
         Methodes_Maxje.tekenFlamethrower(delta, flamethrowerClass, enemyClass);
 
-        // ----------------------------------------------------
-        // PLATFORM RESPAWN
-        // ----------------------------------------------------
+        // ⭐ PLATFORM RESPAWN (random grootte + beweging + hoogte)
         if (platform.x + platform.width < 0) {
 
-            if (rng.nextFloat() < 0.4f) {
-                float randomHeight = baseGroundLevel + 140 + rng.nextInt(80);
+            if (rng.nextFloat() < 0.7f) { // 70% kans op nieuw platform
+
+                float randomHeight = baseGroundLevel + 100 + rng.nextInt(200);
+                float randomWidth = 250 + rng.nextInt(300);
+                float randomMoveSpeed = 30 + rng.nextInt(50);
+                float randomMoveRange = 40 + rng.nextInt(80);
 
                 platform = new PlatformClass(
                         PlayerClass.worldX + 1600,
                         randomHeight,
-                        400, 40,
-                        400, 60,
-                        "platform"
+                        randomWidth,
+                        40,
+                        randomWidth,
+                        60,
+                        "platform",
+                        randomMoveSpeed,
+                        randomMoveRange
                 );
+
             } else {
                 platform = new PlatformClass(
                         PlayerClass.worldX + 2000,
                         -500,
                         0, 0,
                         0, 0,
-                        "platform"
+                        "platform",
+                        0,
+                        0
                 );
             }
         }
