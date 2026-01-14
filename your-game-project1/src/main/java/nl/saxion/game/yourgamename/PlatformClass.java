@@ -9,6 +9,9 @@ public class PlatformClass {
     public float textureWidth, textureHeight;
     public String textureKey;
 
+    // ⭐ Nieuw: bewegen of niet
+    public boolean moves;
+
     private float moveSpeed;
     private float moveRange;
     private float startY;
@@ -18,6 +21,7 @@ public class PlatformClass {
                          float width, float height,
                          float textureWidth, float textureHeight,
                          String textureKey,
+                         boolean moves,
                          float moveSpeed,
                          float moveRange) {
 
@@ -32,6 +36,7 @@ public class PlatformClass {
 
         this.textureKey = textureKey;
 
+        this.moves = moves;
         this.moveSpeed = moveSpeed;
         this.moveRange = moveRange;
         this.startY = y;
@@ -41,13 +46,15 @@ public class PlatformClass {
         // beweegt mee met wereld
         x -= 300 * delta;
 
-        // verticale beweging
-        if (moveUp) {
-            y += moveSpeed * delta;
-            if (y > startY + moveRange) moveUp = false;
-        } else {
-            y -= moveSpeed * delta;
-            if (y < startY - moveRange) moveUp = true;
+        // ⭐ Alleen bewegen als moves == true
+        if (moves) {
+            if (moveUp) {
+                y += moveSpeed * delta;
+                if (y > startY + moveRange) moveUp = false;
+            } else {
+                y -= moveSpeed * delta;
+                if (y < startY - moveRange) moveUp = true;
+            }
         }
     }
 
