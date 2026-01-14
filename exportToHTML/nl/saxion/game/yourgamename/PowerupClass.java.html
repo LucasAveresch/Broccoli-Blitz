@@ -1,0 +1,53 @@
+<html>
+<head>
+<title>PowerupClass.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+PowerupClass.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">nl</span><span class="s2">.</span><span class="s1">saxion</span><span class="s2">.</span><span class="s1">game</span><span class="s2">.</span><span class="s1">yourgamename</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">com</span><span class="s2">.</span><span class="s1">badlogic</span><span class="s2">.</span><span class="s1">gdx</span><span class="s2">.</span><span class="s1">math</span><span class="s2">.</span><span class="s1">Interpolation</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">nl</span><span class="s2">.</span><span class="s1">saxion</span><span class="s2">.</span><span class="s1">gameapp</span><span class="s2">.</span><span class="s1">GameApp</span><span class="s2">;</span>
+
+<span class="s0">public class </span><span class="s1">PowerupClass </span><span class="s2">{</span>
+    <span class="s0">float </span><span class="s1">xPosition </span><span class="s2">= </span><span class="s3">500</span><span class="s2">;</span>
+    <span class="s0">float </span><span class="s1">yposition </span><span class="s2">= </span><span class="s3">150</span><span class="s2">;</span>
+    <span class="s0">float </span><span class="s1">speed </span><span class="s2">= </span><span class="s3">100</span><span class="s2">;</span>
+    <span class="s0">float </span><span class="s1">spriteWidth </span><span class="s2">= </span><span class="s3">100</span><span class="s2">;</span>
+    <span class="s0">float </span><span class="s1">spriteHeight </span><span class="s2">= </span><span class="s3">100</span><span class="s2">;</span>
+    <span class="s1">String filepath</span><span class="s2">;</span>
+    <span class="s1">String textureName</span><span class="s2">;</span>
+    <span class="s1">String filepath2</span><span class="s2">;</span>
+    <span class="s1">String texurename2</span><span class="s2">;</span>
+    <span class="s0">int </span><span class="s1">type </span><span class="s2">= </span><span class="s3">2</span><span class="s2">;</span>
+    <span class="s0">boolean </span><span class="s1">powerupPickedup</span><span class="s2">;</span>
+    <span class="s0">public boolean </span><span class="s1">hasTimer </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+    <span class="s0">public float </span><span class="s1">duration </span><span class="s2">= </span><span class="s3">0f</span><span class="s2">;</span>
+    <span class="s0">public float </span><span class="s1">timeLeft </span><span class="s2">= </span><span class="s3">0f</span><span class="s2">;</span>
+    <span class="s0">public boolean </span><span class="s1">timerStarted </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+
+    <span class="s0">public </span><span class="s1">PowerupClass</span><span class="s2">(</span><span class="s1">String filepath</span><span class="s2">, </span><span class="s1">String textureName</span><span class="s2">, </span><span class="s1">String filepath2</span><span class="s2">, </span><span class="s1">String texurename2</span><span class="s2">){</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">textureName </span><span class="s2">= </span><span class="s1">textureName</span><span class="s2">;</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">filepath </span><span class="s2">= </span><span class="s1">filepath</span><span class="s2">;</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">filepath2 </span><span class="s2">= </span><span class="s1">filepath2</span><span class="s2">;</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">texurename2 </span><span class="s2">= </span><span class="s1">texurename2</span><span class="s2">;</span>
+
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addTexture</span><span class="s2">(</span><span class="s1">textureName</span><span class="s2">, </span><span class="s1">filepath</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addTexture</span><span class="s2">(</span><span class="s1">texurename2</span><span class="s2">,</span><span class="s1">filepath2</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+<span class="s2">}</span>
+</pre>
+</body>
+</html>

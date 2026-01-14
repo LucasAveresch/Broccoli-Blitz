@@ -1,0 +1,139 @@
+<html>
+<head>
+<title>YourGameScreen.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #2aacb8;}
+.s4 { color: #7a7e85;}
+.s5 { color: #6aab73;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+YourGameScreen.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">nl</span><span class="s2">.</span><span class="s1">saxion</span><span class="s2">.</span><span class="s1">game</span><span class="s2">.</span><span class="s1">yourgamename</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">nl</span><span class="s2">.</span><span class="s1">saxion</span><span class="s2">.</span><span class="s1">gameapp</span><span class="s2">.</span><span class="s1">GameApp</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">nl</span><span class="s2">.</span><span class="s1">saxion</span><span class="s2">.</span><span class="s1">gameapp</span><span class="s2">.</span><span class="s1">screens</span><span class="s2">.</span><span class="s1">ScalableGameScreen</span><span class="s2">;</span>
+
+<span class="s0">public class </span><span class="s1">YourGameScreen </span><span class="s0">extends </span><span class="s1">ScalableGameScreen </span><span class="s2">{</span>
+    <span class="s0">public </span><span class="s1">PlayerClass player</span><span class="s2">;</span>
+    <span class="s0">public </span><span class="s1">EnemyClass enemyClass</span><span class="s2">;</span>
+    <span class="s0">public </span><span class="s1">ProjectileClass projectileClass</span><span class="s2">;</span>
+    <span class="s0">public </span><span class="s1">PowerupClass powerupClassSchild</span><span class="s2">;</span>
+    <span class="s0">public </span><span class="s1">SchildClass schildClass</span><span class="s2">;</span>
+    <span class="s0">public </span><span class="s1">unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass</span><span class="s2">;</span>
+    <span class="s0">public </span><span class="s1">SubEnemyClass subEnemyClass</span><span class="s2">;</span>
+
+    <span class="s0">public </span><span class="s1">YourGameScreen</span><span class="s2">(</span><span class="s1">PlayerClass player</span><span class="s2">) {</span>
+        <span class="s0">super</span><span class="s2">(</span><span class="s3">1280</span><span class="s2">, </span><span class="s3">720</span><span class="s2">);</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">player </span><span class="s2">= </span><span class="s1">player</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public void </span><span class="s1">show</span><span class="s2">() {</span>
+        <span class="s4">// Schoon starten</span>
+        <span class="s1">Methodes_Rutger</span><span class="s2">.</span><span class="s1">resetRoundStats</span><span class="s2">(</span><span class="s1">player</span><span class="s2">);</span>
+
+        <span class="s4">// Assets</span>
+        <span class="s1">Methodes_Lucas</span><span class="s2">.</span><span class="s1">LucasParallaxMethods</span><span class="s2">.</span><span class="s1">initParallax</span><span class="s2">(</span><span class="s3">0</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addTexture</span><span class="s2">(</span><span class="s5">&quot;kogel&quot;</span><span class="s2">, </span><span class="s5">&quot;img/kogel.png&quot;</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addTexture</span><span class="s2">(</span><span class="s5">&quot;brocolli&quot;</span><span class="s2">, </span><span class="s5">&quot;img/brocolli3.png&quot;</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addTexture</span><span class="s2">(</span><span class="s5">&quot;block&quot;</span><span class="s2">, </span><span class="s5">&quot;img/block1.png&quot;</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addTexture</span><span class="s2">(</span><span class="s5">&quot;coin&quot;</span><span class="s2">, </span><span class="s5">&quot;img/munt.png&quot;</span><span class="s2">);</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s3">0</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt; </span><span class="s1">MuzzleFlash</span><span class="s2">.</span><span class="s1">TOTAL_FRAMES</span><span class="s2">; </span><span class="s1">i</span><span class="s2">++) {</span>
+            <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addTexture</span><span class="s2">(</span><span class="s5">&quot;muzzleFlash&quot; </span><span class="s2">+ </span><span class="s1">i</span><span class="s2">, </span><span class="s5">&quot;img/MuzzleFlash/muzzle_flash_&quot; </span><span class="s2">+ </span><span class="s1">i </span><span class="s2">+ </span><span class="s5">&quot;.png&quot;</span><span class="s2">);</span>
+        <span class="s2">}</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s3">1</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt;= </span><span class="s3">10</span><span class="s2">; </span><span class="s1">i</span><span class="s2">++) {</span>
+            <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addTexture</span><span class="s2">(</span><span class="s5">&quot;bom&quot; </span><span class="s2">+ </span><span class="s1">i</span><span class="s2">, </span><span class="s5">&quot;img/Bom/bom&quot; </span><span class="s2">+ </span><span class="s1">i </span><span class="s2">+ </span><span class="s5">&quot;.png&quot;</span><span class="s2">); </span><span class="s4">// hoofdletter B!</span>
+        <span class="s2">}</span>
+
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addSound</span><span class="s2">(</span><span class="s5">&quot;shoot&quot;</span><span class="s2">, </span><span class="s5">&quot;Sounds/Schieten.mp3&quot;</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addSound</span><span class="s2">(</span><span class="s5">&quot;coin&quot;</span><span class="s2">, </span><span class="s5">&quot;Sounds/coin.mp3&quot;</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addSound</span><span class="s2">(</span><span class="s5">&quot;Reload&quot;</span><span class="s2">, </span><span class="s5">&quot;Sounds/Reload.mp3&quot;</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addSound</span><span class="s2">(</span><span class="s5">&quot;NoAmmo&quot;</span><span class="s2">, </span><span class="s5">&quot;Sounds/NoAmmo.mp3&quot;</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addSound</span><span class="s2">(</span><span class="s5">&quot;Bomb&quot;</span><span class="s2">, </span><span class="s5">&quot;Sounds/explosie.mp3&quot;</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addSound</span><span class="s2">(</span><span class="s5">&quot;block&quot;</span><span class="s2">, </span><span class="s5">&quot;Sounds/block.mp3&quot;</span><span class="s2">);</span>
+
+        <span class="s4">// Nieuwe enemy/projectiel</span>
+        <span class="s1">enemyClass </span><span class="s2">= </span><span class="s0">new </span><span class="s1">EnemyClass</span><span class="s2">(</span><span class="s5">&quot;img/chef.png&quot;</span><span class="s2">, </span><span class="s5">&quot;chef&quot;</span><span class="s2">,</span><span class="s5">&quot;img/enemy2.png&quot;</span><span class="s2">,</span><span class="s5">&quot;enemy2&quot;</span><span class="s2">,</span><span class="s3">1100</span><span class="s2">, </span><span class="s3">150</span><span class="s2">, </span><span class="s3">1000</span><span class="s2">);</span>
+        <span class="s1">projectileClass </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ProjectileClass</span><span class="s2">(</span><span class="s5">&quot;img/mes.png&quot;</span><span class="s2">, </span><span class="s5">&quot;mes&quot;</span><span class="s2">,</span>
+          <span class="s1">enemyClass</span><span class="s2">.</span><span class="s1">enemyXPos</span><span class="s2">, </span><span class="s1">enemyClass</span><span class="s2">.</span><span class="s1">enemyYPos </span><span class="s2">+ </span><span class="s3">20</span><span class="s2">, </span><span class="s3">200</span><span class="s2">);</span>
+        <span class="s1">powerupClassSchild </span><span class="s2">= </span><span class="s0">new </span><span class="s1">PowerupClass</span><span class="s2">(</span><span class="s5">&quot;img/schild.png&quot;</span><span class="s2">, </span><span class="s5">&quot;schild&quot;</span><span class="s2">,</span><span class="s5">&quot;img/unlimitedKogels.png&quot;</span><span class="s2">,</span><span class="s5">&quot;unlimitedkogels&quot;</span><span class="s2">);</span>
+        <span class="s1">schildClass </span><span class="s2">= </span><span class="s0">new </span><span class="s1">SchildClass</span><span class="s2">(</span><span class="s5">&quot;img/activeSchild.png&quot;</span><span class="s2">, </span><span class="s5">&quot;fullschild&quot;</span><span class="s2">, </span><span class="s5">&quot;crackedSchild&quot;</span><span class="s2">,</span><span class="s5">&quot;img/activeCrackedShield.png&quot;</span><span class="s2">);</span>
+        <span class="s1">unlimitedAmmoPowerupClass </span><span class="s2">= </span><span class="s0">new </span><span class="s1">unlimitedAmmoPowerupClass</span><span class="s2">();</span>
+        <span class="s1">subEnemyClass </span><span class="s2">= </span><span class="s0">new </span><span class="s1">SubEnemyClass</span><span class="s2">(</span><span class="s5">&quot;img/stokbrood.png&quot;</span><span class="s2">,</span><span class="s5">&quot;stokbrood&quot;</span><span class="s2">,</span><span class="s1">enemyClass</span><span class="s2">.</span><span class="s1">enemyXPos</span><span class="s2">,</span><span class="s1">enemyClass</span><span class="s2">.</span><span class="s1">enemyYPos</span><span class="s2">,</span><span class="s3">350</span><span class="s2">);</span>
+        <span class="s1">powerupClassSchild </span><span class="s2">= </span><span class="s0">new </span><span class="s1">PowerupClass</span><span class="s2">(</span>
+                <span class="s5">&quot;img/schild.png&quot;</span><span class="s2">,</span>
+                <span class="s5">&quot;schild&quot;</span><span class="s2">,</span>
+                <span class="s5">&quot;img/unlimitedKogels.png&quot;</span><span class="s2">,</span>
+                <span class="s5">&quot;unlimitedkogels&quot;</span>
+        <span class="s2">);</span>
+    <span class="s2">}</span>
+
+    <span class="s0">private float </span><span class="s1">Worldx</span><span class="s2">;</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public void </span><span class="s1">render</span><span class="s2">(</span><span class="s0">float </span><span class="s1">delta</span><span class="s2">) {</span>
+        <span class="s0">super</span><span class="s2">.</span><span class="s1">render</span><span class="s2">(</span><span class="s1">delta</span><span class="s2">);</span>
+
+        <span class="s4">// --- Dood gaan check ---</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">Methodes_Rutger</span><span class="s2">.</span><span class="s1">checkDeath</span><span class="s2">(</span><span class="s1">player</span><span class="s2">)) {</span>
+            <span class="s0">return</span><span class="s2">; </span><span class="s4">// stop render zodat er niet verder getekend wordt</span>
+        <span class="s2">}</span>
+
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">clearScreen</span><span class="s2">(</span><span class="s5">&quot;black&quot;</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">startSpriteRendering</span><span class="s2">();</span>
+
+        <span class="s1">PlayerClass</span><span class="s2">.</span><span class="s1">worldX </span><span class="s2">+= </span><span class="s3">300 </span><span class="s2">* </span><span class="s1">delta</span><span class="s2">; </span><span class="s4">// sneller in game</span>
+        <span class="s1">Methodes_Lucas</span><span class="s2">.</span><span class="s1">LucasParallaxMethods</span><span class="s2">.</span><span class="s1">drawParallaxBackground</span><span class="s2">(</span><span class="s1">PlayerClass</span><span class="s2">.</span><span class="s1">worldX</span><span class="s2">, </span><span class="s1">getWorldWidth</span><span class="s2">());</span>
+
+        <span class="s1">Methodes_Rutger</span><span class="s2">.</span><span class="s1">update</span><span class="s2">(</span><span class="s1">player</span><span class="s2">,</span><span class="s1">unlimitedAmmoPowerupClass</span><span class="s2">);</span>
+        <span class="s1">Methodes_Rutger</span><span class="s2">.</span><span class="s1">spawnCoins</span><span class="s2">();</span>
+        <span class="s1">Methodes_Rutger</span><span class="s2">.</span><span class="s1">updateCoins</span><span class="s2">(</span><span class="s1">player</span><span class="s2">);</span>
+        <span class="s1">Methodes_Rutger</span><span class="s2">.</span><span class="s1">updateScore</span><span class="s2">(</span><span class="s1">player</span><span class="s2">, </span><span class="s1">delta</span><span class="s2">);</span>
+        <span class="s1">Methodes_Rutger</span><span class="s2">.</span><span class="s1">drawGameHud</span><span class="s2">(</span><span class="s1">player</span><span class="s2">);</span>
+        <span class="s1">Methodes_Rutger</span><span class="s2">.</span><span class="s1">drawBombCooldown</span><span class="s2">();</span>
+
+        <span class="s0">if </span><span class="s2">(!</span><span class="s1">enemyClass</span><span class="s2">.</span><span class="s1">enemyIsDead</span><span class="s2">) {</span>
+            <span class="s1">Methodes_Maxje</span><span class="s2">.</span><span class="s1">updateEnemies</span><span class="s2">(</span><span class="s1">delta</span><span class="s2">,</span><span class="s1">enemyClass</span><span class="s2">,</span><span class="s1">subEnemyClass</span><span class="s2">);</span>
+
+        <span class="s2">}</span>
+
+<span class="s1">Methodes_Rutger</span><span class="s2">.</span><span class="s1">checkBulletHitsEnemy</span><span class="s2">(</span><span class="s1">player</span><span class="s2">,</span><span class="s1">enemyClass</span><span class="s2">);</span>
+        <span class="s1">Methodes_Rutger</span><span class="s2">.</span><span class="s1">checkKogelCollisionSubEnemy</span><span class="s2">(</span><span class="s1">player</span><span class="s2">,</span><span class="s1">subEnemyClass</span><span class="s2">);</span>
+        <span class="s1">Methodes_Maxje</span><span class="s2">.</span><span class="s1">checkCollsionMes</span><span class="s2">(</span><span class="s1">projectileClass</span><span class="s2">,</span><span class="s1">player</span><span class="s2">);</span>
+        <span class="s1">Methodes_Maxje</span><span class="s2">.</span><span class="s1">checkCollisionEnemy</span><span class="s2">(</span><span class="s1">player</span><span class="s2">, </span><span class="s1">enemyClass</span><span class="s2">, </span><span class="s1">subEnemyClass</span><span class="s2">, </span><span class="s1">schildClass</span><span class="s2">, </span><span class="s1">powerupClassSchild</span><span class="s2">);</span>
+        <span class="s1">Methodes_Maxje</span><span class="s2">.</span><span class="s1">checkForPowerupPickup</span><span class="s2">(</span><span class="s1">player</span><span class="s2">,</span><span class="s1">powerupClassSchild</span><span class="s2">);</span>
+        <span class="s1">Methodes_Maxje</span><span class="s2">.</span><span class="s1">updateSchildPowerup</span><span class="s2">(</span><span class="s1">delta</span><span class="s2">, </span><span class="s1">powerupClassSchild</span><span class="s2">,</span><span class="s1">schildClass</span><span class="s2">);</span>
+        <span class="s1">Methodes_Maxje</span><span class="s2">.</span><span class="s1">updateunlimitedKogels</span><span class="s2">(</span><span class="s1">delta</span><span class="s2">, </span><span class="s1">powerupClassSchild</span><span class="s2">, </span><span class="s1">unlimitedAmmoPowerupClass</span><span class="s2">,</span><span class="s1">player</span><span class="s2">);</span>
+        <span class="s1">Methodes_Maxje</span><span class="s2">.</span><span class="s1">unlimitedKogelsLogic</span><span class="s2">(</span><span class="s1">delta</span><span class="s2">,</span><span class="s1">unlimitedAmmoPowerupClass</span><span class="s2">,</span><span class="s1">player</span><span class="s2">,</span><span class="s1">powerupClassSchild</span><span class="s2">);</span>
+        <span class="s1">Methodes_Maxje</span><span class="s2">.</span><span class="s1">activeSchildUpdate</span><span class="s2">(</span><span class="s1">schildClass</span><span class="s2">,</span><span class="s1">player</span><span class="s2">);</span>
+        <span class="s1">Methodes_Maxje</span><span class="s2">.</span><span class="s1">selectEnemyWillekeurig</span><span class="s2">(</span><span class="s1">delta</span><span class="s2">,</span><span class="s1">enemyClass</span><span class="s2">);</span>
+        <span class="s1">Methodes_Maxje</span><span class="s2">.</span><span class="s1">checkShieldCollisionKnife</span><span class="s2">(</span><span class="s1">schildClass</span><span class="s2">,</span><span class="s1">projectileClass</span><span class="s2">, </span><span class="s1">player</span><span class="s2">);</span>
+        <span class="s1">Methodes_Rutger</span><span class="s2">.</span><span class="s1">updateSurvivalTime</span><span class="s2">(</span><span class="s1">player</span><span class="s2">, </span><span class="s1">delta</span><span class="s2">);</span>
+        <span class="s1">Methodes_Rutger</span><span class="s2">.</span><span class="s1">updateBlocking</span><span class="s2">(</span><span class="s1">player</span><span class="s2">);</span>
+        <span class="s1">Methodes_Rutger</span><span class="s2">.</span><span class="s1">updateBomb</span><span class="s2">(</span><span class="s1">player</span><span class="s2">, </span><span class="s1">enemyClass</span><span class="s2">);</span>
+        <span class="s1">Methodes_Maxje</span><span class="s2">.</span><span class="s1">addMes</span><span class="s2">(</span><span class="s1">delta</span><span class="s2">,</span><span class="s1">projectileClass</span><span class="s2">,</span><span class="s1">enemyClass</span><span class="s2">);</span>
+        <span class="s1">Methodes_Maxje</span><span class="s2">.</span><span class="s1">updateMes</span><span class="s2">(</span><span class="s1">delta</span><span class="s2">, </span><span class="s1">projectileClass</span><span class="s2">,</span><span class="s1">enemyClass</span><span class="s2">);</span>
+        <span class="s1">Methodes_Maxje</span><span class="s2">.</span><span class="s1">updateSubEnemies</span><span class="s2">(</span><span class="s1">subEnemyClass</span><span class="s2">, </span><span class="s1">delta</span><span class="s2">,</span><span class="s1">enemyClass</span><span class="s2">);</span>
+        <span class="s1">Methodes_Rutger</span><span class="s2">.</span><span class="s1">updatePowerupTimer</span><span class="s2">(</span><span class="s1">delta</span><span class="s2">, </span><span class="s1">powerupClassSchild</span><span class="s2">, </span><span class="s1">schildClass</span><span class="s2">);</span>
+        <span class="s1">Methodes_Rutger</span><span class="s2">.</span><span class="s1">drawPowerupTimer</span><span class="s2">(</span><span class="s1">powerupClassSchild</span><span class="s2">);</span>
+
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">endSpriteRendering</span><span class="s2">();</span>
+    <span class="s2">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public void </span><span class="s1">hide</span><span class="s2">() {</span>
+        <span class="s1">Methodes_Lucas</span><span class="s2">.</span><span class="s1">LucasParallaxMethods</span><span class="s2">.</span><span class="s1">disposeParallax</span><span class="s2">();</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+</pre>
+</body>
+</html>

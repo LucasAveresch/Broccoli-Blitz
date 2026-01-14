@@ -1,0 +1,92 @@
+<html>
+<head>
+<title>MainMenuScreen.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #7a7e85;}
+.s4 { color: #2aacb8;}
+.s5 { color: #6aab73;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+MainMenuScreen.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">nl</span><span class="s2">.</span><span class="s1">saxion</span><span class="s2">.</span><span class="s1">game</span><span class="s2">.</span><span class="s1">yourgamename</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">com</span><span class="s2">.</span><span class="s1">badlogic</span><span class="s2">.</span><span class="s1">gdx</span><span class="s2">.</span><span class="s1">Input</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">nl</span><span class="s2">.</span><span class="s1">saxion</span><span class="s2">.</span><span class="s1">gameapp</span><span class="s2">.</span><span class="s1">GameApp</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">nl</span><span class="s2">.</span><span class="s1">saxion</span><span class="s2">.</span><span class="s1">gameapp</span><span class="s2">.</span><span class="s1">screens</span><span class="s2">.</span><span class="s1">ScalableGameScreen</span><span class="s2">;</span>
+
+<span class="s0">public class </span><span class="s1">MainMenuScreen </span><span class="s0">extends </span><span class="s1">ScalableGameScreen </span><span class="s2">{</span>
+    <span class="s0">private </span><span class="s1">PlayerClass player</span><span class="s2">;</span>
+    <span class="s0">private float </span><span class="s1">worldX</span><span class="s2">; </span><span class="s3">// voor parallax beweging</span>
+    <span class="s0">private float </span><span class="s1">broccoliX</span><span class="s2">;</span>
+    <span class="s0">private boolean </span><span class="s1">isStarting </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+    <span class="s0">private boolean </span><span class="s1">justDied </span><span class="s2">= </span><span class="s0">false</span><span class="s2">; </span><span class="s3">// nieuwe flag</span>
+
+    <span class="s0">public </span><span class="s1">MainMenuScreen</span><span class="s2">(</span><span class="s1">PlayerClass player</span><span class="s2">) {</span>
+        <span class="s0">super</span><span class="s2">(</span><span class="s4">1280</span><span class="s2">, </span><span class="s4">720</span><span class="s2">);</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">player </span><span class="s2">= </span><span class="s1">player</span><span class="s2">;</span>
+
+    <span class="s2">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public void </span><span class="s1">show</span><span class="s2">() {</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addFont</span><span class="s2">(</span><span class="s5">&quot;basic&quot;</span><span class="s2">, </span><span class="s5">&quot;fonts/basic.ttf&quot;</span><span class="s2">, </span><span class="s4">100</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addFont</span><span class="s2">(</span><span class="s5">&quot;small&quot;</span><span class="s2">, </span><span class="s5">&quot;fonts/basic.ttf&quot;</span><span class="s2">, </span><span class="s4">30</span><span class="s2">); </span><span class="s3">// kleiner font voor HUD</span>
+        <span class="s1">Methodes_Lucas</span><span class="s2">.</span><span class="s1">LucasParallaxMethods</span><span class="s2">.</span><span class="s1">initParallax</span><span class="s2">(</span><span class="s4">0</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addTexture</span><span class="s2">(</span><span class="s5">&quot;brocolli&quot;</span><span class="s2">, </span><span class="s5">&quot;img/brocolli3.png&quot;</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addSound</span><span class="s2">(</span><span class="s5">&quot;start&quot;</span><span class="s2">, </span><span class="s5">&quot;Sounds/Start.mp3&quot;</span><span class="s2">);</span>
+
+        <span class="s1">broccoliX </span><span class="s2">= </span><span class="s1">getWorldWidth</span><span class="s2">() / </span><span class="s4">2f </span><span class="s2">- </span><span class="s1">player</span><span class="s2">.</span><span class="s1">spriteWidth </span><span class="s2">/ </span><span class="s4">2f </span><span class="s2">- </span><span class="s4">50</span><span class="s2">;</span>
+        <span class="s1">isStarting </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+
+    <span class="s2">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public void </span><span class="s1">render</span><span class="s2">(</span><span class="s0">float </span><span class="s1">delta</span><span class="s2">) {</span>
+        <span class="s0">super</span><span class="s2">.</span><span class="s1">render</span><span class="s2">(</span><span class="s1">delta</span><span class="s2">);</span>
+
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">clearScreen</span><span class="s2">(</span><span class="s5">&quot;black&quot;</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">startSpriteRendering</span><span class="s2">();</span>
+
+        <span class="s3">// Starter</span>
+        <span class="s1">isStarting </span><span class="s2">= </span><span class="s1">Methodes_Rutger</span><span class="s2">.</span><span class="s1">handleMenuStart</span><span class="s2">(</span><span class="s1">isStarting</span><span class="s2">);</span>
+
+        <span class="s3">// Springen</span>
+        <span class="s1">Methodes_Rutger</span><span class="s2">.</span><span class="s1">updateJump</span><span class="s2">(</span><span class="s1">player</span><span class="s2">);</span>
+
+        <span class="s3">// Achtergrond bewegen zolang we nog niet gestart zijn</span>
+        <span class="s0">if </span><span class="s2">(!</span><span class="s1">isStarting</span><span class="s2">) {</span>
+            <span class="s1">PlayerClass</span><span class="s2">.</span><span class="s1">worldX </span><span class="s2">+= </span><span class="s4">100 </span><span class="s2">* </span><span class="s1">delta</span><span class="s2">; </span><span class="s3">// langzame scroll in menu</span>
+        <span class="s2">}</span>
+        <span class="s1">Methodes_Lucas</span><span class="s2">.</span><span class="s1">LucasParallaxMethods</span><span class="s2">.</span><span class="s1">drawParallaxBackground</span><span class="s2">(</span><span class="s1">PlayerClass</span><span class="s2">.</span><span class="s1">worldX</span><span class="s2">, </span><span class="s1">getWorldWidth</span><span class="s2">());</span>
+
+        <span class="s3">// Broccoli bewegen + tekenen</span>
+        <span class="s1">broccoliX </span><span class="s2">= </span><span class="s1">Methodes_Rutger</span><span class="s2">.</span><span class="s1">handleMenuBroccoli</span><span class="s2">(</span><span class="s1">player</span><span class="s2">, </span><span class="s1">broccoliX</span><span class="s2">, </span><span class="s1">isStarting</span><span class="s2">, </span><span class="s1">delta</span><span class="s2">);</span>
+
+        <span class="s3">// Tekst</span>
+        <span class="s1">Methodes_Rutger</span><span class="s2">.</span><span class="s1">drawMenuText</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s1">player</span><span class="s2">);</span>
+
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">endSpriteRendering</span><span class="s2">();</span>
+
+        <span class="s3">// 🔑 ESCAPE → naar SettingsScreen</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">isKeyJustPressed</span><span class="s2">(</span><span class="s1">Input</span><span class="s2">.</span><span class="s1">Keys</span><span class="s2">.</span><span class="s1">ESCAPE</span><span class="s2">)) {</span>
+            <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">switchScreen</span><span class="s2">(</span><span class="s5">&quot;SettingsScreen&quot;</span><span class="s2">);</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public void </span><span class="s1">hide</span><span class="s2">() {</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">disposeFont</span><span class="s2">(</span><span class="s5">&quot;basic&quot;</span><span class="s2">);</span>
+        <span class="s1">Methodes_Lucas</span><span class="s2">.</span><span class="s1">LucasParallaxMethods</span><span class="s2">.</span><span class="s1">disposeParallax</span><span class="s2">();</span>
+    <span class="s2">}</span>
+<span class="s2">}</span></pre>
+</body>
+</html>

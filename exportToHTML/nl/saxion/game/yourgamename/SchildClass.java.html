@@ -1,0 +1,48 @@
+<html>
+<head>
+<title>SchildClass.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+SchildClass.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">nl</span><span class="s2">.</span><span class="s1">saxion</span><span class="s2">.</span><span class="s1">game</span><span class="s2">.</span><span class="s1">yourgamename</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">nl</span><span class="s2">.</span><span class="s1">saxion</span><span class="s2">.</span><span class="s1">gameapp</span><span class="s2">.</span><span class="s1">GameApp</span><span class="s2">;</span>
+
+<span class="s0">public class </span><span class="s1">SchildClass </span><span class="s2">{</span>
+    <span class="s0">float </span><span class="s1">Xposition</span><span class="s2">;</span>
+    <span class="s0">float </span><span class="s1">YPosition</span><span class="s2">;</span>
+    <span class="s0">float </span><span class="s1">speed</span><span class="s2">;</span>
+    <span class="s0">int </span><span class="s1">HP </span><span class="s2">= </span><span class="s3">2</span><span class="s2">;</span>
+    <span class="s0">float </span><span class="s1">maxTime </span><span class="s2">= </span><span class="s3">10f</span><span class="s2">;</span>
+    <span class="s0">float </span><span class="s1">currentTime </span><span class="s2">= </span><span class="s3">0f</span><span class="s2">;</span>
+    <span class="s1">String spriteName</span><span class="s2">;</span>
+    <span class="s1">String filepath</span><span class="s2">;</span>
+    <span class="s1">String spritename2</span><span class="s2">;</span>
+    <span class="s1">String filepath2</span><span class="s2">;</span>
+    <span class="s0">boolean </span><span class="s1">isactive</span><span class="s2">;</span>
+
+    <span class="s0">public </span><span class="s1">SchildClass</span><span class="s2">(</span><span class="s1">String filepath</span><span class="s2">, </span><span class="s1">String spriteName</span><span class="s2">, </span><span class="s1">String spriteName2</span><span class="s2">, </span><span class="s1">String Filepath2</span><span class="s2">){</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">spriteName </span><span class="s2">= </span><span class="s1">spriteName</span><span class="s2">;</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">filepath </span><span class="s2">= </span><span class="s1">filepath</span><span class="s2">;</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">filepath2 </span><span class="s2">= </span><span class="s1">Filepath2</span><span class="s2">;</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">spritename2 </span><span class="s2">= </span><span class="s1">spriteName2</span><span class="s2">;</span>
+
+
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addTexture</span><span class="s2">(</span><span class="s1">spriteName</span><span class="s2">,</span><span class="s1">filepath</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addTexture</span><span class="s2">(</span><span class="s1">spriteName2</span><span class="s2">,</span><span class="s1">Filepath2</span><span class="s2">);</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+</pre>
+</body>
+</html>

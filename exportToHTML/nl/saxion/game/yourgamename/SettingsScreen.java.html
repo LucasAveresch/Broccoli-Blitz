@@ -1,0 +1,159 @@
+<html>
+<head>
+<title>SettingsScreen.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #2aacb8;}
+.s4 { color: #7a7e85;}
+.s5 { color: #6aab73;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+SettingsScreen.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">nl</span><span class="s2">.</span><span class="s1">saxion</span><span class="s2">.</span><span class="s1">game</span><span class="s2">.</span><span class="s1">yourgamename</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">com</span><span class="s2">.</span><span class="s1">badlogic</span><span class="s2">.</span><span class="s1">gdx</span><span class="s2">.</span><span class="s1">Input</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">nl</span><span class="s2">.</span><span class="s1">saxion</span><span class="s2">.</span><span class="s1">gameapp</span><span class="s2">.</span><span class="s1">GameApp</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">nl</span><span class="s2">.</span><span class="s1">saxion</span><span class="s2">.</span><span class="s1">gameapp</span><span class="s2">.</span><span class="s1">screens</span><span class="s2">.</span><span class="s1">ScalableGameScreen</span><span class="s2">;</span>
+
+<span class="s0">public class </span><span class="s1">SettingsScreen </span><span class="s0">extends </span><span class="s1">ScalableGameScreen </span><span class="s2">{</span>
+    <span class="s0">private </span><span class="s1">PlayerClass player</span><span class="s2">;</span>
+    <span class="s0">private </span><span class="s1">EnemyClass enemy</span><span class="s2">;</span>
+    <span class="s0">private int </span><span class="s1">tutorialStep </span><span class="s2">= </span><span class="s3">1</span><span class="s2">;</span>
+    <span class="s1">unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass </span><span class="s2">= </span><span class="s0">new </span><span class="s1">unlimitedAmmoPowerupClass</span><span class="s2">();</span>
+
+    <span class="s4">// voor parallax beweging</span>
+    <span class="s0">private float </span><span class="s1">worldX </span><span class="s2">= </span><span class="s3">0</span><span class="s2">;</span>
+
+    <span class="s0">public </span><span class="s1">SettingsScreen</span><span class="s2">(</span><span class="s1">PlayerClass player</span><span class="s2">) {</span>
+        <span class="s0">super</span><span class="s2">(</span><span class="s3">1280</span><span class="s2">, </span><span class="s3">720</span><span class="s2">);</span>
+        <span class="s0">this</span><span class="s2">.</span><span class="s1">player </span><span class="s2">= </span><span class="s1">player</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public void </span><span class="s1">show</span><span class="s2">() {</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addFont</span><span class="s2">(</span><span class="s5">&quot;basic&quot;</span><span class="s2">, </span><span class="s5">&quot;fonts/basic.ttf&quot;</span><span class="s2">, </span><span class="s3">60</span><span class="s2">);</span>
+
+        <span class="s4">// Textures</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addTexture</span><span class="s2">(</span><span class="s5">&quot;brocolli&quot;</span><span class="s2">, </span><span class="s5">&quot;img/brocolli3.png&quot;</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addTexture</span><span class="s2">(</span><span class="s5">&quot;coin&quot;</span><span class="s2">, </span><span class="s5">&quot;img/munt.png&quot;</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addTexture</span><span class="s2">(</span><span class="s5">&quot;kogel&quot;</span><span class="s2">, </span><span class="s5">&quot;img/kogel.png&quot;</span><span class="s2">);</span>
+
+        <span class="s4">// Muzzle flash frames</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s3">0</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt; </span><span class="s1">MuzzleFlash</span><span class="s2">.</span><span class="s1">TOTAL_FRAMES</span><span class="s2">; </span><span class="s1">i</span><span class="s2">++) {</span>
+            <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addTexture</span><span class="s2">(</span><span class="s5">&quot;muzzleFlash&quot; </span><span class="s2">+ </span><span class="s1">i</span><span class="s2">, </span><span class="s5">&quot;img/MuzzleFlash/muzzle_flash_&quot; </span><span class="s2">+ </span><span class="s1">i </span><span class="s2">+ </span><span class="s5">&quot;.png&quot;</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s4">// Bomb frames</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s3">1</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt;= </span><span class="s1">BombClass</span><span class="s2">.</span><span class="s1">TOTAL_FRAMES</span><span class="s2">; </span><span class="s1">i</span><span class="s2">++) {</span>
+            <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addTexture</span><span class="s2">(</span><span class="s5">&quot;bom&quot; </span><span class="s2">+ </span><span class="s1">i</span><span class="s2">, </span><span class="s5">&quot;img/Bom/bom&quot; </span><span class="s2">+ </span><span class="s1">i </span><span class="s2">+ </span><span class="s5">&quot;.png&quot;</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s4">// Sounds</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addSound</span><span class="s2">(</span><span class="s5">&quot;shoot&quot;</span><span class="s2">, </span><span class="s5">&quot;Sounds/Schieten.mp3&quot;</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addSound</span><span class="s2">(</span><span class="s5">&quot;Reload&quot;</span><span class="s2">, </span><span class="s5">&quot;Sounds/Reload.mp3&quot;</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addSound</span><span class="s2">(</span><span class="s5">&quot;coin&quot;</span><span class="s2">, </span><span class="s5">&quot;Sounds/coin.mp3&quot;</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addSound</span><span class="s2">(</span><span class="s5">&quot;NoAmmo&quot;</span><span class="s2">, </span><span class="s5">&quot;Sounds/NoAmmo.mp3&quot;</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addSound</span><span class="s2">(</span><span class="s5">&quot;Bomb&quot;</span><span class="s2">, </span><span class="s5">&quot;Sounds/explosie.mp3&quot;</span><span class="s2">);</span>
+
+        <span class="s4">// Enemy wordt pas gespawned bij stap 5 → dus hier niet aanmaken</span>
+
+        <span class="s4">// Parallax achtergrond</span>
+        <span class="s1">Methodes_Lucas</span><span class="s2">.</span><span class="s1">LucasParallaxMethods</span><span class="s2">.</span><span class="s1">initParallax</span><span class="s2">(</span><span class="s3">0</span><span class="s2">);</span>
+
+        <span class="s4">// Reset tutorial coin flag</span>
+        <span class="s1">Methodes_Rutger</span><span class="s2">.</span><span class="s1">resetTutorial</span><span class="s2">(</span><span class="s1">player</span><span class="s2">);</span>
+        <span class="s1">tutorialStep </span><span class="s2">= </span><span class="s3">1</span><span class="s2">;</span>
+        <span class="s1">enemy </span><span class="s2">= </span><span class="s0">null</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public void </span><span class="s1">render</span><span class="s2">(</span><span class="s0">float </span><span class="s1">delta</span><span class="s2">) {</span>
+        <span class="s0">super</span><span class="s2">.</span><span class="s1">render</span><span class="s2">(</span><span class="s1">delta</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">clearScreen</span><span class="s2">(</span><span class="s5">&quot;black&quot;</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">startSpriteRendering</span><span class="s2">();</span>
+
+        <span class="s4">// Achtergrond bewegen</span>
+        <span class="s1">worldX </span><span class="s2">+= </span><span class="s3">200 </span><span class="s2">* </span><span class="s1">delta</span><span class="s2">;</span>
+        <span class="s1">Methodes_Lucas</span><span class="s2">.</span><span class="s1">LucasParallaxMethods</span><span class="s2">.</span><span class="s1">drawParallaxBackground</span><span class="s2">(</span><span class="s1">worldX</span><span class="s2">, </span><span class="s1">getWorldWidth</span><span class="s2">());</span>
+
+        <span class="s4">// Player update (springen, vallen, schieten, reload, muzzle flash, bommen, etc.)</span>
+        <span class="s1">Methodes_Rutger</span><span class="s2">.</span><span class="s1">update</span><span class="s2">(</span><span class="s1">player</span><span class="s2">,</span><span class="s1">unlimitedAmmoPowerupClass</span><span class="s2">);</span>
+        <span class="s1">Methodes_Rutger</span><span class="s2">.</span><span class="s1">updateBomb</span><span class="s2">(</span><span class="s1">player</span><span class="s2">, </span><span class="s1">enemy</span><span class="s2">);</span>
+        <span class="s1">Methodes_Rutger</span><span class="s2">.</span><span class="s1">updateCoins</span><span class="s2">(</span><span class="s1">player</span><span class="s2">);</span>
+
+        <span class="s4">// HUD tekenen (ammo + coins + distance + highscore)</span>
+        <span class="s1">Methodes_Rutger</span><span class="s2">.</span><span class="s1">drawGameHud</span><span class="s2">(</span><span class="s1">player</span><span class="s2">);</span>
+
+        <span class="s4">// Bomb cooldown tekst</span>
+        <span class="s1">Methodes_Rutger</span><span class="s2">.</span><span class="s1">drawBombCooldown</span><span class="s2">();</span>
+
+        <span class="s4">// Tutorial tekst en checks</span>
+        <span class="s1">Methodes_Rutger</span><span class="s2">.</span><span class="s1">drawTutorialText</span><span class="s2">(</span><span class="s0">this</span><span class="s2">, </span><span class="s1">tutorialStep</span><span class="s2">);</span>
+        <span class="s0">switch </span><span class="s2">(</span><span class="s1">tutorialStep</span><span class="s2">) {</span>
+            <span class="s0">case </span><span class="s3">1</span><span class="s2">:</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">Methodes_Rutger</span><span class="s2">.</span><span class="s1">tutorialShoot</span><span class="s2">(</span><span class="s1">player</span><span class="s2">)) </span><span class="s1">tutorialStep</span><span class="s2">++;</span>
+                <span class="s0">break</span><span class="s2">;</span>
+            <span class="s0">case </span><span class="s3">2</span><span class="s2">:</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">Methodes_Rutger</span><span class="s2">.</span><span class="s1">tutorialReload</span><span class="s2">(</span><span class="s1">player</span><span class="s2">)) </span><span class="s1">tutorialStep</span><span class="s2">++;</span>
+                <span class="s0">break</span><span class="s2">;</span>
+            <span class="s0">case </span><span class="s3">3</span><span class="s2">:</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">Methodes_Rutger</span><span class="s2">.</span><span class="s1">tutorialBomb</span><span class="s2">(</span><span class="s1">player</span><span class="s2">, </span><span class="s1">enemy</span><span class="s2">)) </span><span class="s1">tutorialStep</span><span class="s2">++;</span>
+                <span class="s0">break</span><span class="s2">;</span>
+            <span class="s0">case </span><span class="s3">4</span><span class="s2">:</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">Methodes_Rutger</span><span class="s2">.</span><span class="s1">tutorialCoin</span><span class="s2">(</span><span class="s1">player</span><span class="s2">)) </span><span class="s1">tutorialStep</span><span class="s2">++;</span>
+                <span class="s0">break</span><span class="s2">;</span>
+            <span class="s0">case </span><span class="s3">5</span><span class="s2">:</span>
+                <span class="s4">// Enemy pas aanmaken bij stap 5</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">enemy </span><span class="s2">== </span><span class="s0">null</span><span class="s2">) {</span>
+                    <span class="s1">enemy </span><span class="s2">= </span><span class="s0">new </span><span class="s1">EnemyClass</span><span class="s2">(</span>
+                            <span class="s5">&quot;img/chef.png&quot;</span><span class="s2">,      </span><span class="s4">// filepath 1</span>
+                            <span class="s5">&quot;chef&quot;</span><span class="s2">,              </span><span class="s4">// textureKey 1</span>
+                            <span class="s5">&quot;img/enemy2.png&quot;</span><span class="s2">,    </span><span class="s4">// filepath 2</span>
+                            <span class="s5">&quot;enemy2&quot;</span><span class="s2">,            </span><span class="s4">// textureKey 2</span>
+                            <span class="s3">900</span><span class="s2">,                 </span><span class="s4">// startX</span>
+                            <span class="s3">150</span><span class="s2">,                 </span><span class="s4">// startY</span>
+                            <span class="s3">100                  </span><span class="s4">// speed</span>
+                    <span class="s2">);</span>
+                    <span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyIsDead </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+                <span class="s2">}</span>
+
+                <span class="s4">// Enemy tekenen zolang hij leeft</span>
+                <span class="s0">if </span><span class="s2">(!</span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyIsDead</span><span class="s2">) {</span>
+                    <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawTexture</span><span class="s2">(</span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">textureKey</span><span class="s2">, </span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyXPos</span><span class="s2">, </span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyYPos</span><span class="s2">);</span>
+
+                    <span class="s4">// Bullet-collision specifiek voor tutorial-enemy</span>
+                    <span class="s1">Methodes_Rutger</span><span class="s2">.</span><span class="s1">checkBulletHitsTutorialEnemy</span><span class="s2">(</span><span class="s1">player</span><span class="s2">, </span><span class="s1">enemy</span><span class="s2">);</span>
+                <span class="s2">}</span>
+
+                <span class="s4">// Ga door naar volgende tutorial stap als enemy dood is</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyIsDead</span><span class="s2">) {</span>
+                    <span class="s1">tutorialStep</span><span class="s2">++;</span>
+                <span class="s2">}</span>
+                <span class="s0">break</span><span class="s2">;</span>
+        <span class="s2">}</span>
+
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">endSpriteRendering</span><span class="s2">();</span>
+
+        <span class="s4">// Exit naar menu</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">isKeyJustPressed</span><span class="s2">(</span><span class="s1">Input</span><span class="s2">.</span><span class="s1">Keys</span><span class="s2">.</span><span class="s1">M</span><span class="s2">)) {</span>
+            <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">switchScreen</span><span class="s2">(</span><span class="s5">&quot;MainMenuScreen&quot;</span><span class="s2">);</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s1">@Override</span>
+    <span class="s0">public void </span><span class="s1">hide</span><span class="s2">() {</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">disposeFont</span><span class="s2">(</span><span class="s5">&quot;basic&quot;</span><span class="s2">);</span>
+        <span class="s4">// Parallax resources opruimen</span>
+        <span class="s1">Methodes_Lucas</span><span class="s2">.</span><span class="s1">LucasParallaxMethods</span><span class="s2">.</span><span class="s1">disposeParallax</span><span class="s2">();</span>
+    <span class="s2">}</span>
+<span class="s2">}</span></pre>
+</body>
+</html>

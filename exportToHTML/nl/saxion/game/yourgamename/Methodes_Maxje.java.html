@@ -1,0 +1,388 @@
+<html>
+<head>
+<title>Methodes_Maxje.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #2aacb8;}
+.s4 { color: #6aab73;}
+.s5 { color: #7a7e85;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Methodes_Maxje.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">nl</span><span class="s2">.</span><span class="s1">saxion</span><span class="s2">.</span><span class="s1">game</span><span class="s2">.</span><span class="s1">yourgamename</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">nl</span><span class="s2">.</span><span class="s1">saxion</span><span class="s2">.</span><span class="s1">gameapp</span><span class="s2">.</span><span class="s1">GameApp</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">nl</span><span class="s2">.</span><span class="s1">saxion</span><span class="s2">.</span><span class="s1">game</span><span class="s2">.</span><span class="s1">yourgamename</span><span class="s2">.</span><span class="s1">PlayerClass</span><span class="s2">.*;</span>
+
+<span class="s0">import </span><span class="s1">javax</span><span class="s2">.</span><span class="s1">swing</span><span class="s2">.</span><span class="s1">border</span><span class="s2">.</span><span class="s1">EmptyBorder</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.</span><span class="s1">Random</span><span class="s2">;</span>
+
+<span class="s0">public class </span><span class="s1">Methodes_Maxje </span><span class="s2">{</span>
+
+
+    <span class="s0">public static void </span><span class="s1">updateEnemies</span><span class="s2">(</span><span class="s0">float </span><span class="s1">delta</span><span class="s2">, </span><span class="s1">EnemyClass enemyClass</span><span class="s2">, </span><span class="s1">SubEnemyClass subEnemyClass</span><span class="s2">) {</span>
+
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">enemyClass</span><span class="s2">.</span><span class="s1">allEnemies</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">()) </span><span class="s0">return</span><span class="s2">;</span>
+            <span class="s1">EnemyClass enemy </span><span class="s2">= </span><span class="s1">enemyClass</span><span class="s2">.</span><span class="s1">allEnemies</span><span class="s2">.</span><span class="s1">get</span><span class="s2">(</span><span class="s3">0</span><span class="s2">);</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">type </span><span class="s2">== </span><span class="s3">1</span><span class="s2">) {</span>
+                <span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyXPos </span><span class="s2">-= </span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyspeed </span><span class="s2">* </span><span class="s1">delta</span><span class="s2">;</span>
+
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyXPos </span><span class="s2">&lt; </span><span class="s3">0</span><span class="s2">) {</span>
+                    <span class="s1">enemyClass</span><span class="s2">.</span><span class="s1">allEnemies</span><span class="s2">.</span><span class="s1">remove</span><span class="s2">(</span><span class="s3">0</span><span class="s2">);</span>
+                    <span class="s1">enemy</span><span class="s2">.</span><span class="s1">type </span><span class="s2">= </span><span class="s3">0</span><span class="s2">;</span>
+                    <span class="s0">return</span><span class="s2">;</span>
+
+
+                <span class="s2">}</span>
+
+                <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawTexture</span><span class="s2">(</span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">textureKey</span><span class="s2">, </span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyXPos</span><span class="s2">, </span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyYPos</span><span class="s2">);</span>
+            <span class="s2">} </span><span class="s0">else if </span><span class="s2">(</span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">type </span><span class="s2">== </span><span class="s3">2</span><span class="s2">) {</span>
+                <span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyXPos </span><span class="s2">-= </span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyspeed </span><span class="s2">* </span><span class="s1">delta</span><span class="s2">;</span>
+
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyXPos </span><span class="s2">&lt; </span><span class="s3">0</span><span class="s2">) {</span>
+                    <span class="s1">enemyClass</span><span class="s2">.</span><span class="s1">allEnemies</span><span class="s2">.</span><span class="s1">remove</span><span class="s2">(</span><span class="s3">0</span><span class="s2">);</span>
+                    <span class="s1">enemy</span><span class="s2">.</span><span class="s1">type </span><span class="s2">= </span><span class="s3">0</span><span class="s2">;</span>
+                    <span class="s0">return</span><span class="s2">;</span>
+
+                <span class="s2">}</span>
+
+                <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawTexture</span><span class="s2">(</span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">textureKey2</span><span class="s2">, </span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyXPos</span><span class="s2">, </span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyYPos</span><span class="s2">);</span>
+
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">subEnemyClass</span><span class="s2">.</span><span class="s1">subEnemies</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">()) {</span>
+                    <span class="s1">subEnemyClass</span><span class="s2">.</span><span class="s1">currentTimer </span><span class="s2">+= </span><span class="s1">delta</span><span class="s2">;</span>
+                    <span class="s0">if </span><span class="s2">(</span><span class="s1">subEnemyClass</span><span class="s2">.</span><span class="s1">currentTimer </span><span class="s2">&gt;= </span><span class="s1">subEnemyClass</span><span class="s2">.</span><span class="s1">spawnInterval</span><span class="s2">) {</span>
+                        <span class="s1">subEnemyClass</span><span class="s2">.</span><span class="s1">currentTimer </span><span class="s2">= </span><span class="s3">0f</span><span class="s2">;</span>
+                        <span class="s1">SubEnemyClass subEnemyClass1 </span><span class="s2">= </span><span class="s0">new </span><span class="s1">SubEnemyClass</span><span class="s2">(</span><span class="s4">&quot;img/stokbrood.png&quot;</span><span class="s2">, </span><span class="s4">&quot;StokbroodNoLegs&quot;</span><span class="s2">, </span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyXPos</span><span class="s2">, </span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyYPos</span><span class="s2">, </span><span class="s3">100</span><span class="s2">);</span>
+                        <span class="s1">subEnemyClass</span><span class="s2">.</span><span class="s1">subEnemies</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">subEnemyClass1</span><span class="s2">);</span>
+                    <span class="s2">}</span>
+
+                <span class="s2">}</span>
+
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+        <span class="s0">public static void </span><span class="s1">updateSubEnemies</span><span class="s2">(</span><span class="s1">SubEnemyClass subEnemyClass</span><span class="s2">, </span><span class="s0">float </span><span class="s1">delta</span><span class="s2">,</span><span class="s1">EnemyClass enemyClass</span><span class="s2">) {</span>
+        <span class="s0">if</span><span class="s2">(</span><span class="s1">subEnemyClass</span><span class="s2">.</span><span class="s1">subEnemies</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">()){ </span><span class="s0">return</span><span class="s2">; }</span>
+            <span class="s1">SubEnemyClass subenemy  </span><span class="s2">= </span><span class="s1">subEnemyClass</span><span class="s2">.</span><span class="s1">subEnemies</span><span class="s2">.</span><span class="s1">get</span><span class="s2">(</span><span class="s3">0</span><span class="s2">);</span>
+            <span class="s0">if </span><span class="s2">(!</span><span class="s1">subEnemyClass</span><span class="s2">.</span><span class="s1">subEnemies</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">()) {</span>
+                <span class="s1">subenemy</span><span class="s2">.</span><span class="s1">enemyYPos </span><span class="s2">-= (</span><span class="s1">subEnemyClass</span><span class="s2">.</span><span class="s1">enemyspeed</span><span class="s2">) * </span><span class="s1">delta</span><span class="s2">;</span>
+                <span class="s0">if</span><span class="s2">(</span><span class="s1">subenemy</span><span class="s2">.</span><span class="s1">enemyYPos </span><span class="s2">&lt;= </span><span class="s3">100</span><span class="s2">){</span>
+                    <span class="s1">subenemy</span><span class="s2">.</span><span class="s1">enemyYPos </span><span class="s2">= </span><span class="s3">100</span><span class="s2">;</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+                <span class="s0">if</span><span class="s2">(</span><span class="s1">subenemy</span><span class="s2">.</span><span class="s1">enemyYPos </span><span class="s2">&lt;= </span><span class="s3">100</span><span class="s2">){</span>
+                <span class="s1">subenemy</span><span class="s2">.</span><span class="s1">enemyXPos </span><span class="s2">-= </span><span class="s1">subEnemyClass</span><span class="s2">.</span><span class="s1">enemyspeed </span><span class="s2">* </span><span class="s1">delta</span><span class="s2">;</span>
+                <span class="s0">if</span><span class="s2">(</span><span class="s1">subenemy</span><span class="s2">.</span><span class="s1">enemyXPos </span><span class="s2">&lt; </span><span class="s3">0</span><span class="s2">){</span>
+                    <span class="s1">subEnemyClass</span><span class="s2">.</span><span class="s1">subEnemies</span><span class="s2">.</span><span class="s1">remove</span><span class="s2">(</span><span class="s1">subenemy</span><span class="s2">);</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+            <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawTexture</span><span class="s2">(</span><span class="s1">subEnemyClass</span><span class="s2">.</span><span class="s1">textureKey</span><span class="s2">, </span><span class="s1">subenemy</span><span class="s2">.</span><span class="s1">enemyXPos</span><span class="s2">, </span><span class="s1">subenemy</span><span class="s2">.</span><span class="s1">enemyYPos</span><span class="s2">);</span>
+
+        <span class="s2">}</span>
+
+
+    <span class="s0">public static void </span><span class="s1">selectEnemyWillekeurig</span><span class="s2">(</span><span class="s0">float </span><span class="s1">delta</span><span class="s2">, </span><span class="s1">EnemyClass enemyClass</span><span class="s2">){</span>
+        <span class="s1">Random r </span><span class="s2">= </span><span class="s0">new </span><span class="s1">Random</span><span class="s2">();</span>
+        <span class="s0">boolean </span><span class="s1">spawnNewEnemy </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+
+        <span class="s1">enemyClass</span><span class="s2">.</span><span class="s1">currentTimer </span><span class="s2">+= </span><span class="s1">delta</span><span class="s2">;</span>
+
+        <span class="s0">if</span><span class="s2">(</span><span class="s1">enemyClass</span><span class="s2">.</span><span class="s1">currentTimer </span><span class="s2">&gt;= </span><span class="s1">enemyClass</span><span class="s2">.</span><span class="s1">spawnInterval</span><span class="s2">){</span>
+            <span class="s1">spawnNewEnemy </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+            <span class="s1">enemyClass</span><span class="s2">.</span><span class="s1">currentTimer </span><span class="s2">= </span><span class="s3">0f</span><span class="s2">;</span>
+        <span class="s2">}</span>
+        <span class="s0">if</span><span class="s2">(</span><span class="s1">enemyClass</span><span class="s2">.</span><span class="s1">allEnemies</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">() &amp;&amp; </span><span class="s1">spawnNewEnemy</span><span class="s2">){</span>
+            <span class="s0">int </span><span class="s1">randomnumber </span><span class="s2">= </span><span class="s1">r</span><span class="s2">.</span><span class="s1">nextInt</span><span class="s2">(</span><span class="s3">1</span><span class="s2">, </span><span class="s3">3</span><span class="s2">);</span>
+
+            <span class="s1">EnemyClass enemyClass1 </span><span class="s2">= </span><span class="s0">new </span><span class="s1">EnemyClass</span><span class="s2">(</span><span class="s4">&quot;img/chef.png&quot;</span><span class="s2">, </span><span class="s4">&quot;chef&quot;</span><span class="s2">,</span><span class="s4">&quot;img/enemy2.png&quot;</span><span class="s2">,</span><span class="s4">&quot;enemy2&quot;</span><span class="s2">,</span><span class="s3">1100</span><span class="s2">, </span><span class="s3">150</span><span class="s2">, </span><span class="s3">200</span><span class="s2">);</span>
+            <span class="s1">enemyClass1</span><span class="s2">.</span><span class="s1">type </span><span class="s2">= </span><span class="s1">randomnumber</span><span class="s2">;</span>
+            <span class="s0">if</span><span class="s2">(</span><span class="s1">enemyClass1</span><span class="s2">.</span><span class="s1">type </span><span class="s2">== </span><span class="s3">2</span><span class="s2">){</span>
+                <span class="s1">enemyClass1</span><span class="s2">.</span><span class="s1">enemyYPos </span><span class="s2">= </span><span class="s1">enemyClass1</span><span class="s2">.</span><span class="s1">enemyYPos </span><span class="s2">+ </span><span class="s3">200</span><span class="s2">;</span>
+            <span class="s2">}</span>
+
+            <span class="s1">enemyClass</span><span class="s2">.</span><span class="s1">allEnemies</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">enemyClass1</span><span class="s2">);</span>
+            <span class="s1">spawnNewEnemy </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+
+
+    <span class="s0">public static void </span><span class="s1">addMes</span><span class="s2">(</span><span class="s0">float </span><span class="s1">delta</span><span class="s2">, </span><span class="s1">ProjectileClass projectileClass</span><span class="s2">, </span><span class="s1">EnemyClass enemyClass</span><span class="s2">) {</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">enemyClass</span><span class="s2">.</span><span class="s1">allEnemies</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">() || </span><span class="s1">enemyClass</span><span class="s2">.</span><span class="s1">allEnemies</span><span class="s2">.</span><span class="s1">get</span><span class="s2">(</span><span class="s3">0</span><span class="s2">).</span><span class="s1">type </span><span class="s2">!= </span><span class="s3">1</span><span class="s2">) </span><span class="s0">return</span><span class="s2">;</span>
+
+        <span class="s1">projectileClass</span><span class="s2">.</span><span class="s1">spawnTimer </span><span class="s2">+= </span><span class="s1">delta</span><span class="s2">;</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">projectileClass</span><span class="s2">.</span><span class="s1">spawnTimer </span><span class="s2">&gt; </span><span class="s1">projectileClass</span><span class="s2">.</span><span class="s1">spawnInterval</span><span class="s2">) {</span>
+            <span class="s1">projectileClass</span><span class="s2">.</span><span class="s1">spawnTimer </span><span class="s2">= </span><span class="s3">0f</span><span class="s2">;</span>
+
+            <span class="s1">ProjectileClass newknife </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ProjectileClass</span><span class="s2">(</span>
+                    <span class="s4">&quot;img/mes.png&quot;</span><span class="s2">, </span><span class="s4">&quot;mes&quot;</span><span class="s2">,</span>
+                    <span class="s1">enemyClass</span><span class="s2">.</span><span class="s1">allEnemies</span><span class="s2">.</span><span class="s1">get</span><span class="s2">(</span><span class="s3">0</span><span class="s2">).</span><span class="s1">enemyXPos</span><span class="s2">,</span>
+                    <span class="s1">enemyClass</span><span class="s2">.</span><span class="s1">enemyYPos </span><span class="s2">+ </span><span class="s3">30</span><span class="s2">,</span>
+                    <span class="s3">600</span>
+            <span class="s2">);</span>
+
+            <span class="s1">projectileClass</span><span class="s2">.</span><span class="s1">projectiles</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s1">newknife</span><span class="s2">);</span>
+            <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawTexture</span><span class="s2">(</span><span class="s1">newknife</span><span class="s2">.</span><span class="s1">textureKey</span><span class="s2">, </span><span class="s1">newknife</span><span class="s2">.</span><span class="s1">xposition</span><span class="s2">, </span><span class="s1">newknife</span><span class="s2">.</span><span class="s1">yposition</span><span class="s2">);</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public static void </span><span class="s1">updateMes</span><span class="s2">(</span><span class="s0">float </span><span class="s1">delta</span><span class="s2">, </span><span class="s1">ProjectileClass projectileClass</span><span class="s2">, </span><span class="s1">EnemyClass enemyClass</span><span class="s2">) {</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s1">ProjectileClass knife </span><span class="s2">: </span><span class="s1">projectileClass</span><span class="s2">.</span><span class="s1">projectiles</span><span class="s2">) {</span>
+            <span class="s1">knife</span><span class="s2">.</span><span class="s1">xposition </span><span class="s2">-= </span><span class="s1">knife</span><span class="s2">.</span><span class="s1">speed </span><span class="s2">* </span><span class="s1">delta</span><span class="s2">;</span>
+            <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawTexture</span><span class="s2">(</span><span class="s1">knife</span><span class="s2">.</span><span class="s1">textureKey</span><span class="s2">, </span><span class="s1">knife</span><span class="s2">.</span><span class="s1">xposition</span><span class="s2">, </span><span class="s1">knife</span><span class="s2">.</span><span class="s1">yposition</span><span class="s2">);</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public static void </span><span class="s1">checkCollsionMes</span><span class="s2">(</span><span class="s1">ProjectileClass projectileClass</span><span class="s2">, </span><span class="s1">PlayerClass playerClass</span><span class="s2">) {</span>
+
+        <span class="s5">// Stop als er geen messen zijn</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">projectileClass</span><span class="s2">.</span><span class="s1">projectiles</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">()) </span><span class="s0">return</span><span class="s2">;</span>
+
+        <span class="s5">// We checken alleen het eerste mes (zoals jij al doet)</span>
+        <span class="s1">ProjectileClass knife </span><span class="s2">= </span><span class="s1">projectileClass</span><span class="s2">.</span><span class="s1">projectiles</span><span class="s2">.</span><span class="s1">get</span><span class="s2">(</span><span class="s3">0</span><span class="s2">);</span>
+
+        <span class="s0">boolean </span><span class="s1">collisionX </span><span class="s2">=</span>
+                <span class="s1">knife</span><span class="s2">.</span><span class="s1">xposition </span><span class="s2">&gt; </span><span class="s3">100 </span><span class="s2">+ </span><span class="s1">playerClass</span><span class="s2">.</span><span class="s1">spriteWidth </span><span class="s2">&amp;&amp;</span>
+                        <span class="s1">knife</span><span class="s2">.</span><span class="s1">xposition </span><span class="s2">&lt; </span><span class="s3">120 </span><span class="s2">+ </span><span class="s1">playerClass</span><span class="s2">.</span><span class="s1">spriteWidth</span><span class="s2">;</span>
+
+        <span class="s0">boolean </span><span class="s1">collisionY </span><span class="s2">=</span>
+                <span class="s1">knife</span><span class="s2">.</span><span class="s1">yposition </span><span class="s2">&lt; </span><span class="s1">playerClass</span><span class="s2">.</span><span class="s1">yPlayer </span><span class="s2">+ </span><span class="s1">playerClass</span><span class="s2">.</span><span class="s1">spriteHeight </span><span class="s2">&amp;&amp;</span>
+                        <span class="s1">knife</span><span class="s2">.</span><span class="s1">yposition </span><span class="s2">+ </span><span class="s3">16 </span><span class="s2">&gt; </span><span class="s1">playerClass</span><span class="s2">.</span><span class="s1">yPlayer</span><span class="s2">;</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">collisionX </span><span class="s2">&amp;&amp; </span><span class="s1">collisionY</span><span class="s2">) {</span>
+
+            <span class="s5">// 🟩 BLOCK → mes tegenhouden</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">playerClass</span><span class="s2">.</span><span class="s1">isBlocking</span><span class="s2">) {</span>
+
+                <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addSound</span><span class="s2">(</span><span class="s4">&quot;block&quot;</span><span class="s2">, </span><span class="s4">&quot;Sounds/block.mp3&quot;</span><span class="s2">);</span>
+                <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">playSound</span><span class="s2">(</span><span class="s4">&quot;block&quot;</span><span class="s2">, </span><span class="s3">5.0f</span><span class="s2">);</span>
+
+                <span class="s1">projectileClass</span><span class="s2">.</span><span class="s1">projectiles</span><span class="s2">.</span><span class="s1">remove</span><span class="s2">(</span><span class="s3">0</span><span class="s2">); </span><span class="s5">// gewoon simpel verwijderen</span>
+                <span class="s0">return</span><span class="s2">;</span>
+            <span class="s2">}</span>
+
+            <span class="s5">// 🟥 GEEN BLOCK → dood</span>
+            <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">switchScreen</span><span class="s2">(</span><span class="s4">&quot;DeathScreen&quot;</span><span class="s2">);</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public static void </span><span class="s1">checkCollisionEnemy</span><span class="s2">(</span><span class="s1">PlayerClass playerClass</span><span class="s2">, </span><span class="s1">EnemyClass enemyClass</span><span class="s2">, </span><span class="s1">SubEnemyClass subEnemyClass</span><span class="s2">, </span><span class="s1">SchildClass schildClass</span><span class="s2">, </span><span class="s1">PowerupClass powerUp</span><span class="s2">) {</span>
+        <span class="s0">if</span><span class="s2">(!</span><span class="s1">enemyClass</span><span class="s2">.</span><span class="s1">allEnemies</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">()){</span>
+            <span class="s1">EnemyClass enemy </span><span class="s2">= </span><span class="s1">enemyClass</span><span class="s2">.</span><span class="s1">allEnemies</span><span class="s2">.</span><span class="s1">get</span><span class="s2">(</span><span class="s3">0</span><span class="s2">);</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">type </span><span class="s2">== </span><span class="s3">1</span><span class="s2">) {</span>
+            <span class="s0">boolean </span><span class="s1">collisionX </span><span class="s2">=</span>
+                    <span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyXPos </span><span class="s2">&lt; </span><span class="s3">100 </span><span class="s2">+ </span><span class="s1">playerClass</span><span class="s2">.</span><span class="s1">spriteWidth </span><span class="s2">&amp;&amp;</span>
+                            <span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyXPos </span><span class="s2">+ </span><span class="s3">50 </span><span class="s2">&gt; </span><span class="s3">100</span><span class="s2">;</span>
+
+            <span class="s0">boolean </span><span class="s1">collisionY </span><span class="s2">=</span>
+                    <span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyYPos </span><span class="s2">&lt; </span><span class="s1">playerClass</span><span class="s2">.</span><span class="s1">yPlayer </span><span class="s2">+ </span><span class="s1">playerClass</span><span class="s2">.</span><span class="s1">spriteHeight </span><span class="s2">&amp;&amp;</span>
+                            <span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyYPos </span><span class="s2">+ </span><span class="s3">150 </span><span class="s2">&gt; </span><span class="s1">playerClass</span><span class="s2">.</span><span class="s1">yPlayer</span><span class="s2">;</span>
+
+
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">collisionX </span><span class="s2">&amp;&amp; </span><span class="s1">collisionY </span><span class="s2">&amp;&amp; </span><span class="s1">schildClass</span><span class="s2">.</span><span class="s1">HP </span><span class="s2">== </span><span class="s3">0</span><span class="s2">) {</span>
+                <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">switchScreen</span><span class="s2">(</span><span class="s4">&quot;DeathScreen&quot;</span><span class="s2">);</span>
+            <span class="s2">}</span>
+            <span class="s0">else if </span><span class="s2">(</span><span class="s1">collisionY </span><span class="s2">&amp;&amp; </span><span class="s1">collisionX</span><span class="s2">) {</span>
+
+                <span class="s1">schildClass</span><span class="s2">.</span><span class="s1">HP</span><span class="s2">--;</span>
+
+                <span class="s5">// ❗ Schild gebroken → timer stoppen</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">schildClass</span><span class="s2">.</span><span class="s1">HP </span><span class="s2">&lt;= </span><span class="s3">0</span><span class="s2">) {</span>
+                    <span class="s1">schildClass</span><span class="s2">.</span><span class="s1">isactive </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+
+                    <span class="s1">powerUp</span><span class="s2">.</span><span class="s1">hasTimer </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+                    <span class="s1">powerUp</span><span class="s2">.</span><span class="s1">timeLeft </span><span class="s2">= </span><span class="s3">0</span><span class="s2">;</span>
+                    <span class="s1">powerUp</span><span class="s2">.</span><span class="s1">timerStarted </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+                <span class="s2">}</span>
+
+                <span class="s1">enemyClass</span><span class="s2">.</span><span class="s1">allEnemies</span><span class="s2">.</span><span class="s1">remove</span><span class="s2">(</span><span class="s3">0</span><span class="s2">);</span>
+                <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addSound</span><span class="s2">(</span><span class="s4">&quot;SchildPickup&quot;</span><span class="s2">,</span><span class="s4">&quot;Sounds/shieldPickup.mp3&quot;</span><span class="s2">);</span>
+                <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">playSound</span><span class="s2">(</span><span class="s4">&quot;SchildPickup&quot;</span><span class="s2">);</span>
+            <span class="s2">}</span>
+        <span class="s2">} </span><span class="s0">else if </span><span class="s2">(</span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">type </span><span class="s2">== </span><span class="s3">2</span><span class="s2">) {</span>
+            <span class="s0">boolean </span><span class="s1">collisionX </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+            <span class="s0">boolean </span><span class="s1">collisionY </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyXPos </span><span class="s2">&lt; </span><span class="s3">100 </span><span class="s2">+ </span><span class="s1">playerClass</span><span class="s2">.</span><span class="s1">spriteWidth </span><span class="s2">&amp;&amp; </span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyXPos </span><span class="s2">&gt; </span><span class="s3">100</span><span class="s2">) {</span>
+                <span class="s1">collisionX </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+            <span class="s2">}</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyYPos </span><span class="s2">&lt; </span><span class="s1">playerClass</span><span class="s2">.</span><span class="s1">yPlayer </span><span class="s2">+ </span><span class="s1">playerClass</span><span class="s2">.</span><span class="s1">spriteHeight </span><span class="s2">&amp;&amp; </span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyYPos </span><span class="s2">&gt; </span><span class="s1">playerClass</span><span class="s2">.</span><span class="s1">yPlayer</span><span class="s2">) {</span>
+                <span class="s1">collisionY </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+            <span class="s2">}</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">collisionX </span><span class="s2">&amp;&amp; </span><span class="s1">collisionY </span><span class="s2">&amp;&amp; </span><span class="s1">schildClass</span><span class="s2">.</span><span class="s1">HP </span><span class="s2">== </span><span class="s3">0</span><span class="s2">) {</span>
+                <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">switchScreen</span><span class="s2">(</span><span class="s4">&quot;DeathScreen&quot;</span><span class="s2">);</span>
+            <span class="s2">} </span><span class="s0">else if </span><span class="s2">(</span><span class="s1">collisionY </span><span class="s2">&amp;&amp; </span><span class="s1">collisionX</span><span class="s2">) {</span>
+                <span class="s1">schildClass</span><span class="s2">.</span><span class="s1">HP</span><span class="s2">--;</span>
+                <span class="s1">enemyClass</span><span class="s2">.</span><span class="s1">allEnemies</span><span class="s2">.</span><span class="s1">remove</span><span class="s2">(</span><span class="s1">enemy</span><span class="s2">);</span>
+                <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addSound</span><span class="s2">(</span><span class="s4">&quot;SchildPickup&quot;</span><span class="s2">, </span><span class="s4">&quot;Sounds/shieldPickup.mp3&quot;</span><span class="s2">);</span>
+                <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">playSound</span><span class="s2">(</span><span class="s4">&quot;SchildPickup&quot;</span><span class="s2">);</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+        <span class="s2">}</span>
+        <span class="s0">if </span><span class="s2">(!</span><span class="s1">subEnemyClass</span><span class="s2">.</span><span class="s1">subEnemies</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">()) {</span>
+            <span class="s1">SubEnemyClass subenemy </span><span class="s2">= </span><span class="s1">subEnemyClass</span><span class="s2">.</span><span class="s1">subEnemies</span><span class="s2">.</span><span class="s1">get</span><span class="s2">(</span><span class="s3">0</span><span class="s2">);</span>
+            <span class="s0">boolean </span><span class="s1">collisionX </span><span class="s2">=</span>
+                    <span class="s1">subenemy</span><span class="s2">.</span><span class="s1">enemyXPos </span><span class="s2">&lt; </span><span class="s3">125 </span><span class="s2">+ </span><span class="s1">playerClass</span><span class="s2">.</span><span class="s1">spriteWidth </span><span class="s2">&amp;&amp;</span>
+                            <span class="s1">subenemy</span><span class="s2">.</span><span class="s1">enemyXPos </span><span class="s2">+ </span><span class="s1">subenemy</span><span class="s2">.</span><span class="s1">enemyXPos </span><span class="s2">+ </span><span class="s3">100 </span><span class="s2">&gt; </span><span class="s3">100</span><span class="s2">;</span>
+
+            <span class="s0">boolean </span><span class="s1">collisionY </span><span class="s2">=</span>
+                    <span class="s1">subenemy</span><span class="s2">.</span><span class="s1">enemyYPos </span><span class="s2">&lt; </span><span class="s1">playerClass</span><span class="s2">.</span><span class="s1">yPlayer </span><span class="s2">+ </span><span class="s1">playerClass</span><span class="s2">.</span><span class="s1">spriteHeight </span><span class="s2">&amp;&amp;</span>
+                            <span class="s1">subenemy</span><span class="s2">.</span><span class="s1">enemyYPos </span><span class="s2">+ </span><span class="s1">subenemy</span><span class="s2">.</span><span class="s1">enemyYPos </span><span class="s2">+ </span><span class="s3">50 </span><span class="s2">&gt; </span><span class="s1">playerClass</span><span class="s2">.</span><span class="s1">yPlayer</span><span class="s2">;</span>
+
+
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">collisionX </span><span class="s2">&amp;&amp; </span><span class="s1">collisionY </span><span class="s2">&amp;&amp; </span><span class="s1">schildClass</span><span class="s2">.</span><span class="s1">HP </span><span class="s2">== </span><span class="s3">0</span><span class="s2">) {</span>
+                <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">switchScreen</span><span class="s2">(</span><span class="s4">&quot;DeathScreen&quot;</span><span class="s2">);</span>
+            <span class="s2">} </span><span class="s0">else if </span><span class="s2">( </span><span class="s1">collisionY </span><span class="s2">&amp;&amp; </span><span class="s1">collisionX</span><span class="s2">){</span>
+                <span class="s1">schildClass</span><span class="s2">.</span><span class="s1">HP</span><span class="s2">--;</span>
+                <span class="s1">subEnemyClass</span><span class="s2">.</span><span class="s1">subEnemies</span><span class="s2">.</span><span class="s1">remove</span><span class="s2">(</span><span class="s3">0</span><span class="s2">);</span>
+                <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addSound</span><span class="s2">(</span><span class="s4">&quot;SchildPickup&quot;</span><span class="s2">,</span><span class="s4">&quot;Sounds/shieldPickup.mp3&quot;</span><span class="s2">);</span>
+                <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">playSound</span><span class="s2">(</span><span class="s4">&quot;SchildPickup&quot;</span><span class="s2">);</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+
+
+    <span class="s0">public static void </span><span class="s1">updateSchildPowerup</span><span class="s2">(</span><span class="s0">float </span><span class="s1">delta</span><span class="s2">, </span><span class="s1">PowerupClass powerUp</span><span class="s2">, </span><span class="s1">SchildClass schildClass</span><span class="s2">) {</span>
+
+        <span class="s5">// 1. Tekenen zolang hij nog niet is opgepakt</span>
+        <span class="s0">if </span><span class="s2">(!</span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">powerupPickedup </span><span class="s2">&amp;&amp; </span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">type </span><span class="s2">== </span><span class="s3">1</span><span class="s2">) {</span>
+            <span class="s1">powerUp</span><span class="s2">.</span><span class="s1">xPosition </span><span class="s2">-= </span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">speed </span><span class="s2">* </span><span class="s1">delta</span><span class="s2">;</span>
+
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">xPosition </span><span class="s2">&gt; -</span><span class="s3">200</span><span class="s2">) {</span>
+                <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawTexture</span><span class="s2">(</span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">textureName</span><span class="s2">, </span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">xPosition</span><span class="s2">, </span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">yposition</span><span class="s2">);</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+
+        <span class="s5">// 2. Powerup is opgepakt → activeer shield éénmalig</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">powerupPickedup </span><span class="s2">&amp;&amp; </span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">type </span><span class="s2">== </span><span class="s3">1 </span><span class="s2">&amp;&amp; !</span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">timerStarted</span><span class="s2">) {</span>
+
+            <span class="s1">schildClass</span><span class="s2">.</span><span class="s1">isactive </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+
+            <span class="s5">// Timer starten</span>
+            <span class="s1">powerUp</span><span class="s2">.</span><span class="s1">hasTimer </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+            <span class="s1">powerUp</span><span class="s2">.</span><span class="s1">duration </span><span class="s2">= </span><span class="s3">10f</span><span class="s2">;</span>
+            <span class="s1">powerUp</span><span class="s2">.</span><span class="s1">timeLeft </span><span class="s2">= </span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">duration</span><span class="s2">;</span>
+            <span class="s1">powerUp</span><span class="s2">.</span><span class="s1">timerStarted </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+
+            <span class="s5">// Powerup verstoppen</span>
+            <span class="s1">powerUp</span><span class="s2">.</span><span class="s1">xPosition </span><span class="s2">= -</span><span class="s3">9999</span><span class="s2">;</span>
+            <span class="s1">powerUp</span><span class="s2">.</span><span class="s1">yposition </span><span class="s2">= -</span><span class="s3">9999</span><span class="s2">;</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+    <span class="s0">public static void </span><span class="s1">updateunlimitedKogels</span><span class="s2">(</span><span class="s0">float </span><span class="s1">delta</span><span class="s2">, </span><span class="s1">PowerupClass powerUp</span><span class="s2">,</span>
+                                             <span class="s1">unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass</span><span class="s2">, </span><span class="s1">PlayerClass player</span><span class="s2">) {</span>
+
+        <span class="s0">if </span><span class="s2">(!</span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">powerupPickedup </span><span class="s2">&amp;&amp; </span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">type </span><span class="s2">== </span><span class="s3">2</span><span class="s2">) {</span>
+            <span class="s1">powerUp</span><span class="s2">.</span><span class="s1">xPosition </span><span class="s2">-= </span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">speed </span><span class="s2">* </span><span class="s1">delta</span><span class="s2">;</span>
+
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">xPosition </span><span class="s2">&lt; </span><span class="s3">0</span><span class="s2">) {</span>
+                <span class="s0">return</span><span class="s2">;</span>
+            <span class="s2">}</span>
+            <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawTexture</span><span class="s2">(</span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">texurename2</span><span class="s2">, </span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">xPosition</span><span class="s2">, </span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">yposition</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">powerupPickedup </span><span class="s2">&amp;&amp; </span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">type </span><span class="s2">== </span><span class="s3">2</span><span class="s2">) {</span>
+            <span class="s1">unlimitedAmmoPowerupClass</span><span class="s2">.</span><span class="s1">isactive </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+
+            <span class="s5">// ❗ FIX: reload direct stoppen</span>
+            <span class="s1">player</span><span class="s2">.</span><span class="s1">isReloading </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+            <span class="s1">player</span><span class="s2">.</span><span class="s1">reloadStartTime </span><span class="s2">= </span><span class="s3">0</span><span class="s2">;</span>
+
+            <span class="s5">// ❗ FIX: ammo instellen op powerup waarden</span>
+            <span class="s1">player</span><span class="s2">.</span><span class="s1">ammo </span><span class="s2">= </span><span class="s3">25</span><span class="s2">;</span>
+
+            <span class="s1">powerUp</span><span class="s2">.</span><span class="s1">xPosition </span><span class="s2">= -</span><span class="s3">100</span><span class="s2">;</span>
+            <span class="s1">powerUp</span><span class="s2">.</span><span class="s1">powerupPickedup </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+    <span class="s0">public static void </span><span class="s1">unlimitedKogelsLogic</span><span class="s2">(</span><span class="s0">float </span><span class="s1">delta</span><span class="s2">, </span><span class="s1">unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass</span><span class="s2">,</span>
+                                            <span class="s1">PlayerClass player</span><span class="s2">,</span><span class="s1">PowerupClass powerupClass</span><span class="s2">){</span>
+
+        <span class="s0">if</span><span class="s2">(</span><span class="s1">unlimitedAmmoPowerupClass</span><span class="s2">.</span><span class="s1">isactive</span><span class="s2">) {</span>
+
+             <span class="s0">if </span><span class="s2">(</span><span class="s1">player</span><span class="s2">.</span><span class="s1">ammo </span><span class="s2">== </span><span class="s3">0</span><span class="s2">) {</span>
+                <span class="s1">unlimitedAmmoPowerupClass</span><span class="s2">.</span><span class="s1">isactive </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+                <span class="s1">unlimitedAmmoPowerupClass</span><span class="s2">.</span><span class="s1">currentTime </span><span class="s2">= </span><span class="s3">0f</span><span class="s2">;</span>
+                <span class="s1">powerupClass</span><span class="s2">.</span><span class="s1">powerupPickedup </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+                <span class="s1">unlimitedAmmoPowerupClass</span><span class="s2">.</span><span class="s1">isactive </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+
+            <span class="s2">}</span>
+
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+
+
+    <span class="s0">public static void </span><span class="s1">checkForPowerupPickup</span><span class="s2">(</span><span class="s1">PlayerClass player</span><span class="s2">, </span><span class="s1">PowerupClass powerUp</span><span class="s2">) {</span>
+        <span class="s0">boolean </span><span class="s1">yCollision </span><span class="s2">= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">yPlayer </span><span class="s2">&lt; </span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">yposition </span><span class="s2">+ </span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">spriteHeight </span><span class="s2">&amp;&amp;</span>
+                <span class="s1">player</span><span class="s2">.</span><span class="s1">yPlayer </span><span class="s2">+ </span><span class="s1">player</span><span class="s2">.</span><span class="s1">spriteHeight </span><span class="s2">&gt; </span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">yposition</span><span class="s2">;</span>
+
+        <span class="s0">boolean </span><span class="s1">xCollision </span><span class="s2">= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">groundLevel </span><span class="s2">&lt; </span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">xPosition </span><span class="s2">+ </span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">spriteWidth </span><span class="s2">&amp;&amp;</span>
+                <span class="s1">player</span><span class="s2">.</span><span class="s1">groundLevel </span><span class="s2">+ </span><span class="s1">player</span><span class="s2">.</span><span class="s1">groundLevel </span><span class="s2">&gt; </span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">xPosition</span><span class="s2">;</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">yCollision </span><span class="s2">&amp;&amp; </span><span class="s1">xCollision</span><span class="s2">) {</span>
+            <span class="s1">powerUp</span><span class="s2">.</span><span class="s1">powerupPickedup </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+        <span class="s2">}</span>
+
+    <span class="s2">}</span>
+
+    <span class="s0">public static void </span><span class="s1">activeSchildUpdate</span><span class="s2">(</span><span class="s1">SchildClass schildClass</span><span class="s2">, </span><span class="s1">PlayerClass playerClass</span><span class="s2">) {</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">schildClass</span><span class="s2">.</span><span class="s1">isactive</span><span class="s2">) {</span>
+            <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">getSpriteBatch</span><span class="s2">().</span><span class="s1">setColor</span><span class="s2">(</span><span class="s3">1</span><span class="s2">, </span><span class="s3">1</span><span class="s2">, </span><span class="s3">1</span><span class="s2">, </span><span class="s3">0.5f</span><span class="s2">);</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">schildClass</span><span class="s2">.</span><span class="s1">HP </span><span class="s2">== </span><span class="s3">2</span><span class="s2">) {</span>
+                <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawTexture</span><span class="s2">(</span><span class="s1">schildClass</span><span class="s2">.</span><span class="s1">spriteName</span><span class="s2">, </span><span class="s3">65</span><span class="s2">, </span><span class="s1">playerClass</span><span class="s2">.</span><span class="s1">yPlayer </span><span class="s2">- </span><span class="s3">10</span><span class="s2">);</span>
+            <span class="s2">} </span><span class="s0">else if </span><span class="s2">(</span><span class="s1">schildClass</span><span class="s2">.</span><span class="s1">HP </span><span class="s2">== </span><span class="s3">1</span><span class="s2">) {</span>
+                <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawTexture</span><span class="s2">(</span><span class="s1">schildClass</span><span class="s2">.</span><span class="s1">spritename2</span><span class="s2">, </span><span class="s3">65</span><span class="s2">, </span><span class="s1">playerClass</span><span class="s2">.</span><span class="s1">yPlayer </span><span class="s2">- </span><span class="s3">10</span><span class="s2">);</span>
+            <span class="s2">}</span>
+            <span class="s0">else </span><span class="s2">{</span>
+                <span class="s1">schildClass</span><span class="s2">.</span><span class="s1">isactive </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+            <span class="s2">}</span>
+            <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">getSpriteBatch</span><span class="s2">().</span><span class="s1">setColor</span><span class="s2">(</span><span class="s3">1</span><span class="s2">, </span><span class="s3">1</span><span class="s2">, </span><span class="s3">1</span><span class="s2">, </span><span class="s3">1</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+
+    <span class="s2">}</span>
+
+    <span class="s0">public static void </span><span class="s1">checkShieldCollisionKnife</span><span class="s2">(</span><span class="s1">SchildClass schildClass</span><span class="s2">, </span><span class="s1">ProjectileClass projectileClass</span><span class="s2">, </span><span class="s1">PlayerClass playerClass</span><span class="s2">) {</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">schildClass</span><span class="s2">.</span><span class="s1">isactive</span><span class="s2">) {</span>
+            <span class="s0">for </span><span class="s2">(</span><span class="s1">ProjectileClass p </span><span class="s2">: </span><span class="s1">projectileClass</span><span class="s2">.</span><span class="s1">projectiles</span><span class="s2">) {</span>
+
+                <span class="s0">float </span><span class="s1">mesRechts </span><span class="s2">= </span><span class="s1">p</span><span class="s2">.</span><span class="s1">xposition </span><span class="s2">+ </span><span class="s3">50</span><span class="s2">;</span>
+                <span class="s0">float </span><span class="s1">mesLinks </span><span class="s2">= </span><span class="s1">p</span><span class="s2">.</span><span class="s1">xposition</span><span class="s2">;</span>
+                <span class="s0">float </span><span class="s1">mesTop </span><span class="s2">= </span><span class="s1">p</span><span class="s2">.</span><span class="s1">yposition </span><span class="s2">+ </span><span class="s3">50</span><span class="s2">;</span>
+                <span class="s0">float </span><span class="s1">mesBottom </span><span class="s2">= </span><span class="s1">p</span><span class="s2">.</span><span class="s1">yposition</span><span class="s2">;</span>
+
+                <span class="s0">float </span><span class="s1">schildRechts </span><span class="s2">= </span><span class="s3">65 </span><span class="s2">+ </span><span class="s3">250</span><span class="s2">;</span>
+                <span class="s0">float </span><span class="s1">schildLinks </span><span class="s2">= </span><span class="s3">65 </span><span class="s2">+ </span><span class="s3">75</span><span class="s2">;</span>
+                <span class="s0">float </span><span class="s1">schildTop </span><span class="s2">= </span><span class="s1">playerClass</span><span class="s2">.</span><span class="s1">yPlayer </span><span class="s2">+ </span><span class="s3">100 </span><span class="s2">;</span>
+                <span class="s0">float </span><span class="s1">schildBottom </span><span class="s2">= </span><span class="s1">playerClass</span><span class="s2">.</span><span class="s1">yPlayer</span><span class="s2">;</span>
+
+                <span class="s0">boolean </span><span class="s1">hit </span><span class="s2">=</span>
+                        <span class="s1">mesLinks </span><span class="s2">&lt; </span><span class="s1">schildRechts </span><span class="s2">&amp;&amp;</span>
+                                <span class="s1">mesRechts </span><span class="s2">&gt; </span><span class="s1">schildLinks </span><span class="s2">&amp;&amp;</span>
+                                <span class="s1">mesBottom </span><span class="s2">&lt; </span><span class="s1">schildTop </span><span class="s2">&amp;&amp;</span>
+                                <span class="s1">mesTop </span><span class="s2">&gt; </span><span class="s1">schildBottom</span><span class="s2">;</span>
+
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">hit</span><span class="s2">) {</span>
+                    <span class="s1">schildClass</span><span class="s2">.</span><span class="s1">HP</span><span class="s2">--;</span>
+                    <span class="s1">p</span><span class="s2">.</span><span class="s1">remove </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+                    <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addSound</span><span class="s2">(</span><span class="s4">&quot;SchildPickup&quot;</span><span class="s2">,</span><span class="s4">&quot;Sounds/shieldPickup.mp3&quot;</span><span class="s2">);</span>
+                    <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">playSound</span><span class="s2">(</span><span class="s4">&quot;SchildPickup&quot;</span><span class="s2">);</span>
+
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+
+            <span class="s1">projectileClass</span><span class="s2">.</span><span class="s1">projectiles</span><span class="s2">.</span><span class="s1">removeIf</span><span class="s2">(</span><span class="s1">p -&gt; p</span><span class="s2">.</span><span class="s1">remove</span><span class="s2">);</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+<span class="s2">}</span></pre>
+</body>
+</html>
