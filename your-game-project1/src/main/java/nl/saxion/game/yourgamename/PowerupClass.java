@@ -6,19 +6,21 @@ import nl.saxion.gameapp.GameApp;
 public class PowerupClass {
     float xPosition = 500;
     float yposition = 150;
-    float speed = 100;
+    float speed = 300;
     float spriteWidth = 100;
     float spriteHeight = 100;
     String filepath;
     String textureName;
     String filepath2;
     String texurename2;
-    int type = 2;
+    int type = 0;
     boolean powerupPickedup;
     public boolean hasTimer = false;
     public float duration = 0f;
     public float timeLeft = 0f;
     public boolean timerStarted = false;
+    public float spawninterval = 30f;
+    public float spawntimer = 20f;
 
     public PowerupClass(String filepath, String textureName, String filepath2, String texurename2){
         this.textureName = textureName;
