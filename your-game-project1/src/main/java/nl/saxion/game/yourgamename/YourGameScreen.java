@@ -14,7 +14,7 @@ public class YourGameScreen extends ScalableGameScreen {
     public SubEnemyClass subEnemyClass;
     public flamethrowerClass flamethrowerClass;
 
-    // Nieuw: obstacle
+    // Nieuw
     public ObstacleClass obstacle;
 
     public YourGameScreen(PlayerClass player) {
@@ -35,8 +35,6 @@ public class YourGameScreen extends ScalableGameScreen {
         GameApp.addTexture("brocolli", "img/brocolli3.png");
         GameApp.addTexture("block", "img/block1.png");
         GameApp.addTexture("coin", "img/munt.png");
-
-        // Nieuw: obstacle texture
         GameApp.addTexture("obstacle", "img/obstacle.png");
 
         for (int i = 0; i < MuzzleFlash.TOTAL_FRAMES; i++) {
@@ -77,14 +75,16 @@ public class YourGameScreen extends ScalableGameScreen {
                 "unlimitedkogels"
         );
 
-        // Nieuw: obstacle aanmaken
+        // Nieuw obstakel
         obstacle = new ObstacleClass(
-                1500,                 // startpositie
-                player.groundLevel,   // op de vloer
-                110, 70,              // hitbox
-                150, 150,             // texture grootte
+                1500,
+                player.groundLevel,
+                110, 70,     // hitbox
+                150, 150,    // texture
                 "obstacle"
         );
+
+
     }
 
     @Override
@@ -106,18 +106,16 @@ public class YourGameScreen extends ScalableGameScreen {
                 getWorldHeight()
         );
 
-        // --- Obstakel update ---
+        // --- Obstakel ---
         obstacle.update(delta);
         obstacle.draw();
 
-        // Collision: als speler niet springt → dood
         if (obstacle.collidesWith(player) && player.jumpCount == 0) {
             GameApp.switchScreen("DeathScreen");
             GameApp.endSpriteRendering();
             return;
         }
 
-        // Respawn obstacle
         if (obstacle.x + obstacle.width < 0) {
             obstacle = new ObstacleClass(
                     PlayerClass.worldX + 1200,
@@ -127,6 +125,7 @@ public class YourGameScreen extends ScalableGameScreen {
                     "obstacle"
             );
         }
+
 
         // --- Rest van je game ---
         Methodes_Rutger.update(player, unlimitedAmmoPowerupClass);
