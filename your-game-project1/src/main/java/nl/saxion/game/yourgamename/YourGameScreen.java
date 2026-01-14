@@ -11,6 +11,7 @@ public class YourGameScreen extends ScalableGameScreen {
     public SchildClass schildClass;
     public unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass;
     public SubEnemyClass subEnemyClass;
+    public flamethrowerClass flamethrowerClass;
 
     public YourGameScreen(PlayerClass player) {
         super(1280, 720);
@@ -43,10 +44,10 @@ public class YourGameScreen extends ScalableGameScreen {
         GameApp.addSound("block", "Sounds/block.mp3");
 
         // Nieuwe enemy/projectiel
-        enemyClass = new EnemyClass("img/chef.png", "chef","img/enemy2.png","enemy2",1100, 150, 1000);
+        flamethrowerClass = new flamethrowerClass(0,0);
+        enemyClass = new EnemyClass("img/chef.png", "chef","img/ketchup.png","enemy2",1100, 150, 1000);
         projectileClass = new ProjectileClass("img/mes.png", "mes",
           enemyClass.enemyXPos, enemyClass.enemyYPos + 20, 200);
-        powerupClassSchild = new PowerupClass("img/schild.png", "schild","img/unlimitedKogels.png","unlimitedkogels");
         schildClass = new SchildClass("img/activeSchild.png", "fullschild", "crackedSchild","img/activeCrackedShield.png");
         unlimitedAmmoPowerupClass = new unlimitedAmmoPowerupClass();
         subEnemyClass = new SubEnemyClass("img/stokbrood.png","stokbrood",enemyClass.enemyXPos,enemyClass.enemyYPos,350);
@@ -103,9 +104,11 @@ Methodes_Rutger.checkBulletHitsEnemy(player,enemyClass);
         Methodes_Rutger.updateBomb(player, enemyClass);
         Methodes_Maxje.addMes(delta,projectileClass,enemyClass);
         Methodes_Maxje.updateMes(delta, projectileClass,enemyClass);
-        Methodes_Maxje.updateSubEnemies(subEnemyClass, delta,enemyClass);
+        //Methodes_Maxje.updateSubEnemies(subEnemyClass, delta,enemyClass);
         Methodes_Rutger.updatePowerupTimer(delta, powerupClassSchild, schildClass);
         Methodes_Rutger.drawPowerupTimer(powerupClassSchild);
+        Methodes_Maxje.genereerRandomPowerup(powerupClassSchild,delta);
+        Methodes_Maxje.tekenFlamethrower(delta,flamethrowerClass,enemyClass);
 
         GameApp.endSpriteRendering();
     }

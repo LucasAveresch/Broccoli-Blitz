@@ -13,7 +13,7 @@ public class EnemyClass {
     public boolean enemyIsDead = false;
     public String textureKey;
     public String textureKey2;
-    public int type = 2;
+    public int type = 0;
     public float currentTimer = 0f;
     public float spawnInterval = 5f;
     ArrayList<EnemyClass> allEnemies = new ArrayList<>();
