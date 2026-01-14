@@ -17,9 +17,7 @@ public class YourGameScreen extends ScalableGameScreen {
 
     public ObstacleClass obstacle;
 
-    // was: public PlatformClass platform;
     private PlatformManager platformManager;
-
     private final Random rng = new Random();
 
     private int baseGroundLevel;
@@ -35,7 +33,10 @@ public class YourGameScreen extends ScalableGameScreen {
         Methodes_Rutger.resetRoundStats(player);
         Methodes_Lucas.LucasParallaxMethods.initParallax(0);
 
-        baseGroundLevel = player.groundLevel;
+        // ⭐ ALTIJD vloer resetten bij nieuwe ronde
+        player.groundLevel = 100;
+        player.yPlayer = 100;
+        baseGroundLevel = 100;
 
         GameApp.addTexture("kogel", "img/kogel.png");
         GameApp.addTexture("brocolli", "img/brocolli3.png");
@@ -94,16 +95,17 @@ public class YourGameScreen extends ScalableGameScreen {
                 "unlimitedkogels"
         );
 
+        // ⭐ Eerste obstacle op de vloer
         obstacle = new ObstacleClass(
                 1500,
-                player.groundLevel,
+                baseGroundLevel,
                 110, 70,
                 150, 150,
                 "obstacle"
         );
 
-        // ⭐ PlatformManager initialiseren en paar startplatformen maken
-        platformManager = new PlatformManager(player.groundLevel);
+        // ⭐ PlatformManager + startplatformen
+        platformManager = new PlatformManager(baseGroundLevel);
         platformManager.spawnPlatform(1600);
         platformManager.spawnPlatform(2200);
         platformManager.spawnPlatform(2800);
@@ -128,72 +130,55 @@ public class YourGameScreen extends ScalableGameScreen {
                 getWorldHeight()
         );
 
-        // ----------------------------------------------------
-        // RESET groundLevel naar vloer
-        // ----------------------------------------------------
+        // ⭐ Elke frame vloer resetten
         player.groundLevel = baseGroundLevel;
 
-        // ----------------------------------------------------
-        // PLATFORM UPDATE + DRAW (ALLE PLATFORMEN)
-        // ----------------------------------------------------
+        // ⭐ Platform update + draw
         platformManager.update(delta);
         platformManager.draw();
 
-        // ----------------------------------------------------
-        // ⭐ PLATFORM COLLISION MET ALLE PLATFORMEN
-        // ----------------------------------------------------
+        // ⭐ Platform collision
         for (PlatformClass platform : platformManager.platforms) {
 
             if (platform.playerIsOnTop(player)) {
 
-                int platformTop = (int)(platform.y + platform.height);
+                int platformTop = (int) (platform.y + platform.height);
 
                 if (player.yPlayer < platformTop) {
                     player.yPlayer = platformTop;
                 }
 
-                // groundLevel omhoog zodat physics op platform werkt
                 player.groundLevel = platformTop;
             }
         }
 
-        // ----------------------------------------------------
-        // OBSTAKEL
-        // ----------------------------------------------------
+        // ⭐ Obstacle update + draw
         obstacle.update(delta);
         obstacle.draw();
 
-        if (obstacle.collidesWith(player) && player.jumpCount == 0) {
-            GameApp.switchScreen("DeathScreen");
-            GameApp.endSpriteRendering();
-            return;
-        }
-
+        // ⭐ Random nieuwe obstacle op de vloer
         if (obstacle.x + obstacle.width < 0) {
+
+            float randomDistance = 1000 + rng.nextInt(1000);
+
             obstacle = new ObstacleClass(
-                    PlayerClass.worldX + 1200,
-                    player.groundLevel,
+                    PlayerClass.worldX + randomDistance,
+                    baseGroundLevel,   // altijd vloer
                     110, 70,
                     150, 150,
                     "obstacle"
             );
         }
 
-        // ----------------------------------------------------
-        // ⭐ NU PAS Rutger physics-engine
-        // ----------------------------------------------------
+        // ⭐ Physics-engine
         Methodes_Rutger.update(player, unlimitedAmmoPowerupClass);
 
-        // ----------------------------------------------------
-        // PLATFORM RESPAWN (NIEUWE PLATFORMEN ERBIJ)
-        // ----------------------------------------------------
-        if (rng.nextFloat() < 0.01f) { // 1% kans per frame op nieuw platform
+        // ⭐ Random platform spawn (geen limiet)
+        if (rng.nextFloat() < 0.003f) {  // 0.3% kans per frame
             platformManager.spawnPlatform(PlayerClass.worldX + 1600);
         }
 
-        // ----------------------------------------------------
-        // REST VAN JE GAME LOGIC
-        // ----------------------------------------------------
+        // ⭐ Rest van de game logic
         Methodes_Rutger.spawnCoins();
         Methodes_Rutger.updateCoins(player);
         Methodes_Rutger.updateScore(player, delta);
