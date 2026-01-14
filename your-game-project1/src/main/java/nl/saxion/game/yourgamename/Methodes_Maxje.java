@@ -11,88 +11,58 @@ public class Methodes_Maxje {
 
     public static void updateEnemies(float delta, EnemyClass enemyClass, SubEnemyClass subEnemyClass) {
 
-            if (enemyClass.allEnemies.isEmpty()) return;
-            EnemyClass enemy = enemyClass.allEnemies.get(0);
-            if (enemy.type == 1) {
-                enemy.enemyXPos -= enemy.enemyspeed * delta;
+        if (enemyClass.allEnemies.isEmpty()) return;
+        EnemyClass enemy = enemyClass.allEnemies.get(0);
+        if (enemy.type == 1) {
+            enemy.enemyXPos -= enemy.enemyspeed * delta;
 
-                if (enemy.enemyXPos < 0) {
-                    enemyClass.allEnemies.remove(0);
-                    enemy.type = 0;
-                    return;
+            if (enemy.enemyXPos < 0) {
+                enemyClass.allEnemies.remove(0);
+                enemy.type = 0;
+                return;
 
-
-                }
-
-                GameApp.drawTexture(enemy.textureKey, enemy.enemyXPos, enemy.enemyYPos);
-            } else if (enemy.type == 2) {
-                enemy.enemyXPos -= enemy.enemyspeed * delta;
-
-                if (enemy.enemyXPos < 0) {
-                    enemyClass.allEnemies.remove(0);
-                    enemy.type = 0;
-                    return;
-
-                }
-
-                GameApp.drawTexture(enemy.textureKey2, enemy.enemyXPos, enemy.enemyYPos);
-
-                if (subEnemyClass.subEnemies.isEmpty()) {
-                    subEnemyClass.currentTimer += delta;
-                    if (subEnemyClass.currentTimer >= subEnemyClass.spawnInterval) {
-                        subEnemyClass.currentTimer = 0f;
-                        SubEnemyClass subEnemyClass1 = new SubEnemyClass("img/stokbrood.png", "StokbroodNoLegs", enemy.enemyXPos, enemy.enemyYPos, 100);
-                        subEnemyClass.subEnemies.add(subEnemyClass1);
-                    }
-
-                }
 
             }
-        }
-        public static void updateSubEnemies(SubEnemyClass subEnemyClass, float delta,EnemyClass enemyClass) {
-        if(subEnemyClass.subEnemies.isEmpty()){ return; }
-            SubEnemyClass subenemy  = subEnemyClass.subEnemies.get(0);
-            if (!subEnemyClass.subEnemies.isEmpty()) {
-                subenemy.enemyYPos -= (subEnemyClass.enemyspeed) * delta;
-                if(subenemy.enemyYPos <= 100){
-                    subenemy.enemyYPos = 100;
-                }
+
+            GameApp.drawTexture(enemy.textureKey, enemy.enemyXPos, enemy.enemyYPos);
+        } else if (enemy.type == 2) {
+            enemy.enemyXPos -= enemy.enemyspeed * delta;
+
+            if (enemy.enemyXPos < 0) {
+                enemyClass.allEnemies.remove(0);
+                enemy.type = 0;
+                return;
+
             }
-                if(subenemy.enemyYPos <= 100){
-                subenemy.enemyXPos -= subEnemyClass.enemyspeed * delta;
-                if(subenemy.enemyXPos < 0){
-                    subEnemyClass.subEnemies.remove(subenemy);
-                }
-            }
-            GameApp.drawTexture(subEnemyClass.textureKey, subenemy.enemyXPos, subenemy.enemyYPos);
+
+            GameApp.drawTexture(enemy.textureKey2, enemy.enemyXPos, enemy.enemyYPos, 175, 175);
 
         }
+    }
 
 
-    public static void selectEnemyWillekeurig(float delta, EnemyClass enemyClass){
+
+    public static void selectEnemyWillekeurig(float delta, EnemyClass enemyClass) {
         Random r = new Random();
         boolean spawnNewEnemy = false;
 
         enemyClass.currentTimer += delta;
 
-        if(enemyClass.currentTimer >= enemyClass.spawnInterval){
+        if (enemyClass.currentTimer >= enemyClass.spawnInterval) {
             spawnNewEnemy = true;
             enemyClass.currentTimer = 0f;
         }
-        if(enemyClass.allEnemies.isEmpty() && spawnNewEnemy){
+        if (enemyClass.allEnemies.isEmpty() && spawnNewEnemy) {
             int randomnumber = r.nextInt(1, 3);
 
-            EnemyClass enemyClass1 = new EnemyClass("img/chef.png", "chef","img/enemy2.png","enemy2",1100, 150, 200);
+            EnemyClass enemyClass1 = new EnemyClass("img/chef.png", "chef", "img/ketchup.png", "enemy2", 1100, 150, 200);
             enemyClass1.type = randomnumber;
-            if(enemyClass1.type == 2){
-                enemyClass1.enemyYPos = enemyClass1.enemyYPos + 200;
-            }
+
 
             enemyClass.allEnemies.add(enemyClass1);
             spawnNewEnemy = false;
         }
     }
-
 
 
     public static void addMes(float delta, ProjectileClass projectileClass, EnemyClass enemyClass) {
@@ -155,56 +125,55 @@ public class Methodes_Maxje {
     }
 
     public static void checkCollisionEnemy(PlayerClass playerClass, EnemyClass enemyClass, SubEnemyClass subEnemyClass, SchildClass schildClass, PowerupClass powerUp) {
-        if(!enemyClass.allEnemies.isEmpty()){
+        if (!enemyClass.allEnemies.isEmpty()) {
             EnemyClass enemy = enemyClass.allEnemies.get(0);
-        if (enemy.type == 1) {
-            boolean collisionX =
-                    enemy.enemyXPos < 100 + playerClass.spriteWidth &&
-                            enemy.enemyXPos + 50 > 100;
+            if (enemy.type == 1) {
+                boolean collisionX =
+                        enemy.enemyXPos < 100 + playerClass.spriteWidth &&
+                                enemy.enemyXPos + 50 > 100;
 
-            boolean collisionY =
-                    enemy.enemyYPos < playerClass.yPlayer + playerClass.spriteHeight &&
-                            enemy.enemyYPos + 150 > playerClass.yPlayer;
+                boolean collisionY =
+                        enemy.enemyYPos < playerClass.yPlayer + playerClass.spriteHeight &&
+                                enemy.enemyYPos + 150 > playerClass.yPlayer;
 
 
-            if (collisionX && collisionY && schildClass.HP == 0) {
-                GameApp.switchScreen("DeathScreen");
-            }
-            else if (collisionY && collisionX) {
+                if (collisionX && collisionY && schildClass.HP == 0) {
+                    GameApp.switchScreen("DeathScreen");
+                } else if (collisionY && collisionX) {
 
-                schildClass.HP--;
+                    schildClass.HP--;
 
-                // ❗ Schild gebroken → timer stoppen
-                if (schildClass.HP <= 0) {
-                    schildClass.isactive = false;
+                    // ❗ Schild gebroken → timer stoppen
+                    if (schildClass.HP <= 0) {
+                        schildClass.isactive = false;
 
-                    powerUp.hasTimer = false;
-                    powerUp.timeLeft = 0;
-                    powerUp.timerStarted = false;
+                        powerUp.hasTimer = false;
+                        powerUp.timeLeft = 0;
+                        powerUp.timerStarted = false;
+                    }
+
+                    enemyClass.allEnemies.remove(0);
+                    GameApp.addSound("SchildPickup", "Sounds/shieldPickup.mp3");
+                    GameApp.playSound("SchildPickup");
                 }
-
-                enemyClass.allEnemies.remove(0);
-                GameApp.addSound("SchildPickup","Sounds/shieldPickup.mp3");
-                GameApp.playSound("SchildPickup");
+            } else if (enemy.type == 2) {
+                boolean collisionX = false;
+                boolean collisionY = false;
+                if (enemy.enemyXPos < 100 + playerClass.spriteWidth && enemy.enemyXPos > 100) {
+                    collisionX = true;
+                }
+                if (enemy.enemyYPos < playerClass.yPlayer + playerClass.spriteHeight && enemy.enemyYPos > playerClass.yPlayer) {
+                    collisionY = true;
+                }
+                if (collisionX && collisionY && schildClass.HP == 0) {
+                    GameApp.switchScreen("DeathScreen");
+                } else if (collisionY && collisionX) {
+                    schildClass.HP--;
+                    enemyClass.allEnemies.remove(enemy);
+                    GameApp.addSound("SchildPickup", "Sounds/shieldPickup.mp3");
+                    GameApp.playSound("SchildPickup");
+                }
             }
-        } else if (enemy.type == 2) {
-            boolean collisionX = false;
-            boolean collisionY = false;
-            if (enemy.enemyXPos < 100 + playerClass.spriteWidth && enemy.enemyXPos > 100) {
-                collisionX = true;
-            }
-            if (enemy.enemyYPos < playerClass.yPlayer + playerClass.spriteHeight && enemy.enemyYPos > playerClass.yPlayer) {
-                collisionY = true;
-            }
-            if (collisionX && collisionY && schildClass.HP == 0) {
-                GameApp.switchScreen("DeathScreen");
-            } else if (collisionY && collisionX) {
-                schildClass.HP--;
-                enemyClass.allEnemies.remove(enemy);
-                GameApp.addSound("SchildPickup", "Sounds/shieldPickup.mp3");
-                GameApp.playSound("SchildPickup");
-            }
-        }
         }
         if (!subEnemyClass.subEnemies.isEmpty()) {
             SubEnemyClass subenemy = subEnemyClass.subEnemies.get(0);
@@ -219,15 +188,25 @@ public class Methodes_Maxje {
 
             if (collisionX && collisionY && schildClass.HP == 0) {
                 GameApp.switchScreen("DeathScreen");
-            } else if ( collisionY && collisionX){
+            } else if (collisionY && collisionX) {
                 schildClass.HP--;
                 subEnemyClass.subEnemies.remove(0);
-                GameApp.addSound("SchildPickup","Sounds/shieldPickup.mp3");
+                GameApp.addSound("SchildPickup", "Sounds/shieldPickup.mp3");
                 GameApp.playSound("SchildPickup");
             }
         }
     }
 
+    public static void genereerRandomPowerup(PowerupClass powerupClass, float delta) {
+        powerupClass.spawntimer += delta;
+        if (powerupClass.spawntimer >= powerupClass.spawninterval) {
+            Random r = new Random();
+            int randomint = r.nextInt(1, 3);
+            powerupClass.type = randomint;
+            powerupClass.xPosition = 1200;
+            powerupClass.spawntimer = 0f;
+        }
+    }
 
 
     public static void updateSchildPowerup(float delta, PowerupClass powerUp, SchildClass schildClass) {
@@ -251,12 +230,14 @@ public class Methodes_Maxje {
             powerUp.duration = 10f;
             powerUp.timeLeft = powerUp.duration;
             powerUp.timerStarted = true;
+            schildClass.HP = 2;
 
             // Powerup verstoppen
             powerUp.xPosition = -9999;
             powerUp.yposition = -9999;
         }
     }
+
     public static void updateunlimitedKogels(float delta, PowerupClass powerUp,
                                              unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass, PlayerClass player) {
 
@@ -280,15 +261,16 @@ public class Methodes_Maxje {
             player.ammo = 25;
 
             powerUp.xPosition = -100;
-            powerUp.powerupPickedup = true;
+            powerUp.powerupPickedup = false;
         }
     }
+
     public static void unlimitedKogelsLogic(float delta, unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass,
-                                            PlayerClass player,PowerupClass powerupClass){
+                                            PlayerClass player, PowerupClass powerupClass) {
 
-        if(unlimitedAmmoPowerupClass.isactive) {
+        if (unlimitedAmmoPowerupClass.isactive) {
 
-             if (player.ammo == 0) {
+            if (player.ammo == 0) {
                 unlimitedAmmoPowerupClass.isactive = false;
                 unlimitedAmmoPowerupClass.currentTime = 0f;
                 powerupClass.powerupPickedup = false;
@@ -298,7 +280,6 @@ public class Methodes_Maxje {
 
         }
     }
-
 
 
     public static void checkForPowerupPickup(PlayerClass player, PowerupClass powerUp) {
@@ -321,8 +302,7 @@ public class Methodes_Maxje {
                 GameApp.drawTexture(schildClass.spriteName, 65, playerClass.yPlayer - 10);
             } else if (schildClass.HP == 1) {
                 GameApp.drawTexture(schildClass.spritename2, 65, playerClass.yPlayer - 10);
-            }
-            else {
+            } else {
                 schildClass.isactive = false;
             }
             GameApp.getSpriteBatch().setColor(1, 1, 1, 1);
@@ -343,7 +323,7 @@ public class Methodes_Maxje {
 
                 float schildRechts = 65 + 250;
                 float schildLinks = 65 + 75;
-                float schildTop = playerClass.yPlayer + 100 ;
+                float schildTop = playerClass.yPlayer + 100;
                 float schildBottom = playerClass.yPlayer;
 
                 boolean hit =
@@ -355,7 +335,7 @@ public class Methodes_Maxje {
                 if (hit) {
                     schildClass.HP--;
                     p.remove = true;
-                    GameApp.addSound("SchildPickup","Sounds/shieldPickup.mp3");
+                    GameApp.addSound("SchildPickup", "Sounds/shieldPickup.mp3");
                     GameApp.playSound("SchildPickup");
 
                 }
@@ -364,4 +344,58 @@ public class Methodes_Maxje {
             projectileClass.projectiles.removeIf(p -> p.remove);
         }
     }
-}
+
+    public static void tekenFlamethrower(float delta, flamethrowerClass flame, EnemyClass enemy) {
+
+        if (enemy.allEnemies.isEmpty() && !flame.fired) {
+            flame.frame = 0;
+            flame.fired = false;
+            flame.timer = 0f;
+            return;
+        }
+
+        EnemyClass e = null;
+
+        if (!enemy.allEnemies.isEmpty()) {
+            e = enemy.allEnemies.get(0);
+        }
+
+        if (!flame.fired) {
+
+            if (e == null || e.type != 2) {
+                flame.frame = 0;
+                flame.fired = false;
+                flame.timer = 0f;
+                return;
+            }
+
+            flame.timer += delta;
+
+            if (flame.timer >= flame.interval) {
+                flame.timer = 0f;
+                flame.frame++;
+
+                if (flame.frame >= 7) {
+                    flame.fired = true;
+
+                    flame.x = e.enemyXPos;
+                    flame.y = e.enemyYPos;
+                }
+            }
+
+            String frameName = "flame" + (flame.frame + 1);
+            GameApp.drawTexture(frameName, e.enemyXPos - 20, e.enemyYPos, 100, 100);
+            return;
+        }
+
+
+        flame.x -= flame.speed * delta;
+
+        GameApp.drawTexture("flame8", flame.x, flame.y, 100, 100);
+
+        if (flame.x < -100) {
+            flame.frame = 0;
+            flame.fired = false;
+            flame.timer = 0f;
+        }
+    }}

@@ -47,7 +47,7 @@ public class MainMenuScreen extends ScalableGameScreen {
         if (!isStarting) {
             PlayerClass.worldX += 100 * delta; // langzame scroll in menu
         }
-        Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(PlayerClass.worldX, getWorldWidth());
+        Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(PlayerClass.worldX, getWorldWidth(),getWorldHeight());
 
         // Broccoli bewegen + tekenen
         broccoliX = Methodes_Rutger.handleMenuBroccoli(player, broccoliX, isStarting, delta);

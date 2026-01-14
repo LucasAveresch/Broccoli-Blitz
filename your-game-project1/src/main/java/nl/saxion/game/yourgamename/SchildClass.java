@@ -6,7 +6,7 @@ public class SchildClass {
     float Xposition;
     float YPosition;
     float speed;
-    int HP = 2;
+    int HP = 0;
     float maxTime = 10f;
     float currentTime = 0f;
     String spriteName;
