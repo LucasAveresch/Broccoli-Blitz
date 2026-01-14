@@ -16,9 +16,10 @@ public class YourGameScreen extends ScalableGameScreen {
     public flamethrowerClass flamethrowerClass;
 
     public ObstacleClass obstacle;
-    public PlatformClass platform;
 
-    private Random rng = new Random();
+    private PlatformManager platformManager;
+    private final Random rng = new Random();
+
     private int baseGroundLevel;
 
     public YourGameScreen(PlayerClass player) {
@@ -32,7 +33,10 @@ public class YourGameScreen extends ScalableGameScreen {
         Methodes_Rutger.resetRoundStats(player);
         Methodes_Lucas.LucasParallaxMethods.initParallax(0);
 
-        baseGroundLevel = player.groundLevel;
+        // ⭐ ALTIJD vloer resetten bij nieuwe ronde
+        player.groundLevel = 100;
+        player.yPlayer = 100;
+        baseGroundLevel = 100;
 
         GameApp.addTexture("kogel", "img/kogel.png");
         GameApp.addTexture("brocolli", "img/brocolli3.png");
@@ -91,33 +95,29 @@ public class YourGameScreen extends ScalableGameScreen {
                 "unlimitedkogels"
         );
 
+        // ⭐ Eerste obstacle op de vloer
         obstacle = new ObstacleClass(
                 1500,
-                player.groundLevel,
+                baseGroundLevel,
                 110, 70,
                 150, 150,
                 "obstacle"
         );
 
-        // ⭐ Eerste platform: random grootte + beweging
-        platform = new PlatformClass(
-                1800,
-                player.groundLevel + 150,
-                300 + rng.nextInt(200),     // breedte 300–500
-                40,
-                300 + rng.nextInt(200),
-                60,
-                "platform",
-                40 + rng.nextInt(40),       // moveSpeed 40–80
-                40 + rng.nextInt(60)        // moveRange 40–100
-        );
+        // ⭐ PlatformManager + startplatformen
+        platformManager = new PlatformManager(baseGroundLevel);
+        platformManager.spawnPlatform(1600);
+        platformManager.spawnPlatform(2200);
+        platformManager.spawnPlatform(2800);
     }
 
     @Override
     public void render(float delta) {
         super.render(delta);
 
-        if (Methodes_Rutger.checkDeath(player)) return;
+        if (Methodes_Rutger.checkDeath(player)) {
+            return;
+        }
 
         GameApp.clearScreen("black");
         GameApp.startSpriteRendering();
@@ -130,49 +130,55 @@ public class YourGameScreen extends ScalableGameScreen {
                 getWorldHeight()
         );
 
-        // ⭐ Reset groundLevel naar vloer
+        // ⭐ Elke frame vloer resetten
         player.groundLevel = baseGroundLevel;
 
-        // ⭐ Update + draw platform
-        platform.update(delta);
-        platform.draw();
+        // ⭐ Platform update + draw
+        platformManager.update(delta);
+        platformManager.draw();
 
-        // ⭐ PLATFORM COLLISION FIX
-        if (platform.playerIsOnTop(player)) {
+        // ⭐ Platform collision
+        for (PlatformClass platform : platformManager.platforms) {
 
-            int platformTop = (int)(platform.y + platform.height);
+            if (platform.playerIsOnTop(player)) {
 
-            if (player.yPlayer < platformTop) {
-                player.yPlayer = platformTop;
+                int platformTop = (int) (platform.y + platform.height);
+
+                if (player.yPlayer < platformTop) {
+                    player.yPlayer = platformTop;
+                }
+
+                player.groundLevel = platformTop;
             }
-
-            player.groundLevel = platformTop;
         }
 
-        // Obstakel
+        // ⭐ Obstacle update + draw
         obstacle.update(delta);
         obstacle.draw();
 
-        if (obstacle.collidesWith(player) && player.jumpCount == 0) {
-            GameApp.switchScreen("DeathScreen");
-            GameApp.endSpriteRendering();
-            return;
-        }
-
+        // ⭐ Random nieuwe obstacle op de vloer
         if (obstacle.x + obstacle.width < 0) {
+
+            float randomDistance = 1000 + rng.nextInt(1000);
+
             obstacle = new ObstacleClass(
-                    PlayerClass.worldX + 1200,
-                    player.groundLevel,
+                    PlayerClass.worldX + randomDistance,
+                    baseGroundLevel,   // altijd vloer
                     110, 70,
                     150, 150,
                     "obstacle"
             );
         }
 
-        // ⭐ NU PAS Rutger physics-engine
+        // ⭐ Physics-engine
         Methodes_Rutger.update(player, unlimitedAmmoPowerupClass);
 
-        // Rest van je game logic
+        // ⭐ Random platform spawn (geen limiet)
+        if (rng.nextFloat() < 0.003f) {  // 0.3% kans per frame
+            platformManager.spawnPlatform(PlayerClass.worldX + 1600);
+        }
+
+        // ⭐ Rest van de game logic
         Methodes_Rutger.spawnCoins();
         Methodes_Rutger.updateCoins(player);
         Methodes_Rutger.updateScore(player, delta);
@@ -203,41 +209,6 @@ public class YourGameScreen extends ScalableGameScreen {
         Methodes_Rutger.drawPowerupTimer(powerupClassSchild);
         Methodes_Maxje.genereerRandomPowerup(powerupClassSchild, delta);
         Methodes_Maxje.tekenFlamethrower(delta, flamethrowerClass, enemyClass);
-
-        // ⭐ PLATFORM RESPAWN (random grootte + beweging + hoogte)
-        if (platform.x + platform.width < 0) {
-
-            if (rng.nextFloat() < 0.7f) { // 70% kans op nieuw platform
-
-                float randomHeight = baseGroundLevel + 100 + rng.nextInt(200);
-                float randomWidth = 250 + rng.nextInt(300);
-                float randomMoveSpeed = 30 + rng.nextInt(50);
-                float randomMoveRange = 40 + rng.nextInt(80);
-
-                platform = new PlatformClass(
-                        PlayerClass.worldX + 1600,
-                        randomHeight,
-                        randomWidth,
-                        40,
-                        randomWidth,
-                        60,
-                        "platform",
-                        randomMoveSpeed,
-                        randomMoveRange
-                );
-
-            } else {
-                platform = new PlatformClass(
-                        PlayerClass.worldX + 2000,
-                        -500,
-                        0, 0,
-                        0, 0,
-                        "platform",
-                        0,
-                        0
-                );
-            }
-        }
 
         GameApp.endSpriteRendering();
     }

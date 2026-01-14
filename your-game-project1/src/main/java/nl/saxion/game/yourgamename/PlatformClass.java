@@ -1,7 +1,6 @@
 package nl.saxion.game.yourgamename;
 
 import nl.saxion.gameapp.GameApp;
-import java.util.Random;
 
 public class PlatformClass {
 
@@ -9,18 +8,20 @@ public class PlatformClass {
     public float width, height;
     public float textureWidth, textureHeight;
     public String textureKey;
-    public boolean isActive = true;
 
-    // beweging
+    // ⭐ Nieuw: bewegen of niet
+    public boolean moves;
+
     private float moveSpeed;
     private float moveRange;
     private float startY;
-    private boolean moveUp;
+    private boolean moveUp = true;
 
     public PlatformClass(float x, float y,
                          float width, float height,
                          float textureWidth, float textureHeight,
                          String textureKey,
+                         boolean moves,
                          float moveSpeed,
                          float moveRange) {
 
@@ -35,23 +36,25 @@ public class PlatformClass {
 
         this.textureKey = textureKey;
 
+        this.moves = moves;
         this.moveSpeed = moveSpeed;
         this.moveRange = moveRange;
         this.startY = y;
-        this.moveUp = true;
     }
 
     public void update(float delta) {
-        // horizontale beweging met wereld
+        // beweegt mee met wereld
         x -= 300 * delta;
 
-        // verticale beweging
-        if (moveUp) {
-            y += moveSpeed * delta;
-            if (y > startY + moveRange) moveUp = false;
-        } else {
-            y -= moveSpeed * delta;
-            if (y < startY - moveRange) moveUp = true;
+        // ⭐ Alleen bewegen als moves == true
+        if (moves) {
+            if (moveUp) {
+                y += moveSpeed * delta;
+                if (y > startY + moveRange) moveUp = false;
+            } else {
+                y -= moveSpeed * delta;
+                if (y < startY - moveRange) moveUp = true;
+            }
         }
     }
 
@@ -70,6 +73,6 @@ public class PlatformClass {
 
         boolean vertical = feet >= platformTop - 10 && feet <= platformTop + 20;
 
-        return isActive && horizontal && vertical;
+        return horizontal && vertical;
     }
 }
