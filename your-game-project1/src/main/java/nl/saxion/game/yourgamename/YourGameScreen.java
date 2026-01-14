@@ -79,8 +79,8 @@ public class YourGameScreen extends ScalableGameScreen {
         obstacle = new ObstacleClass(
                 1500,
                 player.groundLevel,
-                110, 70,     // hitbox
-                150, 150,    // texture
+                105, 70,     // hitbox
+                110, 120,    // texture
                 "obstacle"
         );
 
