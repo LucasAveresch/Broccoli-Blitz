@@ -12,24 +12,28 @@ public class PlayerClass {
     int jumpCount = 0;
     int spriteHeight = 120;
     int spriteWidth = 80;
-    ArrayList<BulletClass> bullets= new ArrayList<>();
-    // --- Magazijn ---
-    int ammo = 5;             // huidige kogels
-    int maxAmmo = 5;          // maximale kogels
-    boolean isReloading = false;
-    long reloadStartTime = 0; // tijdstip herladen
+    ArrayList<BulletClass> bullets = new ArrayList<>();
 
-    // --- Nieuwe variabele ---
+    // --- Magazijn ---
+    int ammo = 5;
+    int maxAmmo = 5;
+    boolean isReloading = false;
+    long reloadStartTime = 0;
+
+    // --- Movement / world ---
     public double speed = 1;
     public double distanceTravelled = 0;
     public static float worldX = 0;
 
+    // --- NIEUW: nodig voor dynamische parallax ---
+    public static float totalPlayTime = 0f;
+
+    // --- Statistieken ---
     public int totalCoins = 0;
     public double highScore = 0;
 
-    // --- Statistieken voor DeathScreen ---
-    public int enemiesDefeated = 0;    // aantal verslagen enemies
-    public int shotsFired = 0;         // aantal keer geschoten
-    public float survivalTime = 0;     // tijd in seconden
+    public int enemiesDefeated = 0;
+    public int shotsFired = 0;
+    public float survivalTime = 0;
     public boolean isBlocking = false;
 }
