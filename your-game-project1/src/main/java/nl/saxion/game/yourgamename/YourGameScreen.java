@@ -104,7 +104,6 @@ Methodes_Rutger.checkBulletHitsEnemy(player,enemyClass);
         Methodes_Rutger.updateBomb(player, enemyClass);
         Methodes_Maxje.addMes(delta,projectileClass,enemyClass);
         Methodes_Maxje.updateMes(delta, projectileClass,enemyClass);
-        //Methodes_Maxje.updateSubEnemies(subEnemyClass, delta,enemyClass);
         Methodes_Rutger.updatePowerupTimer(delta, powerupClassSchild, schildClass);
         Methodes_Rutger.drawPowerupTimer(powerupClassSchild);
         Methodes_Maxje.genereerRandomPowerup(powerupClassSchild,delta);

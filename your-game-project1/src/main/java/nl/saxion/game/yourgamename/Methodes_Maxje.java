@@ -37,39 +37,9 @@ public class Methodes_Maxje {
 
             GameApp.drawTexture(enemy.textureKey2, enemy.enemyXPos, enemy.enemyYPos, 175, 175);
 
-            if (subEnemyClass.subEnemies.isEmpty()) {
-                subEnemyClass.currentTimer += delta;
-                if (subEnemyClass.currentTimer >= subEnemyClass.spawnInterval) {
-                    subEnemyClass.currentTimer = 0f;
-                    SubEnemyClass subEnemyClass1 = new SubEnemyClass("img/stokbrood.png", "StokbroodNoLegs", enemy.enemyXPos, enemy.enemyYPos, 100);
-                    subEnemyClass.subEnemies.add(subEnemyClass1);
-                }
-
-            }
-
         }
     }
 
-    public static void updateSubEnemies(SubEnemyClass subEnemyClass, float delta, EnemyClass enemyClass) {
-        if (subEnemyClass.subEnemies.isEmpty()) {
-            return;
-        }
-        SubEnemyClass subenemy = subEnemyClass.subEnemies.get(0);
-        if (!subEnemyClass.subEnemies.isEmpty()) {
-            subenemy.enemyYPos -= (subEnemyClass.enemyspeed) * delta;
-            if (subenemy.enemyYPos <= 100) {
-                subenemy.enemyYPos = 100;
-            }
-        }
-        if (subenemy.enemyYPos <= 100) {
-            subenemy.enemyXPos -= subEnemyClass.enemyspeed * delta;
-            if (subenemy.enemyXPos < 0) {
-                subEnemyClass.subEnemies.remove(subenemy);
-            }
-        }
-        GameApp.drawTexture(subEnemyClass.textureKey, subenemy.enemyXPos, subenemy.enemyYPos);
-
-    }
 
 
     public static void selectEnemyWillekeurig(float delta, EnemyClass enemyClass) {
