@@ -347,7 +347,6 @@ public class Methodes_Maxje {
 
     public static void tekenFlamethrower(float delta, flamethrowerClass flame, EnemyClass enemy) {
 
-        // If no enemies AND the flame hasn't fired yet → reset
         if (enemy.allEnemies.isEmpty() && !flame.fired) {
             flame.frame = 0;
             flame.fired = false;
@@ -357,17 +356,12 @@ public class Methodes_Maxje {
 
         EnemyClass e = null;
 
-        // Only read enemy if it exists
         if (!enemy.allEnemies.isEmpty()) {
             e = enemy.allEnemies.get(0);
         }
 
-        // -------------------------
-        // PHASE 1: Frames 1–7 (enemy must exist AND be type 2)
-        // -------------------------
         if (!flame.fired) {
 
-            // If enemy disappeared or changed type → reset and stop
             if (e == null || e.type != 2) {
                 flame.frame = 0;
                 flame.fired = false;
@@ -384,7 +378,6 @@ public class Methodes_Maxje {
                 if (flame.frame >= 7) {
                     flame.fired = true;
 
-                    // Projectile starts at enemy position
                     flame.x = e.enemyXPos;
                     flame.y = e.enemyYPos;
                 }
@@ -395,14 +388,11 @@ public class Methodes_Maxje {
             return;
         }
 
-        // -------------------------
-        // PHASE 2: Projectile (ALWAYS continues, even if enemy is gone)
-        // -------------------------
+
         flame.x -= flame.speed * delta;
 
         GameApp.drawTexture("flame8", flame.x, flame.y, 100, 100);
 
-        // Reset when projectile leaves screen
         if (flame.x < -100) {
             flame.frame = 0;
             flame.fired = false;
