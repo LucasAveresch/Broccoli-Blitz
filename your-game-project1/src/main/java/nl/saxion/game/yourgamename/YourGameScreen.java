@@ -2,6 +2,8 @@ package nl.saxion.game.yourgamename;
 
 import nl.saxion.gameapp.GameApp;
 import nl.saxion.gameapp.screens.ScalableGameScreen;
+
+import java.util.ArrayList;
 import java.util.Random;
 
 public class YourGameScreen extends ScalableGameScreen {
@@ -15,12 +17,16 @@ public class YourGameScreen extends ScalableGameScreen {
     public SubEnemyClass subEnemyClass;
     public flamethrowerClass flamethrowerClass;
 
-    public ObstacleClass obstacle;
-
-    private PlatformManager platformManager;
     private final Random rng = new Random();
 
     private int baseGroundLevel;
+
+    // Kaasje-style level data
+    private SegmentGenerator segmentGenerator;
+    private float nextSegmentX = 1800;
+
+    private ArrayList<PlatformClass> activePlatforms = new ArrayList<>();
+    private ArrayList<ObstacleClass> activeObstacles = new ArrayList<>();
 
     public YourGameScreen(PlayerClass player) {
         super(1280, 720);
@@ -33,17 +39,27 @@ public class YourGameScreen extends ScalableGameScreen {
         Methodes_Rutger.resetRoundStats(player);
         Methodes_Lucas.LucasParallaxMethods.initParallax(0);
 
-        // ⭐ ALTIJD vloer resetten bij nieuwe ronde
-        player.groundLevel = 100;
-        player.yPlayer = 100;
+        // vloer
         baseGroundLevel = 100;
+        player.groundLevel = baseGroundLevel;
+        player.yPlayer = baseGroundLevel;
 
+        // textures
         GameApp.addTexture("kogel", "img/kogel.png");
         GameApp.addTexture("brocolli", "img/brocolli3.png");
         GameApp.addTexture("block", "img/block1.png");
         GameApp.addTexture("coin", "img/munt.png");
+
+        // oude obstacle/platform keys kun je laten staan als je ze nog gebruikt
         GameApp.addTexture("obstacle", "img/obstacle.png");
         GameApp.addTexture("platform", "img/platform.png");
+
+        // nieuwe Kaasje-style assets
+        GameApp.addTexture("floorTile", "img/floorTile.png");
+        GameApp.addTexture("floorRaise", "img/floorRaise.png");
+        GameApp.addTexture("spike", "img/spike.png");
+        GameApp.addTexture("spikeDouble", "img/spikeDouble.png");
+        GameApp.addTexture("spikeTriple", "img/spikeTriple.png");
 
         for (int i = 0; i < MuzzleFlash.TOTAL_FRAMES; i++) {
             GameApp.addTexture("muzzleFlash" + i, "img/MuzzleFlash/muzzle_flash_" + i + ".png");
@@ -95,20 +111,12 @@ public class YourGameScreen extends ScalableGameScreen {
                 "unlimitedkogels"
         );
 
-        // ⭐ Eerste obstacle op de vloer
-        obstacle = new ObstacleClass(
-                1500,
-                baseGroundLevel,
-                110, 70,
-                150, 150,
-                "obstacle"
-        );
+        // Kaasje-style segment generator
+        segmentGenerator = new SegmentGenerator(baseGroundLevel);
+        nextSegmentX = 1800;
 
-        // ⭐ PlatformManager + startplatformen
-        platformManager = new PlatformManager(baseGroundLevel);
-        platformManager.spawnPlatform(1600);
-        platformManager.spawnPlatform(2200);
-        platformManager.spawnPlatform(2800);
+        activePlatforms.clear();
+        activeObstacles.clear();
     }
 
     @Override
@@ -122,63 +130,60 @@ public class YourGameScreen extends ScalableGameScreen {
         GameApp.clearScreen("black");
         GameApp.startSpriteRendering();
 
+        // wereld beweegt
         PlayerClass.worldX += 300 * delta;
 
+        // achtergrond
         Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(
                 PlayerClass.worldX,
                 getWorldWidth(),
                 getWorldHeight()
         );
 
-        // ⭐ Elke frame vloer resetten
+        // basisvloer als fallback
         player.groundLevel = baseGroundLevel;
 
-        // ⭐ Platform update + draw
-        platformManager.update(delta);
-        platformManager.draw();
+        // nieuwe segmenten genereren
+        if (PlayerClass.worldX + getWorldWidth() > nextSegmentX) {
 
-        // ⭐ Platform collision
-        for (PlatformClass platform : platformManager.platforms) {
+            SegmentGenerator.GeneratedSegment seg =
+                    segmentGenerator.generate(nextSegmentX);
 
-            if (platform.playerIsOnTop(player)) {
+            activePlatforms.addAll(seg.platforms);
+            activeObstacles.addAll(seg.obstacles);
 
-                int platformTop = (int) (platform.y + platform.height);
+            nextSegmentX += 900;
+        }
 
-                if (player.yPlayer < platformTop) {
-                    player.yPlayer = platformTop;
+        // platforms updaten + tekenen
+        for (PlatformClass p : activePlatforms) {
+            p.update(delta);
+            p.draw();
+        }
+        activePlatforms.removeIf(p -> p.x + p.width < 0);
+
+        // platform collision → vloer/verhogingen zoals Kaasje
+        for (PlatformClass p : activePlatforms) {
+            if (p.playerIsOnTop(player)) {
+                int top = (int) (p.y + p.height);
+                if (player.yPlayer < top) {
+                    player.yPlayer = top;
                 }
-
-                player.groundLevel = platformTop;
+                player.groundLevel = top;
             }
         }
 
-        // ⭐ Obstacle update + draw
-        obstacle.update(delta);
-        obstacle.draw();
-
-        // ⭐ Random nieuwe obstacle op de vloer
-        if (obstacle.x + obstacle.width < 0) {
-
-            float randomDistance = 1000 + rng.nextInt(1000);
-
-            obstacle = new ObstacleClass(
-                    PlayerClass.worldX + randomDistance,
-                    baseGroundLevel,   // altijd vloer
-                    110, 70,
-                    150, 150,
-                    "obstacle"
-            );
+        // obstacles updaten + tekenen
+        for (ObstacleClass o : activeObstacles) {
+            o.update(delta);
+            o.draw();
         }
+        activeObstacles.removeIf(o -> o.x + o.width < 0);
 
-        // ⭐ Physics-engine
+        // physics / movement
         Methodes_Rutger.update(player, unlimitedAmmoPowerupClass);
 
-        // ⭐ Random platform spawn (geen limiet)
-        if (rng.nextFloat() < 0.003f) {  // 0.3% kans per frame
-            platformManager.spawnPlatform(PlayerClass.worldX + 1600);
-        }
-
-        // ⭐ Rest van de game logic
+        // rest van je game logic
         Methodes_Rutger.spawnCoins();
         Methodes_Rutger.updateCoins(player);
         Methodes_Rutger.updateScore(player, delta);
