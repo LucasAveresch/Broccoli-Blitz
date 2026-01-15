@@ -5,6 +5,7 @@ import nl.saxion.gameapp.GameApp;
 import nl.saxion.gameapp.screens.ScalableGameScreen;
 
 public class SettingsScreen extends ScalableGameScreen {
+
     private PlayerClass player;
     private EnemyClass enemy;
     private int tutorialStep = 1;
@@ -20,6 +21,7 @@ public class SettingsScreen extends ScalableGameScreen {
     @Override
     public void show() {
         GameApp.addFont("basic", "fonts/basic.ttf", 60);
+        GameApp.addFont("small", "fonts/basic.ttf", 30);
 
         GameApp.addTexture("brocolli", "img/brocolli3.png");
         GameApp.addTexture("coin", "img/munt.png");
@@ -55,36 +57,45 @@ public class SettingsScreen extends ScalableGameScreen {
         GameApp.clearScreen("black");
         GameApp.startSpriteRendering();
 
+        // Achtergrond
         worldX += 200 * delta;
-
         Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(
                 worldX,
                 getWorldWidth(),
                 getWorldHeight()
         );
 
-
+        // Updates
         Methodes_Rutger.update(player, unlimitedAmmoPowerupClass);
         Methodes_Rutger.updateBomb(player, enemy);
         Methodes_Rutger.updateCoins(player);
 
+        // HUD (nu met outline)
         Methodes_Rutger.drawGameHud(player);
         Methodes_Rutger.drawBombCooldown();
+
+        // Tutorial tekst (nu met outline)
         Methodes_Rutger.drawTutorialText(this, tutorialStep);
 
+        // Tutorial stappen
         switch (tutorialStep) {
+
             case 1:
                 if (Methodes_Rutger.tutorialShoot(player)) tutorialStep++;
                 break;
+
             case 2:
                 if (Methodes_Rutger.tutorialReload(player)) tutorialStep++;
                 break;
+
             case 3:
                 if (Methodes_Rutger.tutorialBomb(player, enemy)) tutorialStep++;
                 break;
+
             case 4:
                 if (Methodes_Rutger.tutorialCoin(player)) tutorialStep++;
                 break;
+
             case 5:
                 if (enemy == null) {
                     enemy = new EnemyClass(
@@ -112,6 +123,7 @@ public class SettingsScreen extends ScalableGameScreen {
 
         GameApp.endSpriteRendering();
 
+        // Terug naar menu
         if (GameApp.isKeyJustPressed(Input.Keys.M)) {
             GameApp.switchScreen("MainMenuScreen");
         }

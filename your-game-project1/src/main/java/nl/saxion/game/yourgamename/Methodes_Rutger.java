@@ -20,6 +20,37 @@ public class Methodes_Rutger {
     private static boolean bombOnCooldown = false;
     private static long lastBombTime = 0;
     private static ArrayList<BombClass> bombs = new ArrayList<>();
+    public static void drawTextWithOutline(String font, String text, int x, int y, String color) {
+        int o = 3;
+
+        GameApp.drawText(font, text, x - o, y, "black");
+        GameApp.drawText(font, text, x + o, y, "black");
+        GameApp.drawText(font, text, x, y - o, "black");
+        GameApp.drawText(font, text, x, y + o, "black");
+
+        GameApp.drawText(font, text, x - o, y - o, "black");
+        GameApp.drawText(font, text, x + o, y - o, "black");
+        GameApp.drawText(font, text, x - o, y + o, "black");
+        GameApp.drawText(font, text, x + o, y + o, "black");
+
+        GameApp.drawText(font, text, x, y, color);
+    }
+
+    public static void drawTextCenteredWithOutline(String font, String text, int x, int y, String color) {
+        int o = 3;
+
+        GameApp.drawTextCentered(font, text, x - o, y, "black");
+        GameApp.drawTextCentered(font, text, x + o, y, "black");
+        GameApp.drawTextCentered(font, text, x, y - o, "black");
+        GameApp.drawTextCentered(font, text, x, y + o, "black");
+
+        GameApp.drawTextCentered(font, text, x - o, y - o, "black");
+        GameApp.drawTextCentered(font, text, x + o, y - o, "black");
+        GameApp.drawTextCentered(font, text, x - o, y + o, "black");
+        GameApp.drawTextCentered(font, text, x + o, y + o, "black");
+
+        GameApp.drawTextCentered(font, text, x, y, color);
+    }
 
 
     // Speler update (springen, bukken, tekenen, schieten)
@@ -218,30 +249,43 @@ public class Methodes_Rutger {
     }
 
     public static void drawMenuText(ScalableGameScreen screen, PlayerClass player) {
-        // Titel (midden)
-        String title = "Broccoli Blitz";
+
         int centerX = (int) (GameApp.getWorldWidth() / 2);
-        int centerY = (int) (GameApp.getWorldHeight() / 2 + 200);
-        GameApp.drawTextCentered("basic", title, centerX, centerY, "white");
 
-        // Subtitel (midden)
+        // Titel
+        String title = "Broccoli Blitz";
+        int centerY = (int) (GameApp.getWorldHeight() / 2 + 250);
+        drawTextCenteredWithOutline("basic", title, centerX, centerY, "white");
+
+        // Subtitel
         String subtitle = "jump to start!";
-        int subY = (int) (GameApp.getWorldHeight() / 2 + 100);
-        GameApp.drawTextCentered("basic", subtitle, centerX, subY, "white");
+        int subY = (int) (GameApp.getWorldHeight() / 2 + 150);
+        drawTextCenteredWithOutline("basic", subtitle, centerX, subY, "white");
 
-        // Statistieken rechtsboven (kleiner font)
+        // Tutorial tekst
+        String tutorialText = "Press ESC to start the tutorial";
+        int tutY = (int) (GameApp.getWorldHeight() / 2 + 50);
+        drawTextCenteredWithOutline("small", tutorialText, centerX, tutY, "white");
+
+        // Statistieken rechtsboven
         String coinsText = "Total Coins: " + player.totalCoins;
         String highScoreText = "High Score: " + String.format("%.1f", player.highScore) + " m";
 
         int margin = 20;
         int topY = (int) GameApp.getWorldHeight();
 
-        // Bereken breedte van de tekst zodat hij rechts uitgelijnd staat
         int coinsWidth = (int) GameApp.getTextWidth("small", coinsText);
         int scoreWidth = (int) GameApp.getTextWidth("small", highScoreText);
 
-        GameApp.drawText("small", coinsText, GameApp.getWorldWidth() - margin - coinsWidth, topY - 30, "white");
-        GameApp.drawText("small", highScoreText, GameApp.getWorldWidth() - margin - scoreWidth, topY - 60, "white");
+        drawTextWithOutline("small", coinsText,
+                (int) (GameApp.getWorldWidth() - margin - coinsWidth),
+                topY - 30,
+                "white");
+
+        drawTextWithOutline("small", highScoreText,
+                (int) (GameApp.getWorldWidth() - margin - scoreWidth),
+                topY - 60,
+                "white");
     }
 
     public static boolean checkDeath(PlayerClass player) {
@@ -313,19 +357,27 @@ public class Methodes_Rutger {
         int margin = 20;
         int topY = (int) GameApp.getWorldHeight();
 
-        // Coins
-        drawTextRight("small", "Coins: " + player.coinsPickedUp, margin, topY - 30, "white");
+        String coins = "Coins: " + player.coinsPickedUp;
+        String ammo = "Ammo: " + player.ammo + "/" + player.maxAmmo;
+        String distance = "Distance: " + String.format("%.1f", player.distanceTravelled) + " m";
+        String highScore = "High Score: " + String.format("%.1f", player.highScore) + " m";
 
-        // Ammo
-        drawTextRight("small", "Ammo: " + player.ammo + "/" + player.maxAmmo, margin, topY - 60, "white");
+        int coinsWidth = (int) GameApp.getTextWidth("small", coins);
+        int ammoWidth = (int) GameApp.getTextWidth("small", ammo);
+        int distWidth = (int) GameApp.getTextWidth("small", distance);
+        int hsWidth = (int) GameApp.getTextWidth("small", highScore);
 
-        // Distance
-        drawTextRight("small", "Distance: " + String.format("%.1f", player.distanceTravelled) + " m",
-                margin, topY - 90, "white");
+        int xCoins = (int) (GameApp.getWorldWidth() - margin - coinsWidth);
+        int xAmmo = (int) (GameApp.getWorldWidth() - margin - ammoWidth);
+        int xDist = (int) (GameApp.getWorldWidth() - margin - distWidth);
+        int xHS   = (int) (GameApp.getWorldWidth() - margin - hsWidth);
 
-        // Highscore
-        drawTextRight("small", "High Score: " + String.format("%.1f", player.highScore) + " m",
-                margin, topY - 120, "white");
+        int y = topY - 30;
+
+        drawTextWithOutline("small", coins, xCoins, y, "white");
+        drawTextWithOutline("small", ammo, xAmmo, y - 30, "white");
+        drawTextWithOutline("small", distance, xDist, y - 60, "white");
+        drawTextWithOutline("small", highScore, xHS, y - 90, "white");
     }
 
     public static void drawTextRight(String fontKey, String text, int marginRight, int y, String color) {
@@ -541,34 +593,28 @@ public class Methodes_Rutger {
 
         int remaining = getBombCooldownRemaining();
 
+        String text = (remaining == 0) ? "Bomb: READY" : "Bomb: " + remaining + "s";
+
+        drawTextWithOutline("small", text, margin, topY - 30, "white");
+    }
+
+
+    public static void drawTutorialText(ScalableGameScreen screen, int step) {
+        int centerX = (int) (GameApp.getWorldWidth() / 2);
+        int centerY = (int) (GameApp.getWorldHeight() / 2);
+
         String text;
-        if (remaining == 0) {
-            text = "Bomb: READY";
-        } else {
-            text = "Bomb: " + remaining + "s";
+        switch (step) {
+            case 1: text = "Press [F] to SHOOT"; break;
+            case 2: text = "Press [R] to RELOAD"; break;
+            case 3: text = "Press [G] to throw a BOMB"; break;
+            case 4: text = "Collect the COIN"; break;
+            case 5: text = "Defeat the ENEMY"; break;
+            default: text = "Tutorial complete! Press [M] for Menu"; break;
         }
 
-        GameApp.drawText("small", text, margin, topY - 30, "white");
+        drawTextCenteredWithOutline("basic", text, centerX, centerY, "white");
     }
-
-
-// --- Tutorial instructies tekenen ---
-public static void drawTutorialText(ScalableGameScreen screen, int step) {
-    int centerX = (int) (GameApp.getWorldWidth() / 2);
-    int centerY = (int) (GameApp.getWorldHeight() / 2);
-
-    String text = "";
-    switch (step) {
-        case 1: text = "Press [F] to SHOOT"; break;
-        case 2: text = "Press [R] to RELOAD"; break;
-        case 3: text = "Press [G] to throw a BOMB"; break;
-        case 4: text = "Collect the COIN"; break;
-        case 5: text = "Defeat the ENEMY"; break;
-        default: text = "Tutorial complete! Press [M] for Menu"; break;
-    }
-
-    GameApp.drawTextCentered("basic", text, centerX, centerY, "white");
-}
 
 // --- Tutorial logica per stap ---
 public static boolean tutorialShoot(PlayerClass player) {
