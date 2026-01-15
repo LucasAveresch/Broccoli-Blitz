@@ -14,9 +14,11 @@ public class EnemyClass {
     public String textureKey;
     public String textureKey2;
     public int type = 0;
+    public int hp = 3;
     public float currentTimer = 0f;
     public float spawnInterval = 5f;
     ArrayList<EnemyClass> allEnemies = new ArrayList<>();
+
 
     public EnemyClass(String filepath, String textureKey,String filepath2, String textureKey2, float startX, float startY, float speed) {
         this.textureKey = textureKey;
@@ -27,6 +29,9 @@ public class EnemyClass {
 
         GameApp.addTexture(textureKey, filepath);
         GameApp.addTexture(textureKey2,filepath2);
+        GameApp.addTexture("tank1","img/tank1.png");
+        GameApp.addTexture("tank2","img/tank2.png");
+        GameApp.addTexture("tank3","img/tank3.png");
     }
 }
 

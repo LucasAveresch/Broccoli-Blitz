@@ -20,11 +20,9 @@ public class Methodes_Maxje {
                 enemyClass.allEnemies.remove(0);
                 enemy.type = 0;
                 return;
-
-
             }
 
-            GameApp.drawTexture(enemy.textureKey, enemy.enemyXPos, enemy.enemyYPos);
+            GameApp.drawTexture(enemy.textureKey, enemy.enemyXPos, enemy.enemyYPos- 50, 150,250);
         } else if (enemy.type == 2) {
             enemy.enemyXPos -= enemy.enemyspeed * delta;
 
@@ -32,11 +30,27 @@ public class Methodes_Maxje {
                 enemyClass.allEnemies.remove(0);
                 enemy.type = 0;
                 return;
-
             }
 
             GameApp.drawTexture(enemy.textureKey2, enemy.enemyXPos, enemy.enemyYPos, 175, 175);
 
+        } else if(enemy.type == 3){
+            enemy.enemyXPos -= enemy.enemyspeed * delta;
+
+            if (enemy.enemyXPos < 0) {
+                enemyClass.allEnemies.remove(0);
+                enemy.type = 0;
+                return;
+            }
+            if(enemy.hp == 3){
+                GameApp.drawTexture("tank1",enemy.enemyXPos,enemy.enemyYPos - 50, 200, 200);
+            }
+            else if(enemy.hp == 2){
+                GameApp.drawTexture("tank2",enemy.enemyXPos,enemy.enemyYPos - 50 , 200, 200);
+            }
+            else if(enemy.hp == 1){
+                GameApp.drawTexture("tank3",enemy.enemyXPos,enemy.enemyYPos - 50,200,200);
+            }
         }
     }
 
@@ -53,10 +67,11 @@ public class Methodes_Maxje {
             enemyClass.currentTimer = 0f;
         }
         if (enemyClass.allEnemies.isEmpty() && spawnNewEnemy) {
-            int randomnumber = r.nextInt(1, 3);
+            int randomnumber = r.nextInt(1, 4);
 
             EnemyClass enemyClass1 = new EnemyClass("img/chef.png", "chef", "img/ketchup.png", "enemy2", 1100, 150, 200);
             enemyClass1.type = randomnumber;
+            enemyClass1.hp = 3;
 
 
             enemyClass.allEnemies.add(enemyClass1);
@@ -143,7 +158,6 @@ public class Methodes_Maxje {
 
                     schildClass.HP--;
 
-                    // ❗ Schild gebroken → timer stoppen
                     if (schildClass.HP <= 0) {
                         schildClass.isactive = false;
 
@@ -174,25 +188,34 @@ public class Methodes_Maxje {
                     GameApp.playSound("SchildPickup");
                 }
             }
-        }
-        if (!subEnemyClass.subEnemies.isEmpty()) {
-            SubEnemyClass subenemy = subEnemyClass.subEnemies.get(0);
-            boolean collisionX =
-                    subenemy.enemyXPos < 125 + playerClass.spriteWidth &&
-                            subenemy.enemyXPos + subenemy.enemyXPos + 100 > 100;
+            if (enemy.type == 3) {
+                boolean collisionX =
+                        enemy.enemyXPos < 100 + playerClass.spriteWidth &&
+                                enemy.enemyXPos + 50 > 100;
 
-            boolean collisionY =
-                    subenemy.enemyYPos < playerClass.yPlayer + playerClass.spriteHeight &&
-                            subenemy.enemyYPos + subenemy.enemyYPos + 50 > playerClass.yPlayer;
+                boolean collisionY =
+                        enemy.enemyYPos < playerClass.yPlayer + playerClass.spriteHeight &&
+                                enemy.enemyYPos + 150 > playerClass.yPlayer;
 
 
-            if (collisionX && collisionY && schildClass.HP == 0) {
-                GameApp.switchScreen("DeathScreen");
-            } else if (collisionY && collisionX) {
-                schildClass.HP--;
-                subEnemyClass.subEnemies.remove(0);
-                GameApp.addSound("SchildPickup", "Sounds/shieldPickup.mp3");
-                GameApp.playSound("SchildPickup");
+                if (collisionX && collisionY && schildClass.HP == 0) {
+                    GameApp.switchScreen("DeathScreen");
+                } else if (collisionY && collisionX) {
+
+                    schildClass.HP--;
+
+                    if (schildClass.HP <= 0) {
+                        schildClass.isactive = false;
+
+                        powerUp.hasTimer = false;
+                        powerUp.timeLeft = 0;
+                        powerUp.timerStarted = false;
+                    }
+
+                    enemyClass.allEnemies.remove(0);
+                    GameApp.addSound("SchildPickup", "Sounds/shieldPickup.mp3");
+                    GameApp.playSound("SchildPickup");
+                }
             }
         }
     }
@@ -380,6 +403,8 @@ public class Methodes_Maxje {
 
                     flame.x = e.enemyXPos;
                     flame.y = e.enemyYPos;
+                    GameApp.addSound("flamethrower","sounds/flameThrower.mp3");
+                    GameApp.playSound("flamethrower");
                 }
             }
 
@@ -398,4 +423,30 @@ public class Methodes_Maxje {
             flame.fired = false;
             flame.timer = 0f;
         }
-    }}
+    }
+
+    public static void checkFlamethrowerCollision(flamethrowerClass flamethrowerClass, PlayerClass playerClass,
+                                           SchildClass schildClass){
+        boolean collisionX =
+                flamethrowerClass.x > 100 + playerClass.spriteWidth &&
+                        flamethrowerClass.x < 120 + playerClass.spriteWidth;
+
+        boolean collisionY =
+                flamethrowerClass.y < playerClass.yPlayer + playerClass.spriteHeight &&
+                        flamethrowerClass.y + 16 > playerClass.yPlayer;
+
+        if(schildClass.HP == 0 && collisionX && collisionY){
+            GameApp.switchScreen("DeathScreen");
+        } else if (schildClass.HP > 0 && collisionX && collisionY) {
+            flamethrowerClass.frame = 0;
+            flamethrowerClass.fired = false;
+            flamethrowerClass.timer = 0f;
+            flamethrowerClass.x = -900;
+            schildClass.HP--;
+            GameApp.addSound("SchildPickup", "Sounds/shieldPickup.mp3");
+            GameApp.playSound("SchildPickup");
+
+        }
+    }
+
+}
