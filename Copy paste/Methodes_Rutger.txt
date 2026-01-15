@@ -1,72 +1,81 @@
 package nl.saxion.game.yourgamename;
 
-import com.badlogic.gdx.Input;
 import nl.saxion.gameapp.GameApp;
-import nl.saxion.gameapp.screens.ScalableGameScreen;
 
-public class MainMenuScreen extends ScalableGameScreen {
-    private PlayerClass player;
-    private float worldX; // voor parallax beweging
-    private float broccoliX;
-    private boolean isStarting = false;
-    private boolean justDied = false; // nieuwe flag
+public class Methodes_Lucas {
 
-    public MainMenuScreen(PlayerClass player) {
-        super(1280, 720);
-        this.player = player;
+    public static class LucasParallaxMethods {
 
-    }
+        private static final String TEX_WALL = "bg_wall";
+        private static final String TEX_FLOOR = "bg_floor";
 
-    @Override
-    public void show() {
-        GameApp.addFont("basic", "fonts/basic.ttf", 100);
-        GameApp.addFont("small", "fonts/basic.ttf", 30); // kleiner font voor HUD
-        Methodes_Lucas.LucasParallaxMethods.initParallax(0);
-        GameApp.addTexture("brocolli", "img/brocolli3.png");
-        GameApp.addSound("start", "Sounds/Start.mp3");
+        private static final String TEX_WALL_PATH = "img/bg_mid.png";
+        private static final String TEX_FLOOR_PATH = "img/bg_close.png";
 
-        broccoliX = getWorldWidth() / 2f - player.spriteWidth / 2f - 50;
-        isStarting = false;
+        private static final float FLOOR_HEIGHT_RATIO = 0.18f;
+        private static final float SEAM_OVERLAP = 6f;
 
-    }
+        private static boolean initialized = false;
+        private static float baseY = 0f;
 
-    @Override
-    public void render(float delta) {
-        super.render(delta);
+        public static void initParallax(float parallaxBaseY) {
+            if (initialized) return;
 
-        GameApp.clearScreen("black");
-        GameApp.startSpriteRendering();
+            baseY = parallaxBaseY;
 
-        // Starter
-        isStarting = Methodes_Rutger.handleMenuStart(isStarting);
+            GameApp.addTexture(TEX_WALL, TEX_WALL_PATH);
+            GameApp.addTexture(TEX_FLOOR, TEX_FLOOR_PATH);
 
-        // Springen
-        Methodes_Rutger.updateJump(player);
-
-        // Achtergrond bewegen zolang we nog niet gestart zijn
-        if (!isStarting) {
-            PlayerClass.worldX += 100 * delta; // langzame scroll in menu
+            initialized = true;
         }
-        Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(PlayerClass.worldX, getWorldWidth(),getWorldHeight());
 
-        // Broccoli bewegen + tekenen
-        broccoliX = Methodes_Rutger.handleMenuBroccoli(player, broccoliX, isStarting, delta);
+        public static void disposeParallax() {
+            if (!initialized) return;
 
-        // Tekst
-        Methodes_Rutger.drawMenuText(this, player);
+            GameApp.disposeTexture(TEX_WALL);
+            GameApp.disposeTexture(TEX_FLOOR);
 
-        GameApp.endSpriteRendering();
-
-        // 🔑 ESCAPE → naar SettingsScreen
-        if (GameApp.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            GameApp.switchScreen("SettingsScreen");
+            initialized = false;
         }
-    }
 
-    @Override
-    public void hide() {
-        GameApp.disposeFont("basic");
-        Methodes_Lucas.LucasParallaxMethods.disposeParallax();
+        // ✅ LET OP: nu 3 parameters: cameraX, worldWidth, worldHeight
+        public static void drawParallaxBackground(float cameraX, float worldWidth, float worldHeight) {
+            if (!initialized) initParallax(baseY);
+
+            float playTime = PlayerClass.totalPlayTime;
+            float speedMultiplier = 1f + (playTime / 60f);
+
+            float floorH = worldHeight * FLOOR_HEIGHT_RATIO;
+            float floorY = baseY;
+
+            float wallY = floorY + floorH - SEAM_OVERLAP;
+            float wallH = (baseY + worldHeight) - wallY;
+
+            drawLayerScaled(TEX_WALL, 0.3f * speedMultiplier, cameraX, worldWidth, wallY, wallH);
+            drawLayerScaled(TEX_FLOOR, 0.3f * speedMultiplier, cameraX, worldWidth, floorY, floorH);
+        }
+
+        private static void drawLayerScaled(String textureName,
+                                            float speed,
+                                            float cameraX,
+                                            float worldWidth,
+                                            float y,
+                                            float targetHeight) {
+
+            float texW = GameApp.getTextureWidth(textureName);
+            float texH = GameApp.getTextureHeight(textureName);
+            if (texW <= 0 || texH <= 0 || targetHeight <= 0) return;
+
+            float scale = targetHeight / texH;
+            float tileW = texW * scale;
+
+            float startX = -(cameraX * speed) % tileW;
+            if (startX > 0) startX -= tileW;
+
+            for (float x = startX; x < worldWidth + tileW; x += tileW) {
+                GameApp.drawTexture(textureName, x, y, tileW, targetHeight);
+            }
+        }
     }
 }
 
@@ -92,6 +101,37 @@ public class Methodes_Rutger {
     private static boolean bombOnCooldown = false;
     private static long lastBombTime = 0;
     private static ArrayList<BombClass> bombs = new ArrayList<>();
+    public static void drawTextWithOutline(String font, String text, int x, int y, String color) {
+        int o = 3;
+
+        GameApp.drawText(font, text, x - o, y, "black");
+        GameApp.drawText(font, text, x + o, y, "black");
+        GameApp.drawText(font, text, x, y - o, "black");
+        GameApp.drawText(font, text, x, y + o, "black");
+
+        GameApp.drawText(font, text, x - o, y - o, "black");
+        GameApp.drawText(font, text, x + o, y - o, "black");
+        GameApp.drawText(font, text, x - o, y + o, "black");
+        GameApp.drawText(font, text, x + o, y + o, "black");
+
+        GameApp.drawText(font, text, x, y, color);
+    }
+
+    public static void drawTextCenteredWithOutline(String font, String text, int x, int y, String color) {
+        int o = 3;
+
+        GameApp.drawTextCentered(font, text, x - o, y, "black");
+        GameApp.drawTextCentered(font, text, x + o, y, "black");
+        GameApp.drawTextCentered(font, text, x, y - o, "black");
+        GameApp.drawTextCentered(font, text, x, y + o, "black");
+
+        GameApp.drawTextCentered(font, text, x - o, y - o, "black");
+        GameApp.drawTextCentered(font, text, x + o, y - o, "black");
+        GameApp.drawTextCentered(font, text, x - o, y + o, "black");
+        GameApp.drawTextCentered(font, text, x + o, y + o, "black");
+
+        GameApp.drawTextCentered(font, text, x, y, color);
+    }
 
 
     // Speler update (springen, bukken, tekenen, schieten)
@@ -290,30 +330,43 @@ public class Methodes_Rutger {
     }
 
     public static void drawMenuText(ScalableGameScreen screen, PlayerClass player) {
-        // Titel (midden)
-        String title = "Broccoli Blitz";
+
         int centerX = (int) (GameApp.getWorldWidth() / 2);
-        int centerY = (int) (GameApp.getWorldHeight() / 2 + 200);
-        GameApp.drawTextCentered("basic", title, centerX, centerY, "white");
 
-        // Subtitel (midden)
+        // Titel
+        String title = "Broccoli Blitz";
+        int centerY = (int) (GameApp.getWorldHeight() / 2 + 250);
+        drawTextCenteredWithOutline("basic", title, centerX, centerY, "white");
+
+        // Subtitel
         String subtitle = "jump to start!";
-        int subY = (int) (GameApp.getWorldHeight() / 2 + 100);
-        GameApp.drawTextCentered("basic", subtitle, centerX, subY, "white");
+        int subY = (int) (GameApp.getWorldHeight() / 2 + 150);
+        drawTextCenteredWithOutline("basic", subtitle, centerX, subY, "white");
 
-        // Statistieken rechtsboven (kleiner font)
+        // Tutorial tekst
+        String tutorialText = "Press ESC to start the tutorial";
+        int tutY = (int) (GameApp.getWorldHeight() / 2 + 50);
+        drawTextCenteredWithOutline("small", tutorialText, centerX, tutY, "white");
+
+        // Statistieken rechtsboven
         String coinsText = "Total Coins: " + player.totalCoins;
         String highScoreText = "High Score: " + String.format("%.1f", player.highScore) + " m";
 
         int margin = 20;
         int topY = (int) GameApp.getWorldHeight();
 
-        // Bereken breedte van de tekst zodat hij rechts uitgelijnd staat
         int coinsWidth = (int) GameApp.getTextWidth("small", coinsText);
         int scoreWidth = (int) GameApp.getTextWidth("small", highScoreText);
 
-        GameApp.drawText("small", coinsText, GameApp.getWorldWidth() - margin - coinsWidth, topY - 30, "white");
-        GameApp.drawText("small", highScoreText, GameApp.getWorldWidth() - margin - scoreWidth, topY - 60, "white");
+        drawTextWithOutline("small", coinsText,
+                (int) (GameApp.getWorldWidth() - margin - coinsWidth),
+                topY - 30,
+                "white");
+
+        drawTextWithOutline("small", highScoreText,
+                (int) (GameApp.getWorldWidth() - margin - scoreWidth),
+                topY - 60,
+                "white");
     }
 
     public static boolean checkDeath(PlayerClass player) {
@@ -385,19 +438,27 @@ public class Methodes_Rutger {
         int margin = 20;
         int topY = (int) GameApp.getWorldHeight();
 
-        // Coins
-        drawTextRight("small", "Coins: " + player.coinsPickedUp, margin, topY - 30, "white");
+        String coins = "Coins: " + player.coinsPickedUp;
+        String ammo = "Ammo: " + player.ammo + "/" + player.maxAmmo;
+        String distance = "Distance: " + String.format("%.1f", player.distanceTravelled) + " m";
+        String highScore = "High Score: " + String.format("%.1f", player.highScore) + " m";
 
-        // Ammo
-        drawTextRight("small", "Ammo: " + player.ammo + "/" + player.maxAmmo, margin, topY - 60, "white");
+        int coinsWidth = (int) GameApp.getTextWidth("small", coins);
+        int ammoWidth = (int) GameApp.getTextWidth("small", ammo);
+        int distWidth = (int) GameApp.getTextWidth("small", distance);
+        int hsWidth = (int) GameApp.getTextWidth("small", highScore);
 
-        // Distance
-        drawTextRight("small", "Distance: " + String.format("%.1f", player.distanceTravelled) + " m",
-                margin, topY - 90, "white");
+        int xCoins = (int) (GameApp.getWorldWidth() - margin - coinsWidth);
+        int xAmmo = (int) (GameApp.getWorldWidth() - margin - ammoWidth);
+        int xDist = (int) (GameApp.getWorldWidth() - margin - distWidth);
+        int xHS   = (int) (GameApp.getWorldWidth() - margin - hsWidth);
 
-        // Highscore
-        drawTextRight("small", "High Score: " + String.format("%.1f", player.highScore) + " m",
-                margin, topY - 120, "white");
+        int y = topY - 30;
+
+        drawTextWithOutline("small", coins, xCoins, y, "white");
+        drawTextWithOutline("small", ammo, xAmmo, y - 30, "white");
+        drawTextWithOutline("small", distance, xDist, y - 60, "white");
+        drawTextWithOutline("small", highScore, xHS, y - 90, "white");
     }
 
     public static void drawTextRight(String fontKey, String text, int marginRight, int y, String color) {
@@ -613,34 +674,28 @@ public class Methodes_Rutger {
 
         int remaining = getBombCooldownRemaining();
 
+        String text = (remaining == 0) ? "Bomb: READY" : "Bomb: " + remaining + "s";
+
+        drawTextWithOutline("small", text, margin, topY - 30, "white");
+    }
+
+
+    public static void drawTutorialText(ScalableGameScreen screen, int step) {
+        int centerX = (int) (GameApp.getWorldWidth() / 2);
+        int centerY = (int) (GameApp.getWorldHeight() / 2);
+
         String text;
-        if (remaining == 0) {
-            text = "Bomb: READY";
-        } else {
-            text = "Bomb: " + remaining + "s";
+        switch (step) {
+            case 1: text = "Press [F] to SHOOT"; break;
+            case 2: text = "Press [R] to RELOAD"; break;
+            case 3: text = "Press [G] to throw a BOMB"; break;
+            case 4: text = "Collect the COIN"; break;
+            case 5: text = "Defeat the ENEMY"; break;
+            default: text = "Tutorial complete! Press [M] for Menu"; break;
         }
 
-        GameApp.drawText("small", text, margin, topY - 30, "white");
+        drawTextCenteredWithOutline("basic", text, centerX, centerY, "white");
     }
-
-
-// --- Tutorial instructies tekenen ---
-public static void drawTutorialText(ScalableGameScreen screen, int step) {
-    int centerX = (int) (GameApp.getWorldWidth() / 2);
-    int centerY = (int) (GameApp.getWorldHeight() / 2);
-
-    String text = "";
-    switch (step) {
-        case 1: text = "Press [F] to SHOOT"; break;
-        case 2: text = "Press [R] to RELOAD"; break;
-        case 3: text = "Press [G] to throw a BOMB"; break;
-        case 4: text = "Collect the COIN"; break;
-        case 5: text = "Defeat the ENEMY"; break;
-        default: text = "Tutorial complete! Press [M] for Menu"; break;
-    }
-
-    GameApp.drawTextCentered("basic", text, centerX, centerY, "white");
-}
 
 // --- Tutorial logica per stap ---
 public static boolean tutorialShoot(PlayerClass player) {
@@ -794,3 +849,177 @@ public static boolean tutorialEnemy(PlayerClass player, EnemyClass enemy) {
     }
 }
 
+package nl.saxion.game.yourgamename;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import nl.saxion.gameapp.GameApp;
+
+import java.util.ArrayList;
+
+public class EnemyClass {
+    public float enemyXPos;
+    public float enemyYPos;
+    public float enemyspeed;
+    public boolean enemyIsDead = false;
+    public String textureKey;
+    public String textureKey2;
+    public int type = 0;
+    public int hp = 3;
+    public float currentTimer = 0f;
+    public float spawnInterval = 5f;
+    ArrayList<EnemyClass> allEnemies = new ArrayList<>();
+
+
+    public EnemyClass(String filepath, String textureKey,String filepath2, String textureKey2, float startX, float startY, float speed) {
+        this.textureKey = textureKey;
+        this.textureKey2 = textureKey2;
+        this.enemyXPos = startX;
+        this.enemyYPos = startY;
+        this.enemyspeed = speed;
+
+        GameApp.addTexture(textureKey, filepath);
+        GameApp.addTexture(textureKey2,filepath2);
+        GameApp.addTexture("tank1","img/tank1.png");
+        GameApp.addTexture("tank2","img/tank2.png");
+        GameApp.addTexture("tank3","img/tank3.png");
+    }
+}
+
+package nl.saxion.game.yourgamename;
+
+import com.badlogic.gdx.Input;
+import nl.saxion.gameapp.GameApp;
+import nl.saxion.gameapp.screens.ScalableGameScreen;
+
+public class SettingsScreen extends ScalableGameScreen {
+
+    private PlayerClass player;
+    private EnemyClass enemy;
+    private int tutorialStep = 1;
+    private float worldX = 0;
+
+    private unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass = new unlimitedAmmoPowerupClass();
+
+    public SettingsScreen(PlayerClass player) {
+        super(1280, 720);
+        this.player = player;
+    }
+
+    @Override
+    public void show() {
+        GameApp.addFont("basic", "fonts/basic.ttf", 60);
+        GameApp.addFont("small", "fonts/basic.ttf", 30);
+
+        GameApp.addTexture("brocolli", "img/brocolli3.png");
+        GameApp.addTexture("coin", "img/munt.png");
+        GameApp.addTexture("kogel", "img/kogel.png");
+
+        for (int i = 0; i < MuzzleFlash.TOTAL_FRAMES; i++) {
+            GameApp.addTexture("muzzleFlash" + i, "img/MuzzleFlash/muzzle_flash_" + i + ".png");
+        }
+
+        for (int i = 1; i <= BombClass.TOTAL_FRAMES; i++) {
+            GameApp.addTexture("bom" + i, "img/Bom/bom" + i + ".png");
+        }
+
+        GameApp.addSound("shoot", "Sounds/Schieten.mp3");
+        GameApp.addSound("Reload", "Sounds/Reload.mp3");
+        GameApp.addSound("coin", "Sounds/coin.mp3");
+        GameApp.addSound("NoAmmo", "Sounds/NoAmmo.mp3");
+        GameApp.addSound("Bomb", "Sounds/explosie.mp3");
+
+        Methodes_Lucas.LucasParallaxMethods.initParallax(0);
+
+        Methodes_Rutger.resetTutorial(player);
+        tutorialStep = 1;
+        enemy = null;
+    }
+
+    @Override
+    public void render(float delta) {
+        super.render(delta);
+
+        PlayerClass.totalPlayTime += delta;
+
+        GameApp.clearScreen("black");
+        GameApp.startSpriteRendering();
+
+        // Achtergrond
+        worldX += 200 * delta;
+        Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(
+                worldX,
+                getWorldWidth(),
+                getWorldHeight()
+        );
+
+        // Updates
+        Methodes_Rutger.update(player, unlimitedAmmoPowerupClass);
+        Methodes_Rutger.updateBomb(player, enemy);
+        Methodes_Rutger.updateCoins(player);
+
+        // HUD (nu met outline)
+        Methodes_Rutger.drawGameHud(player);
+        Methodes_Rutger.drawBombCooldown();
+
+        // Tutorial tekst (nu met outline)
+        Methodes_Rutger.drawTutorialText(this, tutorialStep);
+
+        // Tutorial stappen
+        switch (tutorialStep) {
+
+            case 1:
+                if (Methodes_Rutger.tutorialShoot(player)) tutorialStep++;
+                break;
+
+            case 2:
+                if (Methodes_Rutger.tutorialReload(player)) tutorialStep++;
+                break;
+
+            case 3:
+                if (Methodes_Rutger.tutorialBomb(player, enemy)) tutorialStep++;
+                break;
+
+            case 4:
+                if (Methodes_Rutger.tutorialCoin(player)) tutorialStep++;
+                break;
+
+            case 5:
+                if (enemy == null) {
+                    enemy = new EnemyClass(
+                            "img/chef.png",
+                            "chef",
+                            "img/enemy2.png",
+                            "enemy2",
+                            900,
+                            150,
+                            100
+                    );
+                    enemy.enemyIsDead = false;
+                }
+
+                if (!enemy.enemyIsDead) {
+                    GameApp.drawTexture(enemy.textureKey, enemy.enemyXPos, enemy.enemyYPos);
+                    Methodes_Rutger.checkBulletHitsTutorialEnemy(player, enemy);
+                }
+
+                if (enemy.enemyIsDead) {
+                    tutorialStep++;
+                }
+                break;
+        }
+
+        GameApp.endSpriteRendering();
+
+        // Terug naar menu
+        if (GameApp.isKeyJustPressed(Input.Keys.M)) {
+            GameApp.switchScreen("MainMenuScreen");
+        }
+    }
+
+    @Override
+    public void hide() {
+        GameApp.disposeFont("basic");
+        Methodes_Lucas.LucasParallaxMethods.disposeParallax();
+    }
+}

@@ -51,6 +51,7 @@ public class SettingsScreen extends ScalableGameScreen {
     @Override
     public void render(float delta) {
         super.render(delta);
+        boolean inShootTutorial = (tutorialStep == 1);
 
         PlayerClass.totalPlayTime += delta;
 
@@ -66,7 +67,7 @@ public class SettingsScreen extends ScalableGameScreen {
         );
 
         // Updates
-        Methodes_Rutger.update(player, unlimitedAmmoPowerupClass);
+        Methodes_Rutger.update(player, unlimitedAmmoPowerupClass, inShootTutorial);
         Methodes_Rutger.updateBomb(player, enemy);
         Methodes_Rutger.updateCoins(player);
 
@@ -111,7 +112,7 @@ public class SettingsScreen extends ScalableGameScreen {
                 }
 
                 if (!enemy.enemyIsDead) {
-                    GameApp.drawTexture(enemy.textureKey, enemy.enemyXPos, enemy.enemyYPos);
+                    GameApp.drawTexture(enemy.textureKey, enemy.enemyXPos, enemy.enemyYPos-50, 150, 220);
                     Methodes_Rutger.checkBulletHitsTutorialEnemy(player, enemy);
                 }
 

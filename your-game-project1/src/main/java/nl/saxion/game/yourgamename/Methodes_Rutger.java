@@ -53,8 +53,8 @@ public class Methodes_Rutger {
     }
 
 
-    // Speler update (springen, bukken, tekenen, schieten)
-    public static void update(PlayerClass player, unlimitedAmmoPowerupClass powerupClass) {
+    public static void update(PlayerClass player, unlimitedAmmoPowerupClass powerupClass, boolean blockShooting) {
+
         // --- SPRINGEN ---
         if (GameApp.isKeyJustPressed(Input.Keys.SPACE)) {
             if (player.jumpCount < 2) {
@@ -79,8 +79,7 @@ public class Methodes_Rutger {
             player.jumpCount = 0;
         }
 
-// --- RELOAD ---
-// Reload ALTIJD toestaan wanneer ammo < maxAmmo
+        // --- RELOAD ---
         if (GameApp.isKeyJustPressed(Input.Keys.R) && player.ammo < player.maxAmmo) {
             player.isReloading = true;
             player.reloadStartTime = System.currentTimeMillis();
@@ -90,10 +89,11 @@ public class Methodes_Rutger {
         if (player.isReloading) {
             long now = System.currentTimeMillis();
             if (now - player.reloadStartTime >= 1500) {
-                player.ammo = player.maxAmmo;  // altijd 5
+                player.ammo = player.maxAmmo;
                 player.isReloading = false;
             }
         }
+
         // --- KOGELS UPDATEN ---
         for (int i = 0; i < player.bullets.size(); i++) {
             BulletClass b = player.bullets.get(i);
@@ -106,73 +106,61 @@ public class Methodes_Rutger {
             }
         }
 
-        // --- TEKENEN VAN DE BROCCOLI ---
+        // --- BROCCOLI TEKENEN ---
         GameApp.drawTexture("brocolli", 100, player.yPlayer, 200, 200);
 
-// --- SCHIETEN ---
-        if (!player.isBlocking && GameApp.isKeyJustPressed(Input.Keys.F) && !player.isReloading) {
+        // --- SCHIETEN (UITGESCHAKELD TIJDENS TUTORIAL STAP 1) ---
+        if (!blockShooting) {
 
-            if (powerupClass.isactive) {
-                // Powerup actief → altijd schieten zolang ammo > 0
+            if (!player.isBlocking && GameApp.isKeyJustPressed(Input.Keys.F) && !player.isReloading) {
+
                 int broccoliX = 100;
                 int startX = broccoliX + player.spriteWidth;
                 int startY = player.yPlayer + 40 + player.spriteHeight / 2;
 
-                player.bullets.add(new BulletClass(startX, startY));
-                player.ammo--; // telt af van 25 naar 0
-
-                muzzleFlashes.add(new MuzzleFlash(startX, startY));
-                GameApp.playSound("shoot");
-                player.shotsFired++;
-
-            } else {
-                // Normale modus
-                if (player.ammo > 0) {
-                    int broccoliX = 100;
-                    int startX = broccoliX + player.spriteWidth;
-                    int startY = player.yPlayer + 40 + player.spriteHeight / 2;
-
+                if (powerupClass.isactive) {
                     player.bullets.add(new BulletClass(startX, startY));
                     player.ammo--;
-
                     muzzleFlashes.add(new MuzzleFlash(startX, startY));
                     GameApp.playSound("shoot");
                     player.shotsFired++;
 
                 } else {
-                    GameApp.playSound("NoAmmo", 0.8f);
+                    if (player.ammo > 0) {
+                        player.bullets.add(new BulletClass(startX, startY));
+                        player.ammo--;
+                        muzzleFlashes.add(new MuzzleFlash(startX, startY));
+                        GameApp.playSound("shoot");
+                        player.shotsFired++;
+                    } else {
+                        GameApp.playSound("NoAmmo", 0.8f);
+                    }
                 }
             }
         }
+
         // --- POWERUP AMMO CHECK ---
-        if (powerupClass.isactive) {
-            // Als ammo op is → powerup eindigt
-            if (player.ammo <= 0) {
-                powerupClass.isactive = false;
-                player.maxAmmo = 5;
-                player.isReloading = false; // voor de zekerheid
-            }
+        if (powerupClass.isactive && player.ammo <= 0) {
+            powerupClass.isactive = false;
+            player.maxAmmo = 5;
+            player.isReloading = false;
         }
 
-        // --- MUZZLE FLASH UPDATEN/TEKENEN ---
+        // --- MUZZLE FLASH UPDATEN ---
         for (int i = 0; i < muzzleFlashes.size(); i++) {
             MuzzleFlash flash = muzzleFlashes.get(i);
 
-            // Tijd bijwerken
             flash.timer += GameApp.getDeltaTime();
             if (flash.timer >= MuzzleFlash.FRAME_DURATION) {
                 flash.timer = 0;
                 flash.frameIndex++;
             }
 
-            // Frame tekenen zolang we binnen range zitten
             if (flash.frameIndex < MuzzleFlash.TOTAL_FRAMES) {
-                // Pas desnoods deze offsets aan voor perfecte uitlijning
-                int drawX = flash.x + 75;   // kleine offset naar rechts vanaf broccoli
-                int drawY = flash.y - 22;   // kleine offset omlaag richting loop
+                int drawX = flash.x + 75;
+                int drawY = flash.y - 22;
                 GameApp.drawTexture("muzzleFlash" + flash.frameIndex, drawX, drawY, 64, 64);
             } else {
-                // Animatie klaar -> verwijderen
                 muzzleFlashes.remove(i);
                 i--;
             }
@@ -619,9 +607,14 @@ public class Methodes_Rutger {
 // --- Tutorial logica per stap ---
 public static boolean tutorialShoot(PlayerClass player) {
     if (GameApp.isKeyJustPressed(Input.Keys.F) && player.ammo > 0) {
-        player.bullets.add(new BulletClass(100 + player.spriteWidth, player.yPlayer + player.spriteHeight / 2));
+
+        int startX = 100 + player.spriteWidth;
+        int startY = player.yPlayer + player.spriteHeight / 2 + 47; // 30 pixels hoger
+
+        player.bullets.add(new BulletClass(startX, startY));
         player.ammo--;
         GameApp.playSound("shoot");
+
         return true; // stap gehaald
     }
     return false;
