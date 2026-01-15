@@ -69,7 +69,7 @@ public class Methodes_Rutger {
             for (int i = 0; i < player.bullets.size(); i++) {
                 BulletClass b = player.bullets.get(i);
                 b.x += b.velocity;
-                GameApp.drawTexture("kogel", b.x, b.y, 90, 75);
+                GameApp.drawTexture("kogel", b.x, b.y, 45, 40);
 
                 if (b.x > GameApp.getWorldWidth()) {
                     player.bullets.remove(i);
@@ -87,7 +87,7 @@ public class Methodes_Rutger {
                 // Powerup actief → altijd schieten zolang ammo > 0
                 int broccoliX = 100;
                 int startX = broccoliX + player.spriteWidth;
-                int startY = player.yPlayer + player.spriteHeight / 2;
+                int startY = player.yPlayer + 40 + player.spriteHeight / 2;
 
                 player.bullets.add(new BulletClass(startX, startY));
                 player.ammo--; // telt af van 25 naar 0
@@ -101,7 +101,7 @@ public class Methodes_Rutger {
                 if (player.ammo > 0) {
                     int broccoliX = 100;
                     int startX = broccoliX + player.spriteWidth;
-                    int startY = player.yPlayer + player.spriteHeight / 2;
+                    int startY = player.yPlayer + 40 + player.spriteHeight / 2;
 
                     player.bullets.add(new BulletClass(startX, startY));
                     player.ammo--;
@@ -340,7 +340,7 @@ public class Methodes_Rutger {
 
 
                 boolean overlapX = bullet.x < currentenemy.enemyXPos + 100 && bullet.x + 90 > currentenemy.enemyXPos;
-                boolean overlapY = bullet.y < currentenemy.enemyYPos + 100 && bullet.y + 75 > currentenemy.enemyYPos;
+                boolean overlapY = bullet.y < currentenemy.enemyYPos + 140 && bullet.y + 75 > currentenemy.enemyYPos;
 
                 if (overlapX && overlapY && !enemy.allEnemies.isEmpty()) {
                     player.bullets.remove(i);
@@ -353,8 +353,8 @@ public class Methodes_Rutger {
                     enemy.type = 0;
                 }
             } else if (currentenemy.type == 2) {
-                boolean overlapX = bullet.x < currentenemy.enemyXPos + 100 && bullet.x + 90 > currentenemy.enemyXPos;
-                boolean overlapY = bullet.y < currentenemy.enemyYPos + 100 && bullet.y + 75 > currentenemy.enemyYPos;
+                boolean overlapX = bullet.x < currentenemy.enemyXPos + 100 && bullet.x + 45 > currentenemy.enemyXPos;
+                boolean overlapY = bullet.y < currentenemy.enemyYPos + 140 && bullet.y + 40 > currentenemy.enemyYPos;
 
                 if (overlapX && overlapY && !enemy.allEnemies.isEmpty()) {
                     player.bullets.remove(i);
@@ -375,8 +375,8 @@ public class Methodes_Rutger {
         SubEnemyClass currentenemy = subEnemyClass.subEnemies.get(0);
         for (int i = 0; i < player.bullets.size(); i++) {
             BulletClass bullet = player.bullets.get(i);
-            boolean overlapX = bullet.x < currentenemy.enemyXPos + 100 && bullet.x + 90 > currentenemy.enemyXPos;
-            boolean overlapY = bullet.y < currentenemy.enemyYPos + 100 && bullet.y + 75 > currentenemy.enemyYPos;
+            boolean overlapX = bullet.x < currentenemy.enemyXPos + 140 && bullet.x + 45 > currentenemy.enemyXPos;
+            boolean overlapY = bullet.y < currentenemy.enemyYPos + 140 && bullet.y + 40 > currentenemy.enemyYPos;
 
             if (overlapX && overlapY) {
                 player.bullets.remove(i);

@@ -24,7 +24,7 @@ public class Methodes_Maxje {
 
             }
 
-            GameApp.drawTexture(enemy.textureKey, enemy.enemyXPos, enemy.enemyYPos);
+            GameApp.drawTexture(enemy.textureKey, enemy.enemyXPos, enemy.enemyYPos- 50, 150,250);
         } else if (enemy.type == 2) {
             enemy.enemyXPos -= enemy.enemyspeed * delta;
 
