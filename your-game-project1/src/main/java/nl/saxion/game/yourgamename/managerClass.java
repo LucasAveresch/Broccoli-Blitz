@@ -9,4 +9,6 @@ public class managerClass {
     public boolean powerupActive = false;
     public boolean enemyActive = false;
     public boolean obstacleActive = false;
+
+    float timer = 0f;
  }

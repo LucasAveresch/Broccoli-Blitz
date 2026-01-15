@@ -9,7 +9,23 @@ import java.util.Random;
 public class Methodes_Maxje {
 
 
-    public static void updateEnemies(float delta, EnemyClass enemyClass, SubEnemyClass subEnemyClass) {
+    public static boolean DEBUG_FLAME = false;
+    // Breedte van de hitbox per frame (pixels)
+    public static final float[] flameHitboxWidth = {
+            0,    // frame 0 (unused)
+            150,  // frame 1
+            260,  // frame 2
+            360,  // frame 3
+            450,  // frame 4
+            500,  // frame 5 (max flame length)
+            450,  // frame 6
+            360,  // frame 7
+            260,  // frame 8
+            150,  // frame 9
+            50    // frame 10 (small tail)
+    };
+
+    public static void updateEnemies(float delta, EnemyClass enemyClass, SubEnemyClass subEnemyClass, flamethrowerClass flame) {
 
         if (enemyClass.allEnemies.isEmpty()) return;
         EnemyClass enemy = enemyClass.allEnemies.get(0);
@@ -34,6 +50,13 @@ public class Methodes_Maxje {
 
             GameApp.drawTexture(enemy.textureKey2, enemy.enemyXPos, enemy.enemyYPos, 175, 175);
 
+            // 🔥 FLAME SLECHTS ÉÉN KEER STARTEN
+            if (!enemy.hasShotFlame && enemy.enemyXPos < 900) {
+                flame.x = enemy.enemyXPos + 40;
+                flame.y = enemy.enemyYPos + 40;
+
+                enemy.hasShotFlame = true;
+            }
         } else if(enemy.type == 3){
             enemy.enemyXPos -= enemy.enemyspeed * delta;
 
@@ -53,22 +76,19 @@ public class Methodes_Maxje {
             }
         }
     }
-
-
-
-    public static void selectEnemyWillekeurig(float delta, EnemyClass enemyClass) {
+    public static void selectEnemyWillekeurig(float delta, EnemyClass enemyClass,managerClass managerClass) {
         Random r = new Random();
         boolean spawnNewEnemy = false;
 
 
 
-        if (enemyClass.currentTimer >= enemyClass.spawnInterval) {
+        if (managerClass.spawnEnenmy) {
             spawnNewEnemy = true;
             enemyClass.currentTimer = 0f;
         }
         if (enemyClass.allEnemies.isEmpty() && spawnNewEnemy) {
             int randomnumber = r.nextInt(1, 4);
-
+            randomnumber = 2;
             EnemyClass enemyClass1 = new EnemyClass("img/chef.png", "chef", "img/ketchup.png", "enemy2", 1100, 150, 200);
             enemyClass1.type = randomnumber;
             enemyClass1.hp = 3;
@@ -358,10 +378,10 @@ public class Methodes_Maxje {
     }
 
 
-    public static void updateSchildPowerup(float delta, PowerupClass powerUp, SchildClass schildClass) {
+    public static void updateSchildPowerup(float delta, PowerupClass powerUp, SchildClass schildClass,managerClass managerClass) {
 
         // 1. Tekenen zolang hij nog niet is opgepakt
-        if (!powerUp.powerupPickedup && powerUp.type == 1) {
+        if (managerClass.powerupActive && powerUp.type == 1) {
             powerUp.xPosition -= powerUp.speed * delta;
 
             if (powerUp.xPosition > -200) {
@@ -388,9 +408,10 @@ public class Methodes_Maxje {
     }
 
     public static void updateunlimitedKogels(float delta, PowerupClass powerUp,
-                                             unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass, PlayerClass player) {
+                                             unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass, PlayerClass player,
+                                             managerClass managerClass) {
 
-        if (!powerUp.powerupPickedup && powerUp.type == 2) {
+        if (managerClass.spawnPowerup && powerUp.type == 2) {
             powerUp.xPosition -= powerUp.speed * delta;
 
             if (powerUp.xPosition < 0) {
@@ -402,11 +423,9 @@ public class Methodes_Maxje {
         if (powerUp.powerupPickedup && powerUp.type == 2) {
             unlimitedAmmoPowerupClass.isactive = true;
 
-            // ❗ FIX: reload direct stoppen
             player.isReloading = false;
             player.reloadStartTime = 0;
 
-            // ❗ FIX: ammo instellen op powerup waarden
             player.ammo = 25;
 
             powerUp.xPosition = -100;
@@ -493,96 +512,93 @@ public class Methodes_Maxje {
             projectileClass.projectiles.removeIf(p -> p.remove);
         }
     }
+    public static void tekenFlamethrower(float delta, flamethrowerClass flame, EnemyClass enemyClass) {
+        if (flame == null || enemyClass.allEnemies.isEmpty()) return;
+        EnemyClass enemy = enemyClass.allEnemies.get(0);
 
-    public static void tekenFlamethrower(float delta, flamethrowerClass flame, EnemyClass enemy) {
+        // Alleen enemy type 2 gebruikt flame
+        if (enemy.type != 2) return;
 
-        if (enemy.allEnemies.isEmpty() && !flame.fired) {
-            flame.frame = 0;
-            flame.fired = false;
-            flame.timer = 0f;
-            return;
+        // Flame volgt enemy
+        flame.x = enemy.enemyXPos + 40;
+        flame.y = enemy.enemyYPos + 40;
+
+        // Animatie
+        flame.frameTimer += delta;
+        if (flame.frameTimer >= flamethrowerClass.FRAME_DURATION) {
+            flame.frameTimer = 0;
+            flame.frame++;
+            if (flame.frame > 10) flame.frame = 1;
         }
 
-        EnemyClass e = null;
-
-        if (!enemy.allEnemies.isEmpty()) {
-            e = enemy.allEnemies.get(0);
-        }
-
-        if (!flame.fired) {
-
-            if (e == null || e.type != 2) {
-                flame.frame = 0;
-                flame.fired = false;
-                flame.timer = 0f;
-                return;
-            }
-
-            flame.timer += delta;
-
-            if (flame.timer >= flame.interval) {
-                flame.timer = 0f;
-                flame.frame++;
-
-                if (flame.frame >= 7) {
-                    flame.fired = true;
-
-                    flame.x = e.enemyXPos;
-                    flame.y = e.enemyYPos;
-                    GameApp.addSound("flamethrower","sounds/flameThrower.mp3");
-                    GameApp.playSound("flamethrower");
-                }
-            }
-
-            String frameName = "flame" + (flame.frame + 1);
-            GameApp.drawTexture(frameName, e.enemyXPos - 20, e.enemyYPos, 100, 100);
-            return;
-        }
-
-
-        flame.x -= flame.speed * delta;
-
-        GameApp.drawTexture("flame8", flame.x, flame.y, 100, 100);
-
-        if (flame.x < -100) {
-            flame.frame = 0;
-            flame.fired = false;
-            flame.timer = 0f;
-        }
+        // 🔥 VISUELE FLAME (groeit van rechts naar links)
+        GameApp.drawTexture("flame" + flame.frame, flame.x - 450, flame.y, 500, 100);
     }
 
-    public static void checkFlamethrowerCollision(flamethrowerClass flamethrowerClass, PlayerClass playerClass,
-                                           SchildClass schildClass){
-        boolean collisionX =
-                flamethrowerClass.x > 100 + playerClass.spriteWidth &&
-                        flamethrowerClass.x < 120 + playerClass.spriteWidth;
+    public static void checkFlamethrowerCollision(flamethrowerClass flame,
+                                                  PlayerClass player,
+                                                  SchildClass shield) {
 
-        boolean collisionY =
-                flamethrowerClass.y < playerClass.yPlayer + playerClass.spriteHeight &&
-                        flamethrowerClass.y + 16 > playerClass.yPlayer;
+        if (flame == null || flame.frame == 1) return;
 
-        if (playerClass.isBlocking && collisionX && collisionY) {
-            GameApp.addSound("block", "Sounds/block.mp3");
-            GameApp.playSound("block", 5.0f);
-            flamethrowerClass.frame = 0;
-            flamethrowerClass.fired = false;
-            flamethrowerClass.timer = 0f;
-            flamethrowerClass.x = -900;
+        int f = flame.frame;
+
+        float drawX = flame.x - 450;
+        float drawY = flame.y;
+
+        float flameRight  = drawX + 500;
+        float flameLeft   = flameRight - flameHitboxWidth[f];
+        float flameTop    = drawY + 100;
+        float flameBottom = drawY;
+
+        float playerLeft   = 100;
+        float playerRight  = 100 + player.spriteWidth;
+        float playerTop    = player.yPlayer + player.spriteHeight;
+        float playerBottom = player.yPlayer;
+
+        boolean overlap =
+                flameLeft < playerRight &&
+                        flameRight > playerLeft &&
+                        flameBottom < playerTop &&
+                        flameTop > playerBottom;
+
+        if (!overlap) return;
+
+        // 🛡 BLOCKING → speler blijft leven
+        if (player.isBlocking) {
+
+            // Als shield actief is → shield verliest HP
+            if (shield.isactive && shield.HP > 0) {
+                shield.HP--;
+                if (shield.HP <= 0) shield.isactive = false;
+            }
+
+            // Flame resetten zodat hij niet blijft raken
+            flame.frame = 1;
             return;
         }
 
-        if(schildClass.HP == 0 && collisionX && collisionY){
+        // 🟥 GEEN BLOCK → normale damage
+        if (!shield.isactive || shield.HP <= 0) {
             GameApp.switchScreen("DeathScreen");
-        } else if (schildClass.HP > 0 && collisionX && collisionY) {
-            flamethrowerClass.frame = 0;
-            flamethrowerClass.fired = false;
-            flamethrowerClass.timer = 0f;
-            flamethrowerClass.x = -900;
-            schildClass.HP--;
-            GameApp.addSound("SchildPickup", "Sounds/shieldPickup.mp3");
-            GameApp.playSound("SchildPickup");
-
+            return;
         }
+
+        // Shield absorbeert hit
+        shield.HP--;
+        if (shield.HP <= 0) shield.isactive = false;
+
+        flame.frame = 1;
     }
 
-}
+
+
+    public static void generateGameLogic(managerClass managerClass,float delta){
+        if(managerClass.spawnObstacle||managerClass.spawnPowerup||managerClass.spawnEnenmy){return;}
+
+        Random r =  new Random();
+        }
+
+    }
+
+

@@ -602,40 +602,40 @@ public class Methodes_Rutger {
         drawTextCenteredWithOutline("basic", text, centerX, centerY, "white");
     }
 
-// --- Tutorial logica per stap ---
-public static boolean tutorialShoot(PlayerClass player) {
-    if (GameApp.isKeyJustPressed(Input.Keys.F) && player.ammo > 0) {
+    // --- Tutorial logica per stap ---
+    public static boolean tutorialShoot(PlayerClass player) {
+        if (GameApp.isKeyJustPressed(Input.Keys.F) && player.ammo > 0) {
 
-        int startX = 100 + player.spriteWidth;
-        int startY = player.yPlayer + player.spriteHeight / 2 + 47; // 30 pixels hoger
+            int startX = 100 + player.spriteWidth;
+            int startY = player.yPlayer + player.spriteHeight / 2 + 47; // 30 pixels hoger
 
-        player.bullets.add(new BulletClass(startX, startY));
-        player.ammo--;
-        GameApp.playSound("shoot");
+            player.bullets.add(new BulletClass(startX, startY));
+            player.ammo--;
+            GameApp.playSound("shoot");
 
-        return true; // stap gehaald
+            return true; // stap gehaald
+        }
+        return false;
     }
-    return false;
-}
 
-public static boolean tutorialReload(PlayerClass player) {
-    if (GameApp.isKeyJustPressed(Input.Keys.R)) {
-        player.isReloading = true;
-        player.reloadStartTime = System.currentTimeMillis();
-        GameApp.playSound("Reload", 0.8f);
-        return true;
+    public static boolean tutorialReload(PlayerClass player) {
+        if (GameApp.isKeyJustPressed(Input.Keys.R)) {
+            player.isReloading = true;
+            player.reloadStartTime = System.currentTimeMillis();
+            GameApp.playSound("Reload", 0.8f);
+            return true;
+        }
+        return false;
     }
-    return false;
-}
 
-public static boolean tutorialBomb(PlayerClass player, EnemyClass enemy) {
-    if (GameApp.isKeyJustPressed(Input.Keys.G)) {
-        bombs.add(new BombClass(100 + player.spriteWidth, player.yPlayer + player.spriteHeight / 2));
-        GameApp.playSound("shoot");
-        return true;
+    public static boolean tutorialBomb(PlayerClass player, EnemyClass enemy) {
+        if (GameApp.isKeyJustPressed(Input.Keys.G)) {
+            bombs.add(new BombClass(100 + player.spriteWidth, player.yPlayer + player.spriteHeight / 2));
+            GameApp.playSound("shoot");
+            return true;
+        }
+        return false;
     }
-    return false;
-}
     public static boolean tutorialCoin(PlayerClass player) {
         // Als er GEEN coins meer zijn → spawn er één nieuwe
         if (coins.isEmpty()) {
@@ -651,12 +651,12 @@ public static boolean tutorialBomb(PlayerClass player, EnemyClass enemy) {
         return player.coinsPickedUp > 0;
     }
 
-public static boolean tutorialEnemy(PlayerClass player, EnemyClass enemy) {
-    if (!enemy.enemyIsDead) {
-        checkBulletHitsEnemy(player, enemy);
+    public static boolean tutorialEnemy(PlayerClass player, EnemyClass enemy) {
+        if (!enemy.enemyIsDead) {
+            checkBulletHitsEnemy(player, enemy);
+        }
+        return enemy.enemyIsDead;
     }
-    return enemy.enemyIsDead;
-}
     // --- Tutorial coin spawn (eenmalig) ---
     private static boolean tutorialCoinSpawned = false;
 
@@ -757,5 +757,6 @@ public static boolean tutorialEnemy(PlayerClass player, EnemyClass enemy) {
             GameApp.drawTexture("block", 130, player.yPlayer-50 + 20, 200,150);
         }
     }
+
 }
 

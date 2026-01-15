@@ -37,6 +37,8 @@ public class YourGameScreen extends ScalableGameScreen {
     @Override
     public void show() {
 
+        flamethrowerClass = new flamethrowerClass(-2000, 0);
+
         Methodes_Rutger.resetRoundStats(player);
         Methodes_Lucas.LucasParallaxMethods.initParallax(0);
 
@@ -69,6 +71,9 @@ public class YourGameScreen extends ScalableGameScreen {
         for (int i = 1; i <= 10; i++) {
             GameApp.addTexture("bom" + i, "img/Bom/bom" + i + ".png");
         }
+        for (int i = 1; i <= 10; i++) {
+            GameApp.addTexture("flame" + i, "img/flame2/flame2." + i + ".png");
+        }
 
         GameApp.addSound("shoot", "Sounds/Schieten.mp3");
         GameApp.addSound("coin", "Sounds/coin.mp3");
@@ -77,7 +82,6 @@ public class YourGameScreen extends ScalableGameScreen {
         GameApp.addSound("Bomb", "Sounds/explosie.mp3");
         GameApp.addSound("block", "Sounds/block.mp3");
 
-        flamethrowerClass = new flamethrowerClass(0, 0);
         enemyClass = new EnemyClass("img/chef.png", "chef", "img/ketchup.png", "enemy2", 1100, 150, 1000);
 
         String[] knifeFrames = {
@@ -148,15 +152,14 @@ public class YourGameScreen extends ScalableGameScreen {
         player.groundLevel = baseGroundLevel;
 
         // nieuwe segmenten genereren
-        if (PlayerClass.worldX + getWorldWidth() > nextSegmentX) {
+        if (managerClass.spawnObstacle) {
+            managerClass.spawnObstacle = false;
+                SegmentGenerator.GeneratedSegment seg =
+                        segmentGenerator.generate(nextSegmentX);
 
-            SegmentGenerator.GeneratedSegment seg =
-                    segmentGenerator.generate(nextSegmentX);
+                activePlatforms.addAll(seg.platforms);
+                activeObstacles.addAll(seg.obstacles);
 
-            activePlatforms.addAll(seg.platforms);
-            activeObstacles.addAll(seg.obstacles);
-
-            nextSegmentX += 900;
         }
 
         // platforms updaten + tekenen
@@ -195,19 +198,17 @@ public class YourGameScreen extends ScalableGameScreen {
         Methodes_Rutger.drawGameHud(player);
         Methodes_Rutger.drawBombCooldown();
 
-        if (!enemyClass.enemyIsDead) {
-            Methodes_Maxje.updateEnemies(delta, enemyClass, subEnemyClass);
-        }
 
+        Methodes_Maxje.updateEnemies(delta, enemyClass,subEnemyClass,flamethrowerClass);
         Methodes_Rutger.checkBulletHitsEnemy(player, enemyClass);
         Methodes_Maxje.checkCollsionMes(projectileClass, player);
         Methodes_Maxje.checkCollisionEnemy(player, enemyClass, subEnemyClass, schildClass, powerupClassSchild);
         Methodes_Maxje.checkForPowerupPickup(player, powerupClassSchild);
-        Methodes_Maxje.updateSchildPowerup(delta, powerupClassSchild, schildClass);
-        Methodes_Maxje.updateunlimitedKogels(delta, powerupClassSchild, unlimitedAmmoPowerupClass, player);
+        Methodes_Maxje.updateSchildPowerup(delta, powerupClassSchild, schildClass,managerClass);
+        Methodes_Maxje.updateunlimitedKogels(delta, powerupClassSchild, unlimitedAmmoPowerupClass, player,managerClass);
         Methodes_Maxje.unlimitedKogelsLogic(delta, unlimitedAmmoPowerupClass, player, powerupClassSchild);
         Methodes_Maxje.activeSchildUpdate(schildClass, player);
-        Methodes_Maxje.selectEnemyWillekeurig(delta, enemyClass);
+        Methodes_Maxje.selectEnemyWillekeurig(delta, enemyClass,managerClass);
         Methodes_Maxje.checkShieldCollisionKnife(schildClass, projectileClass, player);
         Methodes_Rutger.updateSurvivalTime(player, delta);
         Methodes_Rutger.updateBlocking(player);
@@ -222,6 +223,40 @@ public class YourGameScreen extends ScalableGameScreen {
         Methodes_Maxje.addSpatel(delta,projectileClass,enemyClass);
         Methodes_Maxje.updateSpatel(delta,projectileClass);
         Methodes_Maxje.checkCollsionSpatel(projectileClass,player);
+        Methodes_Maxje.generateGameLogic(managerClass,delta);
+
+        // 1. Enemies updaten + tekenen
+        Methodes_Maxje.updateEnemies(delta, enemyClass, subEnemyClass, flamethrowerClass);
+
+// 2. Flame tekenen
+        Methodes_Maxje.tekenFlamethrower(delta, flamethrowerClass, enemyClass);
+
+// 3. Flame collision checken
+        Methodes_Maxje.checkFlamethrowerCollision(flamethrowerClass, player,schildClass);
+
+        // 🔥 DEBUG HITBOX FLAME (rechts → links)
+        if (Methodes_Maxje.DEBUG_FLAME && flamethrowerClass != null && flamethrowerClass.frame > 0) {
+
+            int f = flamethrowerClass.frame;
+
+            // Sprite beginpunt
+            float drawX = flamethrowerClass.x - 450;
+            float drawY = flamethrowerClass.y;
+
+            // Flame groeit van rechts naar links
+            float flameRight = drawX + 500;
+            float flameLeft  = flameRight - Methodes_Maxje.flameHitboxWidth[f];
+
+            // Debug‑texture tekenen
+            GameApp.drawTexture(
+                    "platform",          // jouw debug PNG
+                    flameLeft,           // x‑positie
+                    drawY,               // y‑positie
+                    Methodes_Maxje.flameHitboxWidth[f], // breedte per frame
+                    100                  // hoogte van flame
+            );
+        }
+
 
         GameApp.endSpriteRendering();
     }

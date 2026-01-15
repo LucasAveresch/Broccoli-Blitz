@@ -16,15 +16,18 @@ public class SegmentGenerator {
 
         GeneratedSegment seg = new GeneratedSegment();
 
-        int pattern = rng.nextInt(5);
+        int pattern = rng.nextInt(7);
 
 
         switch (pattern) {
 
             case 0:
-                // ⭐ PATTERN: verhoogde vloer van 2 blokken
-                seg.platforms.add(new PlatformClass(startX + 200, baseGroundLevel, 300, 70, 300, 120, "floorRaise", false, 0, 0));
-                seg.platforms.add(new PlatformClass(startX + 500, baseGroundLevel, 300, 70, 300, 120, "floorRaise", false, 0, 0));
+                seg.platforms.add(new PlatformClass(startX + 150, baseGroundLevel, 300, 70, 300, 120, "floorRaise", false, 0, 0));
+                seg.obstacles.add(new ObstacleClass(startX + 480, baseGroundLevel, 150, 70, 150, 150, "spike"));
+                seg.platforms.add(new PlatformClass(startX + 650, baseGroundLevel, 300, 70, 300, 120, "floorRaise", false, 0, 0));
+                seg.platforms.add(new PlatformClass(startX + 1100, baseGroundLevel, 300, 70, 300, 120, "floorRaise", false, 0, 0));
+                seg.obstacles.add(new ObstacleClass(startX + 1430, baseGroundLevel, 150, 70, 150, 150, "spike"));
+                seg.platforms.add(new PlatformClass(startX + 1600, baseGroundLevel, 300, 70, 300, 120, "floorRaise", false, 0, 0));
                 break;
 
             case 1:
@@ -36,22 +39,38 @@ public class SegmentGenerator {
 
             case 2:
                 // ⭐ PATTERN: vloer + triple spike
-                seg.obstacles.add(new ObstacleClass(startX + 300, baseGroundLevel, 330, 70, 450, 150, "spikeTriple"));
+                seg.platforms.add(new PlatformClass(startX + 150, baseGroundLevel, 300, 70, 300, 120, "floorRaise", false, 0, 0));
+                seg.obstacles.add(new ObstacleClass(startX + 325, baseGroundLevel, 330, 70, 450, 150, "spikeTriple"));
+                seg.platforms.add(new PlatformClass(startX + 650, baseGroundLevel, 300, 70, 300, 120, "floorRaise", false, 0, 0));
                 break;
 
             case 3:
                 // ⭐ PATTERN: raise + spike bovenop
-                seg.obstacles.add(new ObstacleClass(startX + 400, baseGroundLevel, 70, 70, 150, 150, "spike"));
-                seg.obstacles.add(new ObstacleClass(startX + 800, baseGroundLevel, 70, 70, 150, 150, "spike"));
-                seg.obstacles.add(new ObstacleClass(startX + 1200, baseGroundLevel, 70, 70, 150, 150, "spike"));
+                seg.platforms.add(new PlatformClass(startX + 200, baseGroundLevel, 300, 70, 300, 120, "floorRaise", false, 0, 0));
+                seg.platforms.add(new PlatformClass(startX + 500, baseGroundLevel + 100, 300, 70, 300, 120, "floorRaise", false, 0, 0));
+                seg.platforms.add(new PlatformClass(startX + 800, baseGroundLevel + 200, 270, 70, 300, 120, "floorRaise", false, 0, 0));
+                seg.platforms.add(new PlatformClass(startX + 1100, baseGroundLevel + 100, 270, 70, 300, 120, "floorRaise", false, 0, 0));
+                seg.platforms.add(new PlatformClass(startX + 1400, baseGroundLevel, 270, 70, 300, 120, "floorRaise", false, 0, 0));
+                seg.obstacles.add(new ObstacleClass(startX + 1800, baseGroundLevel, 330, 70, 450, 150, "spikeTriple"));
+                seg.platforms.add(new PlatformClass(startX + 2200, baseGroundLevel, 270, 70, 300, 120, "floorRaise", false, 0, 0));
                 break;
 
             case 4:
-                // ⭐ PATTERN: lange verhoogde vloer met spike aan het eind
-                seg.platforms.add(new PlatformClass(startX + 150, baseGroundLevel, 300, 70, 300, 120, "floorRaise", false, 0, 0));
-                seg.platforms.add(new PlatformClass(startX + 450, baseGroundLevel, 300, 70, 300, 120, "floorRaise", false, 0, 0));
-                seg.obstacles.add(new ObstacleClass(startX + 780, baseGroundLevel, 150, 70, 150, 150, "spike"));
+                seg.platforms.add(new PlatformClass(startX + 200, baseGroundLevel, 300, 70, 300, 120, "floorRaise", false, 0, 0));
+                seg.platforms.add(new PlatformClass(startX + 500, baseGroundLevel + 100, 300, 70, 300, 120, "floorRaise", false, 0, 0));
+                seg.obstacles.add(new ObstacleClass(startX + 650, baseGroundLevel, 330, 70, 450, 150, "spikeTriple"));
+                seg.obstacles.add(new ObstacleClass(startX + 800, baseGroundLevel, 330, 70, 450, 150, "spikeTriple"));
+                seg.platforms.add(new PlatformClass(startX + 1100, baseGroundLevel + 100, 270, 70, 300, 120, "floorRaise", false, 0, 0));
+                seg.platforms.add(new PlatformClass(startX + 1400, baseGroundLevel, 270, 70, 300, 120, "floorRaise", false, 0, 0));
                 break;
+
+            case 5:
+                seg.obstacles.add(new ObstacleClass(startX + 480, baseGroundLevel, 150, 70, 150, 150, "spike"));
+                break;
+            case 6:
+                seg.obstacles.add(new ObstacleClass(startX + 480, baseGroundLevel, 150, 70, 150, 150, "spikeTriple"));
+                break;
+
         }
 
         return seg;
