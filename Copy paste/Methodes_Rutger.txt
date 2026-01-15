@@ -2,922 +2,83 @@ package nl.saxion.game.yourgamename;
 
 import nl.saxion.gameapp.GameApp;
 
-public class BombClass {
-    public int x, y;
-    public int frameIndex = 1; // nooit 0!
-    public float timer = 0;
-    public static final int EXPLOSION_RADIUS = 200;
+public class Methodes_Lucas {
 
-    // Bewegingsvariabelen
-    public float velocityX = 12;
-    public float velocityY = 20;
-    public float gravity = -1.0f;
+    public static class LucasParallaxMethods {
 
-    public boolean exploded = false; // nieuwe flag
+        private static final String TEX_WALL = "bg_wall";
+        private static final String TEX_FLOOR = "bg_floor";
 
-    public static final int TOTAL_FRAMES = 10;
-    public static final float FRAME_DURATION = 0.2f;
+        private static final String TEX_WALL_PATH = "img/bg_mid.png";
+        private static final String TEX_FLOOR_PATH = "img/bg_close.png";
 
-    public BombClass(int startX, int startY) {
-        this.x = startX;
-        this.y = startY;
-    }
+        private static final float FLOOR_HEIGHT_RATIO = 0.18f;
+        private static final float SEAM_OVERLAP = 6f;
 
-    public void update() {
-        if (!exploded) {
-            // Parabolische beweging
-            x += velocityX;
-            y += velocityY;
-            velocityY += gravity;
+        private static boolean initialized = false;
+        private static float baseY = 0f;
+
+        public static void initParallax(float parallaxBaseY) {
+            if (initialized) return;
+
+            baseY = parallaxBaseY;
+
+            GameApp.addTexture(TEX_WALL, TEX_WALL_PATH);
+            GameApp.addTexture(TEX_FLOOR, TEX_FLOOR_PATH);
+
+            initialized = true;
         }
 
-        // Animatie frames alleen als hij geëxplodeerd is
-        if (exploded) {
-            timer += GameApp.getDeltaTime();
-            if (timer >= FRAME_DURATION) {
-                timer = 0;
-                if (frameIndex < TOTAL_FRAMES) {
-                    frameIndex++;
-                }
+        public static void disposeParallax() {
+            if (!initialized) return;
+
+            GameApp.disposeTexture(TEX_WALL);
+            GameApp.disposeTexture(TEX_FLOOR);
+
+            initialized = false;
+        }
+
+        // ✅ LET OP: nu 3 parameters: cameraX, worldWidth, worldHeight
+        public static void drawParallaxBackground(float cameraX, float worldWidth, float worldHeight) {
+            if (!initialized) initParallax(baseY);
+
+            float playTime = PlayerClass.totalPlayTime;
+            float speedMultiplier = 1f + (playTime / 60f);
+
+            float floorH = worldHeight * FLOOR_HEIGHT_RATIO;
+            float floorY = baseY;
+
+            float wallY = floorY + floorH - SEAM_OVERLAP;
+            float wallH = (baseY + worldHeight) - wallY;
+
+            drawLayerScaled(TEX_WALL, 0.3f * speedMultiplier, cameraX, worldWidth, wallY, wallH);
+            drawLayerScaled(TEX_FLOOR, 0.3f * speedMultiplier, cameraX, worldWidth, floorY, floorH);
+        }
+
+        private static void drawLayerScaled(String textureName,
+                                            float speed,
+                                            float cameraX,
+                                            float worldWidth,
+                                            float y,
+                                            float targetHeight) {
+
+            float texW = GameApp.getTextureWidth(textureName);
+            float texH = GameApp.getTextureHeight(textureName);
+            if (texW <= 0 || texH <= 0 || targetHeight <= 0) return;
+
+            float scale = targetHeight / texH;
+            float tileW = texW * scale;
+
+            float startX = -(cameraX * speed) % tileW;
+            if (startX > 0) startX -= tileW;
+
+            for (float x = startX; x < worldWidth + tileW; x += tileW) {
+                GameApp.drawTexture(textureName, x, y, tileW, targetHeight);
             }
         }
     }
 }
-package nl.saxion.game.yourgamename;
 
-public class Box {
-    float width;
-    float height;
-}
-package nl.saxion.game.yourgamename;
-
-public class BulletClass {
-    int x;
-    int y;
-    int velocity = 15; // snelheid naar rechts
-
-    public BulletClass(int startX, int startY) {
-        this.x = startX;
-        this.y = startY-23;
-    }
-
-
-}
-package nl.saxion.game.yourgamename;
-
-public class CoinClass {
-    int x;
-    int y;
-    int width = 100;
-    int height = 100;
-    boolean isCollected = false;
-
-    public CoinClass(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-}
-package nl.saxion.game.yourgamename;
-
-import com.badlogic.gdx.Input;
-import nl.saxion.gameapp.GameApp;
-import nl.saxion.gameapp.screens.ScalableGameScreen;
-
-public class DeathScreen extends ScalableGameScreen {
-    private PlayerClass player;
-    private long deathSoundId; // hier bewaren we het ID
-
-    public DeathScreen(PlayerClass player) {
-        super(1280, 720);
-        this.player = player;
-
-
-    }
-
-    @Override
-    public void show() {
-        GameApp.addFont("basic", "fonts/basic.ttf", 100);
-        GameApp.addFont("small", "fonts/basic.ttf", 30);
-
-        GameApp.addSound("death", "Sounds/DeadSound.mp3");
-        GameApp.addTexture("DeathScreen", "img/DeathScreen.png");
-        deathSoundId = GameApp.playSound("death", 0.8f); // ID opslaan
-
-    }
-
-    @Override
-    public void render(float delta) {
-        super.render(delta);
-        GameApp.clearScreen("black");
-        GameApp.startSpriteRendering();
-
-        // Achtergrond + stats
-        GameApp.drawTexture("DeathScreen", 0, 0, getWorldWidth(), getWorldHeight());
-        Methodes_Rutger.drawDeathStats(player, this);
-
-        GameApp.endSpriteRendering();
-
-        // Exit naar menu: eerst sound stoppen, dan resetten, dan switch
-        if (GameApp.isKeyJustPressed(Input.Keys.M)) {
-            GameApp.stopSound(deathSoundId);
-            Methodes_Rutger.resetRoundStats(player);
-            GameApp.switchScreen("MainMenuScreen");
-        }
-    }
-
-    @Override
-    public void hide() {
-        GameApp.disposeFont("basic");
-        GameApp.disposeFont("small");
-    }
-
-    @Override
-    public void dispose() {
-        // eventueel resources opruimen
-    }
-}
-package nl.saxion.game.yourgamename;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import nl.saxion.gameapp.GameApp;
-
-import java.util.ArrayList;
-
-public class EnemyClass {
-    public float enemyXPos;
-    public float enemyYPos;
-    public float enemyspeed;
-    public boolean enemyIsDead = false;
-    public String textureKey;
-    public String textureKey2;
-    public int type = 2;
-    public float currentTimer = 0f;
-    public float spawnInterval = 5f;
-    ArrayList<EnemyClass> allEnemies = new ArrayList<>();
-
-    public EnemyClass(String filepath, String textureKey,String filepath2, String textureKey2, float startX, float startY, float speed) {
-        this.textureKey = textureKey;
-        this.textureKey2 = textureKey2;
-        this.enemyXPos = startX;
-        this.enemyYPos = startY;
-        this.enemyspeed = speed;
-
-        GameApp.addTexture(textureKey, filepath);
-        GameApp.addTexture(textureKey2,filepath2);
-    }
-}
-
-package nl.saxion.game.yourgamename;
-
-import com.badlogic.gdx.Input;
-import nl.saxion.gameapp.GameApp;
-import nl.saxion.gameapp.screens.ScalableGameScreen;
-
-public class MainMenuScreen extends ScalableGameScreen {
-    private PlayerClass player;
-    private float worldX; // voor parallax beweging
-    private float broccoliX;
-    private boolean isStarting = false;
-    private boolean justDied = false; // nieuwe flag
-
-    public MainMenuScreen(PlayerClass player) {
-        super(1280, 720);
-        this.player = player;
-
-    }
-
-    @Override
-    public void show() {
-        GameApp.addFont("basic", "fonts/basic.ttf", 100);
-        GameApp.addFont("small", "fonts/basic.ttf", 30); // kleiner font voor HUD
-        Methodes_Lucas.LucasParallaxMethods.initParallax(0);
-        GameApp.addTexture("brocolli", "img/brocolli3.png");
-        GameApp.addSound("start", "Sounds/Start.mp3");
-
-        broccoliX = getWorldWidth() / 2f - player.spriteWidth / 2f - 50;
-        isStarting = false;
-
-    }
-
-    @Override
-    public void render(float delta) {
-        super.render(delta);
-
-        GameApp.clearScreen("black");
-        GameApp.startSpriteRendering();
-
-        // Starter
-        isStarting = Methodes_Rutger.handleMenuStart(isStarting);
-
-        // Springen
-        Methodes_Rutger.updateJump(player);
-
-        // Achtergrond bewegen zolang we nog niet gestart zijn
-        if (!isStarting) {
-            PlayerClass.worldX += 100 * delta; // langzame scroll in menu
-        }
-        Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(PlayerClass.worldX, getWorldWidth());
-
-        // Broccoli bewegen + tekenen
-        broccoliX = Methodes_Rutger.handleMenuBroccoli(player, broccoliX, isStarting, delta);
-
-        // Tekst
-        Methodes_Rutger.drawMenuText(this, player);
-
-        GameApp.endSpriteRendering();
-
-        // 🔑 ESCAPE → naar SettingsScreen
-        if (GameApp.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            GameApp.switchScreen("SettingsScreen");
-        }
-    }
-
-    @Override
-    public void hide() {
-        GameApp.disposeFont("basic");
-        Methodes_Lucas.LucasParallaxMethods.disposeParallax();
-    }
-}package nl.saxion.game.yourgamename;
-
- import nl.saxion.gameapp.GameApp;
-
- import java.util.ArrayList;
- import java.util.Iterator;
- import java.util.Random;
-
-     public class Methodes_Lucas {
-
-         /**
-          * Helper-methodes voor een simpele parallax achtergrond
-          * met één laag die eindeloos herhaalt.
-          *
-          * Gebruik in je Screen:
-          *  - LucasParallaxMethods.initParallax(0f); in show()
-          *  - LucasParallaxMethods.drawParallaxBackground(cameraX, getWorldWidth()); in render()
-          *  - LucasParallaxMethods.disposeParallax(); in hide()
-          */
-         public static class LucasParallaxMethods {
-
-             // Namen voor de textures in de GameApp texture registry
-             private static final String TEX_MID = "lucas_bg_mid";
-
-             // Bestandsnamen in src/main/resources/img
-             private static final String TEX_MID_PATH = "img/bg_mid.png";
-
-             // Parallax snelheid (kleiner = lijkt verder weg)
-             private static final float SPEED_MID = 0.5f;
-
-             // Y-positie waarop de achtergrond getekend wordt
-             private static float baseY = 0f;
-
-             // Om te voorkomen dat we textures dubbel laden
-             private static boolean initialized = false;
-
-             /**
-              * Roept je één keer aan bij het opstarten van je level.
-              * Bijvoorbeeld in show() van je ScalableGameScreen.
-              */
-             public static void initParallax(float parallaxBaseY) {
-                 if (initialized) {
-                     return;
-                 }
-
-                 baseY = parallaxBaseY;
-
-                 // Textures registreren in de globale texture registry
-                 GameApp.addTexture(TEX_MID, TEX_MID_PATH);
-
-                 initialized = true;
-             }
-
-             /**
-              * Ruimt de textures weer op.
-              * Roept je aan in hide() van je Screen.
-              */
-             public static void disposeParallax() {
-                 if (!initialized) {
-                     return;
-                 }
-
-                 GameApp.disposeTexture(TEX_MID);
-
-                 initialized = false;
-             }
-
-             /**
-              * Tekent de parallax achtergrond met één laag die eindeloos herhaalt.
-              * Roept je elke frame aan nadat GameApp.startSpriteRendering() is aangeroepen.
-              */
-             public static void drawParallaxBackground(float cameraX, float worldWidth) {
-                 if (!initialized) {
-                     initParallax(baseY);
-                 }
-
-                 // Middenlaag dichterbij
-                 drawLayer(TEX_MID, SPEED_MID, cameraX, worldWidth);
-             }
-
-             // Interne hulpfunctie voor één laag
-             private static void drawLayer(String textureName,
-                                           float speed,
-                                           float cameraX,
-                                           float worldWidth) {
-
-                 // Breedte van de texture in pixels
-                 float texWidth = GameApp.getTextureWidth(textureName);
-
-                 // Parallax: beweegt langzamer dan de camera
-                 float worldX = -cameraX * speed;
-
-                 // Beginpositie binnen één tile-breedte
-                 float startX = worldX % texWidth;
-
-                 // Zorg dat startX niet positief is, zodat we links van 0 beginnen
-                 if (startX > 0) {
-                     startX -= texWidth;
-                 }
-
-                 // Tiles tekenen van links naar rechts tot de hele wereldbreedte gevuld is
-                 for (float x = startX; x < worldWidth; x += texWidth) {
-                     GameApp.drawTexture(textureName, x, baseY);
-                 }
-             }
-         }
-
-         /**
-          * LucasLevelSegments:
-          * segment-gebaseerde platforms (keuken-obstakels) die naar links schuiven.
-          * De speler staat altijd op x = 100; de wereld beweegt.
-          */
-         public static class LucasLevelSegments {
-
-             // Één platform (bijv. een aanrecht / pan / keukenkast)
-             private static class Platform {
-                 float x;
-                 float y;
-                 float width;
-                 float height;
-                 String textureKey;
-
-                 Platform(float x, float y, float width, float height, String textureKey) {
-                     this.x = x;
-                     this.y = y;
-                     this.width = width;
-                     this.height = height;
-                     this.textureKey = textureKey;
-                 }
-             }
-
-             private static final int PLAYER_X = 100;           // vaste X van broccoli-speler
-             private static final float PLATFORM_HEIGHT = 40f;
-             private static final float SMALL_PLATFORM_WIDTH = 80f;
-             private static final float BIG_PLATFORM_WIDTH = 140f;
-
-             // Afstand tussen segmenten (in meters)
-             private static final float BASE_SEGMENT_DISTANCE = 6f;
-             private static final float MIN_SEGMENT_DISTANCE = 3f;
-             private static final float MAX_SEGMENT_DISTANCE = 10f;
-
-             // Waar we platforms weggooien (links buiten beeld)
-             private static final float DESPAWN_X = -200f;
-
-             private static final ArrayList<Platform> platforms = new ArrayList<>();
-             private static final Random random = new Random();
-
-             private static float metersSinceLastSegment = 0f;
-
-             private static boolean initialized = false;
-
-             // Keuken-platform textures laden (keukenapparatuur)
-             private static void init() {
-                 if (initialized) return;
-
-                 // Zorg dat je deze bestanden in src/main/resources/img zet:
-                 //  - platform_small.png (bijv. pan / krat)
-                 //  - platform_big.png   (bijv. groot aanrecht)
-                 GameApp.addTexture("platform_small", "img/platform_small.png");
-                 GameApp.addTexture("platform_big", "img/platform_big.png");
-
-                 initialized = true;
-             }
-
-             public static void dispose() {
-                 if (!initialized) return;
-
-                 GameApp.disposeTexture("platform_small");
-                 GameApp.disposeTexture("platform_big");
-
-                 platforms.clear();
-                 metersSinceLastSegment = 0f;
-                 initialized = false;
-             }
-
-             /**
-              * Roept je elke frame vanuit YourGameScreen.render().
-              * - Spawnt nieuwe segmenten op basis van distanceTravelled (difficulty)
-              * - Beweegt platforms naar links
-              * - Tekent platforms
-              */
-             public static void updateAndDrawSegments(PlayerClass player, float delta) {
-                 init(); // textures één keer laden
-
-                 // 1. Difficulty obv afstand
-                 float difficulty = 1f + (float) (player.distanceTravelled / 30.0); // hoe verder, hoe moeilijker
-                 float targetDistance = BASE_SEGMENT_DISTANCE / difficulty;
-
-                 // Clamp min/max afstand
-                 if (targetDistance < MIN_SEGMENT_DISTANCE) targetDistance = MIN_SEGMENT_DISTANCE;
-                 if (targetDistance > MAX_SEGMENT_DISTANCE) targetDistance = MAX_SEGMENT_DISTANCE;
-
-                 // 2. Meters sinds laatste segment optellen
-                 metersSinceLastSegment += player.speed * delta;
-
-                 // 3. Nieuw segment maken als we ver genoeg zijn
-                 if (metersSinceLastSegment >= targetDistance) {
-                     metersSinceLastSegment = 0f;
-                     spawnSegment(player);
-                 }
-
-                 // 4. Platforms updaten + tekenen
-                 float screenSpeed = (float) (player.speed * 5.0); // zelfde als munten
-
-                 Iterator<Platform> it = platforms.iterator();
-                 while (it.hasNext()) {
-                     Platform p = it.next();
-
-                     // naar links bewegen
-                     p.x -= screenSpeed;
-
-                     // tekenen
-                     GameApp.drawTexture(p.textureKey, p.x, p.y, p.width, p.height);
-
-                     // despawn als platform uit beeld is
-                     if (p.x + p.width < DESPAWN_X) {
-                         it.remove();
-                     }
-                 }
-             }
-
-             // === SEGMENT-GENERATIE ===
-
-             private static void spawnSegment(PlayerClass player) {
-                 float startX = GameApp.getWorldWidth() + 50f;
-
-                 int templateIndex = random.nextInt(3); // drie basis-templates
-
-                 switch (templateIndex) {
-                     case 0:
-                         spawnLowDouble(startX, player);
-                         break;
-                     case 1:
-                         spawnHighPlatform(startX, player);
-                         break;
-                     default:
-                         spawnStairs(startX, player);
-                         break;
-                 }
-             }
-
-             // Template 1: twee lage "keukenobjecten" op de grond (er OVERheen springen)
-             private static void spawnLowDouble(float startX, PlayerClass player) {
-                 float groundY = player.groundLevel;
-
-                 float w1 = SMALL_PLATFORM_WIDTH;
-                 float h1 = PLATFORM_HEIGHT;
-                 platforms.add(new Platform(startX, groundY, w1, h1, "platform_small"));
-
-                 float gap = 80f; // afstand ertussen
-                 float w2 = SMALL_PLATFORM_WIDTH;
-                 platforms.add(new Platform(startX + w1 + gap, groundY, w2, h1, "platform_small"));
-             }
-
-             // Template 2: lage keukentafel + hoger blok om op te landen
-             private static void spawnHighPlatform(float startX, PlayerClass player) {
-                 float groundY = player.groundLevel;
-
-                 // lage keukentafel
-                 float w1 = BIG_PLATFORM_WIDTH;
-                 platforms.add(new Platform(startX, groundY, w1, PLATFORM_HEIGHT, "platform_big"));
-
-                 // hoog keukenblok
-                 float gap = 60f;
-                 float highY = groundY + 80f;
-                 float w2 = SMALL_PLATFORM_WIDTH;
-                 platforms.add(new Platform(startX + w1 + gap, highY, w2, PLATFORM_HEIGHT, "platform_small"));
-             }
-
-             // Template 3: trappetje van keukenobjecten
-             private static void spawnStairs(float startX, PlayerClass player) {
-                 float groundY = player.groundLevel;
-                 float stepHeight = 35f;
-                 float stepWidth = SMALL_PLATFORM_WIDTH;
-                 float gap = 40f;
-
-                 platforms.add(new Platform(startX, groundY, stepWidth, PLATFORM_HEIGHT, "platform_small"));
-                 platforms.add(new Platform(startX + stepWidth + gap, groundY + stepHeight, stepWidth, PLATFORM_HEIGHT, "platform_small"));
-                 platforms.add(new Platform(startX + 2 * (stepWidth + gap), groundY + 2 * stepHeight, stepWidth, PLATFORM_HEIGHT, "platform_small"));
-             }
-
-             /**
-              * Geeft terug wat de "grondhoogte" is onder de speler:
-              * - standaard player.groundLevel
-              * - of de bovenkant van het hoogste platform onder de speler
-              */
-             public static int getGroundYAtPlayer(PlayerClass player) {
-                 int ground = player.groundLevel;
-
-                 int playerLeft = PLAYER_X;
-                 int playerRight = PLAYER_X + player.spriteWidth;
-
-                 for (Platform p : platforms) {
-                     float platformLeft = p.x;
-                     float platformRight = p.x + p.width;
-
-                     // horizontale overlap met speler?
-                     if (playerRight >= platformLeft && playerLeft <= platformRight) {
-                         int platformTop = (int) (p.y + p.height);
-
-                         // neem alleen platforms boven de normale grond
-                         if (platformTop > ground && platformTop <= ground + 200) {
-                             ground = platformTop;
-                         }
-                     }
-                 }
-
-                 return ground;
-             }
-         }
-     }
-
-
-package nl.saxion.game.yourgamename;
-
-import nl.saxion.gameapp.GameApp;
-import nl.saxion.game.yourgamename.PlayerClass.*;
-
-import javax.swing.border.EmptyBorder;
-import java.util.Random;
-
-public class Methodes_Maxje {
-
-
-    public static void updateEnemies(float delta, EnemyClass enemyClass, SubEnemyClass subEnemyClass) {
-
-            if (enemyClass.allEnemies.isEmpty()) return;
-            EnemyClass enemy = enemyClass.allEnemies.get(0);
-            if (enemy.type == 1) {
-                enemy.enemyXPos -= enemy.enemyspeed * delta;
-
-                if (enemy.enemyXPos < 0) {
-                    enemyClass.allEnemies.remove(0);
-                    enemy.type = 0;
-                    return;
-
-
-                }
-
-                GameApp.drawTexture(enemy.textureKey, enemy.enemyXPos, enemy.enemyYPos);
-            } else if (enemy.type == 2) {
-                enemy.enemyXPos -= enemy.enemyspeed * delta;
-
-                if (enemy.enemyXPos < 0) {
-                    enemyClass.allEnemies.remove(0);
-                    enemy.type = 0;
-                    return;
-
-                }
-
-                GameApp.drawTexture(enemy.textureKey2, enemy.enemyXPos, enemy.enemyYPos);
-
-                if (subEnemyClass.subEnemies.isEmpty()) {
-                    subEnemyClass.currentTimer += delta;
-                    if (subEnemyClass.currentTimer >= subEnemyClass.spawnInterval) {
-                        subEnemyClass.currentTimer = 0f;
-                        SubEnemyClass subEnemyClass1 = new SubEnemyClass("img/stokbrood.png", "StokbroodNoLegs", enemy.enemyXPos, enemy.enemyYPos, 100);
-                        subEnemyClass.subEnemies.add(subEnemyClass1);
-                    }
-
-                }
-
-            }
-        }
-        public static void updateSubEnemies(SubEnemyClass subEnemyClass, float delta,EnemyClass enemyClass) {
-        if(subEnemyClass.subEnemies.isEmpty()){ return; }
-            SubEnemyClass subenemy  = subEnemyClass.subEnemies.get(0);
-            if (!subEnemyClass.subEnemies.isEmpty()) {
-                subenemy.enemyYPos -= (subEnemyClass.enemyspeed) * delta;
-                if(subenemy.enemyYPos <= 100){
-                    subenemy.enemyYPos = 100;
-                }
-            }
-                if(subenemy.enemyYPos <= 100){
-                subenemy.enemyXPos -= subEnemyClass.enemyspeed * delta;
-                if(subenemy.enemyXPos < 0){
-                    subEnemyClass.subEnemies.remove(subenemy);
-                }
-            }
-            GameApp.drawTexture(subEnemyClass.textureKey, subenemy.enemyXPos, subenemy.enemyYPos);
-
-        }
-
-
-    public static void selectEnemyWillekeurig(float delta, EnemyClass enemyClass){
-        Random r = new Random();
-        boolean spawnNewEnemy = false;
-
-        enemyClass.currentTimer += delta;
-
-        if(enemyClass.currentTimer >= enemyClass.spawnInterval){
-            spawnNewEnemy = true;
-            enemyClass.currentTimer = 0f;
-        }
-        if(enemyClass.allEnemies.isEmpty() && spawnNewEnemy){
-            int randomnumber = r.nextInt(1, 3);
-
-            EnemyClass enemyClass1 = new EnemyClass("img/chef.png", "chef","img/enemy2.png","enemy2",1100, 150, 200);
-            enemyClass1.type = randomnumber;
-            if(enemyClass1.type == 2){
-                enemyClass1.enemyYPos = enemyClass1.enemyYPos + 200;
-            }
-
-            enemyClass.allEnemies.add(enemyClass1);
-            spawnNewEnemy = false;
-        }
-    }
-
-
-
-    public static void addMes(float delta, ProjectileClass projectileClass, EnemyClass enemyClass) {
-        if (enemyClass.allEnemies.isEmpty() || enemyClass.allEnemies.get(0).type != 1) return;
-
-        projectileClass.spawnTimer += delta;
-        if (projectileClass.spawnTimer > projectileClass.spawnInterval) {
-            projectileClass.spawnTimer = 0f;
-
-            ProjectileClass newknife = new ProjectileClass(
-                    "img/mes.png", "mes",
-                    enemyClass.allEnemies.get(0).enemyXPos,
-                    enemyClass.enemyYPos + 30,
-                    600
-            );
-
-            projectileClass.projectiles.add(newknife);
-            GameApp.drawTexture(newknife.textureKey, newknife.xposition, newknife.yposition);
-        }
-    }
-
-    public static void updateMes(float delta, ProjectileClass projectileClass, EnemyClass enemyClass) {
-        for (ProjectileClass knife : projectileClass.projectiles) {
-            knife.xposition -= knife.speed * delta;
-            GameApp.drawTexture(knife.textureKey, knife.xposition, knife.yposition);
-        }
-    }
-
-    public static void checkCollsionMes(ProjectileClass projectileClass, PlayerClass playerClass) {
-
-        // Stop als er geen messen zijn
-        if (projectileClass.projectiles.isEmpty()) return;
-
-        // We checken alleen het eerste mes (zoals jij al doet)
-        ProjectileClass knife = projectileClass.projectiles.get(0);
-
-        boolean collisionX =
-                knife.xposition > 100 + playerClass.spriteWidth &&
-                        knife.xposition < 120 + playerClass.spriteWidth;
-
-        boolean collisionY =
-                knife.yposition < playerClass.yPlayer + playerClass.spriteHeight &&
-                        knife.yposition + 16 > playerClass.yPlayer;
-
-        if (collisionX && collisionY) {
-
-            // 🟩 BLOCK → mes tegenhouden
-            if (playerClass.isBlocking) {
-
-                GameApp.addSound("block", "Sounds/block.mp3");
-                GameApp.playSound("block", 5.0f);
-
-                projectileClass.projectiles.remove(0); // gewoon simpel verwijderen
-                return;
-            }
-
-            // 🟥 GEEN BLOCK → dood
-            GameApp.switchScreen("DeathScreen");
-        }
-    }
-
-    public static void checkCollisionEnemy(PlayerClass playerClass, EnemyClass enemyClass, SubEnemyClass subEnemyClass, SchildClass schildClass, PowerupClass powerUp) {
-        if(!enemyClass.allEnemies.isEmpty()){
-            EnemyClass enemy = enemyClass.allEnemies.get(0);
-        if (enemy.type == 1) {
-            boolean collisionX =
-                    enemy.enemyXPos < 100 + playerClass.spriteWidth &&
-                            enemy.enemyXPos + 50 > 100;
-
-            boolean collisionY =
-                    enemy.enemyYPos < playerClass.yPlayer + playerClass.spriteHeight &&
-                            enemy.enemyYPos + 150 > playerClass.yPlayer;
-
-
-            if (collisionX && collisionY && schildClass.HP == 0) {
-                GameApp.switchScreen("DeathScreen");
-            }
-            else if (collisionY && collisionX) {
-
-                schildClass.HP--;
-
-                // ❗ Schild gebroken → timer stoppen
-                if (schildClass.HP <= 0) {
-                    schildClass.isactive = false;
-
-                    powerUp.hasTimer = false;
-                    powerUp.timeLeft = 0;
-                    powerUp.timerStarted = false;
-                }
-
-                enemyClass.allEnemies.remove(0);
-                GameApp.addSound("SchildPickup","Sounds/shieldPickup.mp3");
-                GameApp.playSound("SchildPickup");
-            }
-        } else if (enemy.type == 2) {
-            boolean collisionX = false;
-            boolean collisionY = false;
-            if (enemy.enemyXPos < 100 + playerClass.spriteWidth && enemy.enemyXPos > 100) {
-                collisionX = true;
-            }
-            if (enemy.enemyYPos < playerClass.yPlayer + playerClass.spriteHeight && enemy.enemyYPos > playerClass.yPlayer) {
-                collisionY = true;
-            }
-            if (collisionX && collisionY && schildClass.HP == 0) {
-                GameApp.switchScreen("DeathScreen");
-            } else if (collisionY && collisionX) {
-                schildClass.HP--;
-                enemyClass.allEnemies.remove(enemy);
-                GameApp.addSound("SchildPickup", "Sounds/shieldPickup.mp3");
-                GameApp.playSound("SchildPickup");
-            }
-        }
-        }
-        if (!subEnemyClass.subEnemies.isEmpty()) {
-            SubEnemyClass subenemy = subEnemyClass.subEnemies.get(0);
-            boolean collisionX =
-                    subenemy.enemyXPos < 125 + playerClass.spriteWidth &&
-                            subenemy.enemyXPos + subenemy.enemyXPos + 100 > 100;
-
-            boolean collisionY =
-                    subenemy.enemyYPos < playerClass.yPlayer + playerClass.spriteHeight &&
-                            subenemy.enemyYPos + subenemy.enemyYPos + 50 > playerClass.yPlayer;
-
-
-            if (collisionX && collisionY && schildClass.HP == 0) {
-                GameApp.switchScreen("DeathScreen");
-            } else if ( collisionY && collisionX){
-                schildClass.HP--;
-                subEnemyClass.subEnemies.remove(0);
-                GameApp.addSound("SchildPickup","Sounds/shieldPickup.mp3");
-                GameApp.playSound("SchildPickup");
-            }
-        }
-    }
-
-
-
-    public static void updateSchildPowerup(float delta, PowerupClass powerUp, SchildClass schildClass) {
-
-        // 1. Tekenen zolang hij nog niet is opgepakt
-        if (!powerUp.powerupPickedup && powerUp.type == 1) {
-            powerUp.xPosition -= powerUp.speed * delta;
-
-            if (powerUp.xPosition > -200) {
-                GameApp.drawTexture(powerUp.textureName, powerUp.xPosition, powerUp.yposition);
-            }
-        }
-
-        // 2. Powerup is opgepakt → activeer shield éénmalig
-        if (powerUp.powerupPickedup && powerUp.type == 1 && !powerUp.timerStarted) {
-
-            schildClass.isactive = true;
-
-            // Timer starten
-            powerUp.hasTimer = true;
-            powerUp.duration = 10f;
-            powerUp.timeLeft = powerUp.duration;
-            powerUp.timerStarted = true;
-
-            // Powerup verstoppen
-            powerUp.xPosition = -9999;
-            powerUp.yposition = -9999;
-        }
-    }
-    public static void updateunlimitedKogels(float delta, PowerupClass powerUp,
-                                             unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass, PlayerClass player) {
-
-        if (!powerUp.powerupPickedup && powerUp.type == 2) {
-            powerUp.xPosition -= powerUp.speed * delta;
-
-            if (powerUp.xPosition < 0) {
-                return;
-            }
-            GameApp.drawTexture(powerUp.texurename2, powerUp.xPosition, powerUp.yposition);
-        }
-
-        if (powerUp.powerupPickedup && powerUp.type == 2) {
-            unlimitedAmmoPowerupClass.isactive = true;
-
-            // ❗ FIX: reload direct stoppen
-            player.isReloading = false;
-            player.reloadStartTime = 0;
-
-            // ❗ FIX: ammo instellen op powerup waarden
-            player.ammo = 25;
-
-            powerUp.xPosition = -100;
-            powerUp.powerupPickedup = true;
-        }
-    }
-    public static void unlimitedKogelsLogic(float delta, unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass,
-                                            PlayerClass player,PowerupClass powerupClass){
-
-        if(unlimitedAmmoPowerupClass.isactive) {
-
-             if (player.ammo == 0) {
-                unlimitedAmmoPowerupClass.isactive = false;
-                unlimitedAmmoPowerupClass.currentTime = 0f;
-                powerupClass.powerupPickedup = false;
-                unlimitedAmmoPowerupClass.isactive = false;
-
-            }
-
-        }
-    }
-
-
-
-    public static void checkForPowerupPickup(PlayerClass player, PowerupClass powerUp) {
-        boolean yCollision = player.yPlayer < powerUp.yposition + powerUp.spriteHeight &&
-                player.yPlayer + player.spriteHeight > powerUp.yposition;
-
-        boolean xCollision = player.groundLevel < powerUp.xPosition + powerUp.spriteWidth &&
-                player.groundLevel + player.groundLevel > powerUp.xPosition;
-
-        if (yCollision && xCollision) {
-            powerUp.powerupPickedup = true;
-        }
-
-    }
-
-    public static void activeSchildUpdate(SchildClass schildClass, PlayerClass playerClass) {
-        if (schildClass.isactive) {
-            GameApp.getSpriteBatch().setColor(1, 1, 1, 0.5f);
-            if (schildClass.HP == 2) {
-                GameApp.drawTexture(schildClass.spriteName, 65, playerClass.yPlayer - 10);
-            } else if (schildClass.HP == 1) {
-                GameApp.drawTexture(schildClass.spritename2, 65, playerClass.yPlayer - 10);
-            }
-            else {
-                schildClass.isactive = false;
-            }
-            GameApp.getSpriteBatch().setColor(1, 1, 1, 1);
-        }
-
-
-    }
-
-    public static void checkShieldCollisionKnife(SchildClass schildClass, ProjectileClass projectileClass, PlayerClass playerClass) {
-
-        if (schildClass.isactive) {
-            for (ProjectileClass p : projectileClass.projectiles) {
-
-                float mesRechts = p.xposition + 50;
-                float mesLinks = p.xposition;
-                float mesTop = p.yposition + 50;
-                float mesBottom = p.yposition;
-
-                float schildRechts = 65 + 250;
-                float schildLinks = 65 + 75;
-                float schildTop = playerClass.yPlayer + 100 ;
-                float schildBottom = playerClass.yPlayer;
-
-                boolean hit =
-                        mesLinks < schildRechts &&
-                                mesRechts > schildLinks &&
-                                mesBottom < schildTop &&
-                                mesTop > schildBottom;
-
-                if (hit) {
-                    schildClass.HP--;
-                    p.remove = true;
-                    GameApp.addSound("SchildPickup","Sounds/shieldPickup.mp3");
-                    GameApp.playSound("SchildPickup");
-
-                }
-            }
-
-            projectileClass.projectiles.removeIf(p -> p.remove);
-        }
-    }
-}
 package nl.saxion.game.yourgamename;
 
 import com.badlogic.gdx.Game;
@@ -940,8 +101,37 @@ public class Methodes_Rutger {
     private static boolean bombOnCooldown = false;
     private static long lastBombTime = 0;
     private static ArrayList<BombClass> bombs = new ArrayList<>();
+    public static void drawTextWithOutline(String font, String text, int x, int y, String color) {
+        int o = 3;
 
+        GameApp.drawText(font, text, x - o, y, "black");
+        GameApp.drawText(font, text, x + o, y, "black");
+        GameApp.drawText(font, text, x, y - o, "black");
+        GameApp.drawText(font, text, x, y + o, "black");
 
+        GameApp.drawText(font, text, x - o, y - o, "black");
+        GameApp.drawText(font, text, x + o, y - o, "black");
+        GameApp.drawText(font, text, x - o, y + o, "black");
+        GameApp.drawText(font, text, x + o, y + o, "black");
+
+        GameApp.drawText(font, text, x, y, color);
+    }
+
+    public static void drawTextCenteredWithOutline(String font, String text, int x, int y, String color) {
+        int o = 3;
+
+        GameApp.drawTextCentered(font, text, x - o, y, "black");
+        GameApp.drawTextCentered(font, text, x + o, y, "black");
+        GameApp.drawTextCentered(font, text, x, y - o, "black");
+        GameApp.drawTextCentered(font, text, x, y + o, "black");
+
+        GameApp.drawTextCentered(font, text, x - o, y - o, "black");
+        GameApp.drawTextCentered(font, text, x + o, y - o, "black");
+        GameApp.drawTextCentered(font, text, x - o, y + o, "black");
+        GameApp.drawTextCentered(font, text, x + o, y + o, "black");
+
+        GameApp.drawTextCentered(font, text, x, y, color);
+    }
 
 
     // Speler update (springen, bukken, tekenen, schieten)
@@ -986,15 +176,15 @@ public class Methodes_Rutger {
             }
         }
         // --- KOGELS UPDATEN ---
-            for (int i = 0; i < player.bullets.size(); i++) {
-                BulletClass b = player.bullets.get(i);
-                b.x += b.velocity;
-                GameApp.drawTexture("kogel", b.x, b.y, 90, 75);
+        for (int i = 0; i < player.bullets.size(); i++) {
+            BulletClass b = player.bullets.get(i);
+            b.x += b.velocity;
+            GameApp.drawTexture("kogel", b.x, b.y, 45, 40);
 
-                if (b.x > GameApp.getWorldWidth()) {
-                    player.bullets.remove(i);
-                    i--;
-                }
+            if (b.x > GameApp.getWorldWidth()) {
+                player.bullets.remove(i);
+                i--;
+            }
         }
 
         // --- TEKENEN VAN DE BROCCOLI ---
@@ -1007,7 +197,7 @@ public class Methodes_Rutger {
                 // Powerup actief → altijd schieten zolang ammo > 0
                 int broccoliX = 100;
                 int startX = broccoliX + player.spriteWidth;
-                int startY = player.yPlayer + player.spriteHeight / 2;
+                int startY = player.yPlayer + 40 + player.spriteHeight / 2;
 
                 player.bullets.add(new BulletClass(startX, startY));
                 player.ammo--; // telt af van 25 naar 0
@@ -1021,7 +211,7 @@ public class Methodes_Rutger {
                 if (player.ammo > 0) {
                     int broccoliX = 100;
                     int startX = broccoliX + player.spriteWidth;
-                    int startY = player.yPlayer + player.spriteHeight / 2;
+                    int startY = player.yPlayer + 40 + player.spriteHeight / 2;
 
                     player.bullets.add(new BulletClass(startX, startY));
                     player.ammo--;
@@ -1069,44 +259,45 @@ public class Methodes_Rutger {
             }
         }
     }
-        public static void updateCoins(PlayerClass player) {
-            int broccoliX = 100;
-            int broccoliYTop = player.yPlayer;
-            int broccoliYBottom = player.yPlayer + player.spriteHeight;
 
-            for (int i = 0; i < coins.size(); i++) {
-                CoinClass coin = coins.get(i);
+    public static void updateCoins(PlayerClass player) {
+        int broccoliX = 100;
+        int broccoliYTop = player.yPlayer;
+        int broccoliYBottom = player.yPlayer + player.spriteHeight;
 
-                if (!coin.isCollected) {
-                    // Munten bewegen naar links
-                    coin.x -= player.speed * 5;
+        for (int i = 0; i < coins.size(); i++) {
+            CoinClass coin = coins.get(i);
 
-                    // Teken munt
-                    GameApp.drawTexture("coin", coin.x, coin.y, coin.width, coin.height);
+            if (!coin.isCollected) {
+                // Munten bewegen naar links
+                coin.x -= player.speed * 5;
 
-                    // Collision check (AABB)
-                    boolean overlap =
-                            broccoliX < coin.x + coin.width &&
-                                    broccoliX + player.spriteWidth > coin.x &&
-                                    broccoliYTop < coin.y + coin.height &&
-                                    broccoliYBottom > coin.y;
+                // Teken munt
+                GameApp.drawTexture("coin", coin.x, coin.y, coin.width, coin.height);
 
-                    if (overlap) {
-                        coin.isCollected = true;
-                        player.coinsPickedUp++;
-                        GameApp.playSound("coin", 0.25f);
-                    }
+                // Collision check (AABB)
+                boolean overlap =
+                        broccoliX < coin.x + coin.width &&
+                                broccoliX + player.spriteWidth > coin.x &&
+                                broccoliYTop < coin.y + coin.height &&
+                                broccoliYBottom > coin.y;
 
-                    // Verwijder munt als hij uit beeld is
-                    if (coin.x + coin.width < 0) {
-                        coin.isCollected = true;
-                    }
+                if (overlap) {
+                    coin.isCollected = true;
+                    player.coinsPickedUp++;
+                    GameApp.playSound("coin", 0.25f);
+                }
+
+                // Verwijder munt als hij uit beeld is
+                if (coin.x + coin.width < 0) {
+                    coin.isCollected = true;
                 }
             }
-
-            // HIER: echt uit de lijst slopen
-            coins.removeIf(c -> c.isCollected || c.x + c.width < 0);
         }
+
+        // HIER: echt uit de lijst slopen
+        coins.removeIf(c -> c.isCollected || c.x + c.width < 0);
+    }
 
 
     public static void spawnCoins() {
@@ -1139,30 +330,43 @@ public class Methodes_Rutger {
     }
 
     public static void drawMenuText(ScalableGameScreen screen, PlayerClass player) {
-        // Titel (midden)
-        String title = "Broccoli Blitz";
+
         int centerX = (int) (GameApp.getWorldWidth() / 2);
-        int centerY = (int) (GameApp.getWorldHeight() / 2 + 200);
-        GameApp.drawTextCentered("basic", title, centerX, centerY, "white");
 
-        // Subtitel (midden)
+        // Titel
+        String title = "Broccoli Blitz";
+        int centerY = (int) (GameApp.getWorldHeight() / 2 + 250);
+        drawTextCenteredWithOutline("basic", title, centerX, centerY, "white");
+
+        // Subtitel
         String subtitle = "jump to start!";
-        int subY = (int) (GameApp.getWorldHeight() / 2 + 100);
-        GameApp.drawTextCentered("basic", subtitle, centerX, subY, "white");
+        int subY = (int) (GameApp.getWorldHeight() / 2 + 150);
+        drawTextCenteredWithOutline("basic", subtitle, centerX, subY, "white");
 
-        // Statistieken rechtsboven (kleiner font)
+        // Tutorial tekst
+        String tutorialText = "Press ESC to start the tutorial";
+        int tutY = (int) (GameApp.getWorldHeight() / 2 + 50);
+        drawTextCenteredWithOutline("small", tutorialText, centerX, tutY, "white");
+
+        // Statistieken rechtsboven
         String coinsText = "Total Coins: " + player.totalCoins;
         String highScoreText = "High Score: " + String.format("%.1f", player.highScore) + " m";
 
         int margin = 20;
         int topY = (int) GameApp.getWorldHeight();
 
-        // Bereken breedte van de tekst zodat hij rechts uitgelijnd staat
         int coinsWidth = (int) GameApp.getTextWidth("small", coinsText);
         int scoreWidth = (int) GameApp.getTextWidth("small", highScoreText);
 
-        GameApp.drawText("small", coinsText, GameApp.getWorldWidth() - margin - coinsWidth, topY - 30, "white");
-        GameApp.drawText("small", highScoreText, GameApp.getWorldWidth() - margin - scoreWidth, topY - 60, "white");
+        drawTextWithOutline("small", coinsText,
+                (int) (GameApp.getWorldWidth() - margin - coinsWidth),
+                topY - 30,
+                "white");
+
+        drawTextWithOutline("small", highScoreText,
+                (int) (GameApp.getWorldWidth() - margin - scoreWidth),
+                topY - 60,
+                "white");
     }
 
     public static boolean checkDeath(PlayerClass player) {
@@ -1179,6 +383,7 @@ public class Methodes_Rutger {
         }
         return false;
     }
+
     public static void updateJump(PlayerClass player) {
         // --- SPRINGEN ---
         if (GameApp.isKeyJustPressed(Input.Keys.SPACE)) {
@@ -1199,6 +404,7 @@ public class Methodes_Rutger {
             player.jumpCount = 0;
         }
     }
+
     public static float handleMenuBroccoli(PlayerClass player, float broccoliX, boolean isStarting, float delta) {
         // Broccoli beweegt naar startpositie
         if (isStarting && broccoliX > 100) {
@@ -1212,10 +418,11 @@ public class Methodes_Rutger {
         }
 
         // Teken broccoli op huidige X en Y (nu met springen)
-        GameApp.drawTexture("brocolli", (int)broccoliX, player.yPlayer,200,200);
+        GameApp.drawTexture("brocolli", (int) broccoliX, player.yPlayer, 200, 200);
 
         return broccoliX;
     }
+
     public static boolean handleMenuStart(boolean isStarting) {
         // Spatie activeert beweging
         if (!isStarting && GameApp.isKeyJustPressed(Input.Keys.SPACE)) {
@@ -1226,23 +433,32 @@ public class Methodes_Rutger {
         }
         return isStarting; // geef de bijgewerkte waarde terug
     }
+
     public static void drawGameHud(PlayerClass player) {
         int margin = 20;
         int topY = (int) GameApp.getWorldHeight();
 
-        // Coins
-        drawTextRight("small", "Coins: " + player.coinsPickedUp, margin, topY - 30, "white");
+        String coins = "Coins: " + player.coinsPickedUp;
+        String ammo = "Ammo: " + player.ammo + "/" + player.maxAmmo;
+        String distance = "Distance: " + String.format("%.1f", player.distanceTravelled) + " m";
+        String highScore = "High Score: " + String.format("%.1f", player.highScore) + " m";
 
-        // Ammo
-        drawTextRight("small", "Ammo: " + player.ammo + "/" + player.maxAmmo, margin, topY - 60, "white");
+        int coinsWidth = (int) GameApp.getTextWidth("small", coins);
+        int ammoWidth = (int) GameApp.getTextWidth("small", ammo);
+        int distWidth = (int) GameApp.getTextWidth("small", distance);
+        int hsWidth = (int) GameApp.getTextWidth("small", highScore);
 
-        // Distance
-        drawTextRight("small", "Distance: " + String.format("%.1f", player.distanceTravelled) + " m",
-                margin, topY - 90, "white");
+        int xCoins = (int) (GameApp.getWorldWidth() - margin - coinsWidth);
+        int xAmmo = (int) (GameApp.getWorldWidth() - margin - ammoWidth);
+        int xDist = (int) (GameApp.getWorldWidth() - margin - distWidth);
+        int xHS   = (int) (GameApp.getWorldWidth() - margin - hsWidth);
 
-        // Highscore
-        drawTextRight("small", "High Score: " + String.format("%.1f", player.highScore) + " m",
-                margin, topY - 120, "white");
+        int y = topY - 30;
+
+        drawTextWithOutline("small", coins, xCoins, y, "white");
+        drawTextWithOutline("small", ammo, xAmmo, y - 30, "white");
+        drawTextWithOutline("small", distance, xDist, y - 60, "white");
+        drawTextWithOutline("small", highScore, xHS, y - 90, "white");
     }
 
     public static void drawTextRight(String fontKey, String text, int marginRight, int y, String color) {
@@ -1260,7 +476,7 @@ public class Methodes_Rutger {
 
 
                 boolean overlapX = bullet.x < currentenemy.enemyXPos + 100 && bullet.x + 90 > currentenemy.enemyXPos;
-                boolean overlapY = bullet.y < currentenemy.enemyYPos + 100 && bullet.y + 75 > currentenemy.enemyYPos;
+                boolean overlapY = bullet.y < currentenemy.enemyYPos + 140 && bullet.y + 75 > currentenemy.enemyYPos;
 
                 if (overlapX && overlapY && !enemy.allEnemies.isEmpty()) {
                     player.bullets.remove(i);
@@ -1273,8 +489,8 @@ public class Methodes_Rutger {
                     enemy.type = 0;
                 }
             } else if (currentenemy.type == 2) {
-                boolean overlapX = bullet.x < currentenemy.enemyXPos + 100 && bullet.x + 90 > currentenemy.enemyXPos;
-                boolean overlapY = bullet.y < currentenemy.enemyYPos + 100 && bullet.y + 75 > currentenemy.enemyYPos;
+                boolean overlapX = bullet.x < currentenemy.enemyXPos + 100 && bullet.x + 45 > currentenemy.enemyXPos;
+                boolean overlapY = bullet.y < currentenemy.enemyYPos + 140 && bullet.y + 40 > currentenemy.enemyYPos;
 
                 if (overlapX && overlapY && !enemy.allEnemies.isEmpty()) {
                     player.bullets.remove(i);
@@ -1286,26 +502,25 @@ public class Methodes_Rutger {
                     enemy.allEnemies.remove(0);
                     enemy.type = 0;
                 }
-            }
-        }
-    }
-    public static void checkKogelCollisionSubEnemy(PlayerClass player,SubEnemyClass subEnemyClass) {
+            } else if (currentenemy.type == 3) {
+                boolean overlapX = bullet.x < currentenemy.enemyXPos + 100 && bullet.x + 45 > currentenemy.enemyXPos;
+                boolean overlapY = bullet.y < currentenemy.enemyYPos + 140 && bullet.y + 40 > currentenemy.enemyYPos;
 
-        if (subEnemyClass.subEnemies.isEmpty()) return;
-        SubEnemyClass currentenemy = subEnemyClass.subEnemies.get(0);
-        for (int i = 0; i < player.bullets.size(); i++) {
-            BulletClass bullet = player.bullets.get(i);
-            boolean overlapX = bullet.x < currentenemy.enemyXPos + 100 && bullet.x + 90 > currentenemy.enemyXPos;
-            boolean overlapY = bullet.y < currentenemy.enemyYPos + 100 && bullet.y + 75 > currentenemy.enemyYPos;
-
-            if (overlapX && overlapY) {
-                player.bullets.remove(i);
-                GameApp.addSound("Enemydood", "Sounds/enemydoosounds.mp3");
-                GameApp.playSound("Enemydood");
-                i--;
-
-                player.enemiesDefeated++; // ✅ kill registreren
-                subEnemyClass.subEnemies.remove(0);
+                if (overlapX && overlapY && !enemy.allEnemies.isEmpty() && currentenemy.hp > 1) {
+                    player.bullets.remove(i);
+                    currentenemy.hp--;
+                    i--;
+                    System.out.println(currentenemy.hp);
+                } else if (overlapX && overlapY && !enemy.allEnemies.isEmpty() && currentenemy.hp == 1) {
+                    player.bullets.remove(i);
+                    System.out.println("I RUN");
+                    GameApp.addSound("Enemydood", "Sounds/enemydoosounds.mp3");
+                    GameApp.playSound("Enemydood");
+                    i--;
+                    player.enemiesDefeated++; // ✅ kill registreren
+                    enemy.allEnemies.remove(0);
+                    enemy.type = 0;
+                }
             }
         }
     }
@@ -1459,34 +674,28 @@ public class Methodes_Rutger {
 
         int remaining = getBombCooldownRemaining();
 
+        String text = (remaining == 0) ? "Bomb: READY" : "Bomb: " + remaining + "s";
+
+        drawTextWithOutline("small", text, margin, topY - 30, "white");
+    }
+
+
+    public static void drawTutorialText(ScalableGameScreen screen, int step) {
+        int centerX = (int) (GameApp.getWorldWidth() / 2);
+        int centerY = (int) (GameApp.getWorldHeight() / 2);
+
         String text;
-        if (remaining == 0) {
-            text = "Bomb: READY";
-        } else {
-            text = "Bomb: " + remaining + "s";
+        switch (step) {
+            case 1: text = "Press [F] to SHOOT"; break;
+            case 2: text = "Press [R] to RELOAD"; break;
+            case 3: text = "Press [G] to throw a BOMB"; break;
+            case 4: text = "Collect the COIN"; break;
+            case 5: text = "Defeat the ENEMY"; break;
+            default: text = "Tutorial complete! Press [M] for Menu"; break;
         }
 
-        GameApp.drawText("small", text, margin, topY - 30, "white");
+        drawTextCenteredWithOutline("basic", text, centerX, centerY, "white");
     }
-
-
-// --- Tutorial instructies tekenen ---
-public static void drawTutorialText(ScalableGameScreen screen, int step) {
-    int centerX = (int) (GameApp.getWorldWidth() / 2);
-    int centerY = (int) (GameApp.getWorldHeight() / 2);
-
-    String text = "";
-    switch (step) {
-        case 1: text = "Press [F] to SHOOT"; break;
-        case 2: text = "Press [R] to RELOAD"; break;
-        case 3: text = "Press [G] to throw a BOMB"; break;
-        case 4: text = "Collect the COIN"; break;
-        case 5: text = "Defeat the ENEMY"; break;
-        default: text = "Tutorial complete! Press [M] for Menu"; break;
-    }
-
-    GameApp.drawTextCentered("basic", text, centerX, centerY, "white");
-}
 
 // --- Tutorial logica per stap ---
 public static boolean tutorialShoot(PlayerClass player) {
@@ -1642,155 +851,38 @@ public static boolean tutorialEnemy(PlayerClass player, EnemyClass enemy) {
 
 package nl.saxion.game.yourgamename;
 
-public class MuzzleFlash {
-    public int x, y;
-    public int frameIndex = 0;
-    public static final int TOTAL_FRAMES = 5;   // aantal frames in je sheet
-    public static final float FRAME_DURATION = 0.05f; // tijd per frame (50 ms)
-    float timer = 0f;
-    public boolean active = true;
-
-    public MuzzleFlash(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    public void update(float delta) {
-        timer += delta;
-        if (timer >= FRAME_DURATION) {
-            timer = 0;
-            frameIndex++;
-            if (frameIndex >= TOTAL_FRAMES) {
-                active = false; // animatie klaar
-            }
-        }
-    }
-}
-package nl.saxion.game.yourgamename;
-
-import java.util.ArrayList;
-
-public class PlayerClass {
-    int coinsPickedUp;
-    String filepath = "img/brocolli3.png";
-    int velocity = 0;
-    int gravity = 1;
-    int groundLevel = 100;
-    int yPlayer = 100;
-    int jumpCount = 0;
-    int spriteHeight = 120;
-    int spriteWidth = 80;
-    ArrayList<BulletClass> bullets= new ArrayList<>();
-    // --- Magazijn ---
-    int ammo = 5;             // huidige kogels
-    int maxAmmo = 5;          // maximale kogels
-    boolean isReloading = false;
-    long reloadStartTime = 0; // tijdstip herladen
-
-    // --- Nieuwe variabele ---
-    public double speed = 1;
-    public double distanceTravelled = 0;
-    public static float worldX = 0;
-
-    public int totalCoins = 0;
-    public double highScore = 0;
-
-    // --- Statistieken voor DeathScreen ---
-    public int enemiesDefeated = 0;    // aantal verslagen enemies
-    public int shotsFired = 0;         // aantal keer geschoten
-    public float survivalTime = 0;     // tijd in seconden
-    public boolean isBlocking = false;
-}
-package nl.saxion.game.yourgamename;
-
-import com.badlogic.gdx.math.Interpolation;
-import nl.saxion.gameapp.GameApp;
-
-public class PowerupClass {
-    float xPosition = 500;
-    float yposition = 150;
-    float speed = 100;
-    float spriteWidth = 100;
-    float spriteHeight = 100;
-    String filepath;
-    String textureName;
-    String filepath2;
-    String texurename2;
-    int type = 2;
-    boolean powerupPickedup;
-    public boolean hasTimer = false;
-    public float duration = 0f;
-    public float timeLeft = 0f;
-    public boolean timerStarted = false;
-
-    public PowerupClass(String filepath, String textureName, String filepath2, String texurename2){
-        this.textureName = textureName;
-        this.filepath = filepath;
-        this.filepath2 = filepath2;
-        this.texurename2 = texurename2;
-
-        GameApp.addTexture(textureName, filepath);
-        GameApp.addTexture(texurename2,filepath2);
-    }
-
-}
-
-package nl.saxion.game.yourgamename;
-
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import nl.saxion.gameapp.GameApp;
 
 import java.util.ArrayList;
 
-public class ProjectileClass {
-    public float yposition;
-    public float xposition;
-    public float speed;
-    public float spawnTimer;
-    public float spawnInterval;
+public class EnemyClass {
+    public float enemyXPos;
+    public float enemyYPos;
+    public float enemyspeed;
+    public boolean enemyIsDead = false;
     public String textureKey;
-    public String filepath;
-    public boolean projectileOffScreen;
-    public boolean remove;
-    public ArrayList<ProjectileClass> projectiles = new ArrayList<>();
+    public String textureKey2;
+    public int type = 0;
+    public int hp = 3;
+    public float currentTimer = 0f;
+    public float spawnInterval = 5f;
+    ArrayList<EnemyClass> allEnemies = new ArrayList<>();
 
-    public ProjectileClass(String filepath, String textureKey, float xposition, float yposition, float speed){
-        this.speed = speed;
-        this.xposition = xposition;
-        this.yposition = yposition;
+
+    public EnemyClass(String filepath, String textureKey,String filepath2, String textureKey2, float startX, float startY, float speed) {
         this.textureKey = textureKey;
-        this.spawnInterval = 3.5f;
-        this.spawnTimer = 3f;
+        this.textureKey2 = textureKey2;
+        this.enemyXPos = startX;
+        this.enemyYPos = startY;
+        this.enemyspeed = speed;
 
         GameApp.addTexture(textureKey, filepath);
-    }
-}
-
-package nl.saxion.game.yourgamename;
-
-import nl.saxion.gameapp.GameApp;
-
-public class SchildClass {
-    float Xposition;
-    float YPosition;
-    float speed;
-    int HP = 2;
-    float maxTime = 10f;
-    float currentTime = 0f;
-    String spriteName;
-    String filepath;
-    String spritename2;
-    String filepath2;
-    boolean isactive;
-
-    public SchildClass(String filepath, String spriteName, String spriteName2, String Filepath2){
-        this.spriteName = spriteName;
-        this.filepath = filepath;
-        this.filepath2 = Filepath2;
-        this.spritename2 = spriteName2;
-
-
-        GameApp.addTexture(spriteName,filepath);
-        GameApp.addTexture(spriteName2,Filepath2);
+        GameApp.addTexture(textureKey2,filepath2);
+        GameApp.addTexture("tank1","img/tank1.png");
+        GameApp.addTexture("tank2","img/tank2.png");
+        GameApp.addTexture("tank3","img/tank3.png");
     }
 }
 
@@ -1801,13 +893,13 @@ import nl.saxion.gameapp.GameApp;
 import nl.saxion.gameapp.screens.ScalableGameScreen;
 
 public class SettingsScreen extends ScalableGameScreen {
+
     private PlayerClass player;
     private EnemyClass enemy;
     private int tutorialStep = 1;
-    unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass = new unlimitedAmmoPowerupClass();
-
-    // voor parallax beweging
     private float worldX = 0;
+
+    private unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass = new unlimitedAmmoPowerupClass();
 
     public SettingsScreen(PlayerClass player) {
         super(1280, 720);
@@ -1817,35 +909,28 @@ public class SettingsScreen extends ScalableGameScreen {
     @Override
     public void show() {
         GameApp.addFont("basic", "fonts/basic.ttf", 60);
+        GameApp.addFont("small", "fonts/basic.ttf", 30);
 
-        // Textures
         GameApp.addTexture("brocolli", "img/brocolli3.png");
         GameApp.addTexture("coin", "img/munt.png");
         GameApp.addTexture("kogel", "img/kogel.png");
 
-        // Muzzle flash frames
         for (int i = 0; i < MuzzleFlash.TOTAL_FRAMES; i++) {
             GameApp.addTexture("muzzleFlash" + i, "img/MuzzleFlash/muzzle_flash_" + i + ".png");
         }
 
-        // Bomb frames
         for (int i = 1; i <= BombClass.TOTAL_FRAMES; i++) {
             GameApp.addTexture("bom" + i, "img/Bom/bom" + i + ".png");
         }
 
-        // Sounds
         GameApp.addSound("shoot", "Sounds/Schieten.mp3");
         GameApp.addSound("Reload", "Sounds/Reload.mp3");
         GameApp.addSound("coin", "Sounds/coin.mp3");
         GameApp.addSound("NoAmmo", "Sounds/NoAmmo.mp3");
         GameApp.addSound("Bomb", "Sounds/explosie.mp3");
 
-        // Enemy wordt pas gespawned bij stap 5 → dus hier niet aanmaken
-
-        // Parallax achtergrond
         Methodes_Lucas.LucasParallaxMethods.initParallax(0);
 
-        // Reset tutorial coin flag
         Methodes_Rutger.resetTutorial(player);
         tutorialStep = 1;
         enemy = null;
@@ -1854,63 +939,70 @@ public class SettingsScreen extends ScalableGameScreen {
     @Override
     public void render(float delta) {
         super.render(delta);
+
+        PlayerClass.totalPlayTime += delta;
+
         GameApp.clearScreen("black");
         GameApp.startSpriteRendering();
 
-        // Achtergrond bewegen
+        // Achtergrond
         worldX += 200 * delta;
-        Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(worldX, getWorldWidth());
+        Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(
+                worldX,
+                getWorldWidth(),
+                getWorldHeight()
+        );
 
-        // Player update (springen, vallen, schieten, reload, muzzle flash, bommen, etc.)
-        Methodes_Rutger.update(player,unlimitedAmmoPowerupClass);
+        // Updates
+        Methodes_Rutger.update(player, unlimitedAmmoPowerupClass);
         Methodes_Rutger.updateBomb(player, enemy);
         Methodes_Rutger.updateCoins(player);
 
-        // HUD tekenen (ammo + coins + distance + highscore)
+        // HUD (nu met outline)
         Methodes_Rutger.drawGameHud(player);
-
-        // Bomb cooldown tekst
         Methodes_Rutger.drawBombCooldown();
 
-        // Tutorial tekst en checks
+        // Tutorial tekst (nu met outline)
         Methodes_Rutger.drawTutorialText(this, tutorialStep);
+
+        // Tutorial stappen
         switch (tutorialStep) {
+
             case 1:
                 if (Methodes_Rutger.tutorialShoot(player)) tutorialStep++;
                 break;
+
             case 2:
                 if (Methodes_Rutger.tutorialReload(player)) tutorialStep++;
                 break;
+
             case 3:
                 if (Methodes_Rutger.tutorialBomb(player, enemy)) tutorialStep++;
                 break;
+
             case 4:
                 if (Methodes_Rutger.tutorialCoin(player)) tutorialStep++;
                 break;
+
             case 5:
-                // Enemy pas aanmaken bij stap 5
                 if (enemy == null) {
                     enemy = new EnemyClass(
-                            "img/chef.png",      // filepath 1
-                            "chef",              // textureKey 1
-                            "img/enemy2.png",    // filepath 2
-                            "enemy2",            // textureKey 2
-                            900,                 // startX
-                            150,                 // startY
-                            100                  // speed
+                            "img/chef.png",
+                            "chef",
+                            "img/enemy2.png",
+                            "enemy2",
+                            900,
+                            150,
+                            100
                     );
                     enemy.enemyIsDead = false;
                 }
 
-                // Enemy tekenen zolang hij leeft
                 if (!enemy.enemyIsDead) {
                     GameApp.drawTexture(enemy.textureKey, enemy.enemyXPos, enemy.enemyYPos);
-
-                    // Bullet-collision specifiek voor tutorial-enemy
                     Methodes_Rutger.checkBulletHitsTutorialEnemy(player, enemy);
                 }
 
-                // Ga door naar volgende tutorial stap als enemy dood is
                 if (enemy.enemyIsDead) {
                     tutorialStep++;
                 }
@@ -1919,7 +1011,7 @@ public class SettingsScreen extends ScalableGameScreen {
 
         GameApp.endSpriteRendering();
 
-        // Exit naar menu
+        // Terug naar menu
         if (GameApp.isKeyJustPressed(Input.Keys.M)) {
             GameApp.switchScreen("MainMenuScreen");
         }
@@ -1928,161 +1020,6 @@ public class SettingsScreen extends ScalableGameScreen {
     @Override
     public void hide() {
         GameApp.disposeFont("basic");
-        // Parallax resources opruimen
         Methodes_Lucas.LucasParallaxMethods.disposeParallax();
     }
 }
-package nl.saxion.game.yourgamename;
-
-import nl.saxion.gameapp.GameApp;
-
-import java.util.ArrayList;
-
-public class SubEnemyClass {
-    public float enemyXPos;
-    public float enemyYPos;
-    public float enemyspeed;
-    public String textureKey;
-    public float currentTimer = 0f;
-    public float spawnInterval = 2f;
-    ArrayList<SubEnemyClass> subEnemies = new ArrayList<>();
-
-    public SubEnemyClass(String filepath, String textureKey, float startX, float startY, float speed) {
-        this.textureKey = textureKey;
-        this.enemyXPos = startX;
-        this.enemyYPos = startY;
-        this.enemyspeed = speed;
-
-        GameApp.addTexture(textureKey, filepath);
-    }
-}
-package nl.saxion.game.yourgamename;
-
-import nl.saxion.gameapp.GameApp;
-
-public class unlimitedAmmoPowerupClass {
-    boolean isactive;
-    float maxTime = 10f;
-    float currentTime = 0f;
-
-
-}
-
-package nl.saxion.game.yourgamename;
-
-import nl.saxion.gameapp.GameApp;
-import nl.saxion.gameapp.screens.ScalableGameScreen;
-
-public class YourGameScreen extends ScalableGameScreen {
-    public PlayerClass player;
-    public EnemyClass enemyClass;
-    public ProjectileClass projectileClass;
-    public PowerupClass powerupClassSchild;
-    public SchildClass schildClass;
-    public unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass;
-    public SubEnemyClass subEnemyClass;
-
-    public YourGameScreen(PlayerClass player) {
-        super(1280, 720);
-        this.player = player;
-    }
-
-    @Override
-    public void show() {
-        // Schoon starten
-        Methodes_Rutger.resetRoundStats(player);
-
-        // Assets
-        Methodes_Lucas.LucasParallaxMethods.initParallax(0);
-        GameApp.addTexture("kogel", "img/kogel.png");
-        GameApp.addTexture("brocolli", "img/brocolli3.png");
-        GameApp.addTexture("block", "img/block1.png");
-        GameApp.addTexture("coin", "img/munt.png");
-        for (int i = 0; i < MuzzleFlash.TOTAL_FRAMES; i++) {
-            GameApp.addTexture("muzzleFlash" + i, "img/MuzzleFlash/muzzle_flash_" + i + ".png");
-        }
-        for (int i = 1; i <= 10; i++) {
-            GameApp.addTexture("bom" + i, "img/Bom/bom" + i + ".png"); // hoofdletter B!
-        }
-
-        GameApp.addSound("shoot", "Sounds/Schieten.mp3");
-        GameApp.addSound("coin", "Sounds/coin.mp3");
-        GameApp.addSound("Reload", "Sounds/Reload.mp3");
-        GameApp.addSound("NoAmmo", "Sounds/NoAmmo.mp3");
-        GameApp.addSound("Bomb", "Sounds/explosie.mp3");
-        GameApp.addSound("block", "Sounds/block.mp3");
-
-        // Nieuwe enemy/projectiel
-        enemyClass = new EnemyClass("img/chef.png", "chef","img/enemy2.png","enemy2",1100, 150, 1000);
-        projectileClass = new ProjectileClass("img/mes.png", "mes",
-          enemyClass.enemyXPos, enemyClass.enemyYPos + 20, 200);
-        powerupClassSchild = new PowerupClass("img/schild.png", "schild","img/unlimitedKogels.png","unlimitedkogels");
-        schildClass = new SchildClass("img/activeSchild.png", "fullschild", "crackedSchild","img/activeCrackedShield.png");
-        unlimitedAmmoPowerupClass = new unlimitedAmmoPowerupClass();
-        subEnemyClass = new SubEnemyClass("img/stokbrood.png","stokbrood",enemyClass.enemyXPos,enemyClass.enemyYPos,350);
-        powerupClassSchild = new PowerupClass(
-                "img/schild.png",
-                "schild",
-                "img/unlimitedKogels.png",
-                "unlimitedkogels"
-        );
-    }
-
-    private float Worldx;
-
-    @Override
-    public void render(float delta) {
-        super.render(delta);
-
-        // --- Dood gaan check ---
-        if (Methodes_Rutger.checkDeath(player)) {
-            return; // stop render zodat er niet verder getekend wordt
-        }
-
-        GameApp.clearScreen("black");
-        GameApp.startSpriteRendering();
-
-        PlayerClass.worldX += 300 * delta; // sneller in game
-        Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(PlayerClass.worldX, getWorldWidth());
-
-        Methodes_Rutger.update(player,unlimitedAmmoPowerupClass);
-        Methodes_Rutger.spawnCoins();
-        Methodes_Rutger.updateCoins(player);
-        Methodes_Rutger.updateScore(player, delta);
-        Methodes_Rutger.drawGameHud(player);
-        Methodes_Rutger.drawBombCooldown();
-
-        if (!enemyClass.enemyIsDead) {
-            Methodes_Maxje.updateEnemies(delta,enemyClass,subEnemyClass);
-
-        }
-
-Methodes_Rutger.checkBulletHitsEnemy(player,enemyClass);
-        Methodes_Rutger.checkKogelCollisionSubEnemy(player,subEnemyClass);
-        Methodes_Maxje.checkCollsionMes(projectileClass,player);
-        Methodes_Maxje.checkCollisionEnemy(player, enemyClass, subEnemyClass, schildClass, powerupClassSchild);
-        Methodes_Maxje.checkForPowerupPickup(player,powerupClassSchild);
-        Methodes_Maxje.updateSchildPowerup(delta, powerupClassSchild,schildClass);
-        Methodes_Maxje.updateunlimitedKogels(delta, powerupClassSchild, unlimitedAmmoPowerupClass,player);
-        Methodes_Maxje.unlimitedKogelsLogic(delta,unlimitedAmmoPowerupClass,player,powerupClassSchild);
-        Methodes_Maxje.activeSchildUpdate(schildClass,player);
-        Methodes_Maxje.selectEnemyWillekeurig(delta,enemyClass);
-        Methodes_Maxje.checkShieldCollisionKnife(schildClass,projectileClass, player);
-        Methodes_Rutger.updateSurvivalTime(player, delta);
-        Methodes_Rutger.updateBlocking(player);
-        Methodes_Rutger.updateBomb(player, enemyClass);
-        Methodes_Maxje.addMes(delta,projectileClass,enemyClass);
-        Methodes_Maxje.updateMes(delta, projectileClass,enemyClass);
-        Methodes_Maxje.updateSubEnemies(subEnemyClass, delta,enemyClass);
-        Methodes_Rutger.updatePowerupTimer(delta, powerupClassSchild, schildClass);
-        Methodes_Rutger.drawPowerupTimer(powerupClassSchild);
-
-        GameApp.endSpriteRendering();
-    }
-
-    @Override
-    public void hide() {
-        Methodes_Lucas.LucasParallaxMethods.disposeParallax();
-    }
-}
-

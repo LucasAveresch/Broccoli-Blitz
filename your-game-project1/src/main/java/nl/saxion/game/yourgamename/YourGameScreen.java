@@ -184,7 +184,7 @@ public class YourGameScreen extends ScalableGameScreen {
         activeObstacles.removeIf(o -> o.x + o.width < 0);
 
         // physics / movement
-        Methodes_Rutger.update(player, unlimitedAmmoPowerupClass);
+        Methodes_Rutger.update(player, unlimitedAmmoPowerupClass, false);
 
         // rest van je game logic
         Methodes_Rutger.spawnCoins();

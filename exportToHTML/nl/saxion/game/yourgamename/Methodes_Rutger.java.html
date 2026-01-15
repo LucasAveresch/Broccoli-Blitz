@@ -1,0 +1,744 @@
+<html>
+<head>
+<title>Methodes_Rutger.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #7a7e85;}
+.s4 { color: #2aacb8;}
+.s5 { color: #6aab73;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Methodes_Rutger.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">nl</span><span class="s2">.</span><span class="s1">saxion</span><span class="s2">.</span><span class="s1">game</span><span class="s2">.</span><span class="s1">yourgamename</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">com</span><span class="s2">.</span><span class="s1">badlogic</span><span class="s2">.</span><span class="s1">gdx</span><span class="s2">.</span><span class="s1">Game</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">com</span><span class="s2">.</span><span class="s1">badlogic</span><span class="s2">.</span><span class="s1">gdx</span><span class="s2">.</span><span class="s1">Input</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">com</span><span class="s2">.</span><span class="s1">badlogic</span><span class="s2">.</span><span class="s1">gdx</span><span class="s2">.</span><span class="s1">graphics</span><span class="s2">.</span><span class="s1">Color</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">nl</span><span class="s2">.</span><span class="s1">saxion</span><span class="s2">.</span><span class="s1">gameapp</span><span class="s2">.</span><span class="s1">GameApp</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">nl</span><span class="s2">.</span><span class="s1">saxion</span><span class="s2">.</span><span class="s1">gameapp</span><span class="s2">.</span><span class="s1">screens</span><span class="s2">.</span><span class="s1">ScalableGameScreen</span><span class="s2">;</span>
+
+
+<span class="s0">import </span><span class="s1">javax</span><span class="s2">.</span><span class="s1">swing</span><span class="s2">.*;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">awt</span><span class="s2">.*;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.</span><span class="s1">ArrayList</span><span class="s2">;</span>
+
+<span class="s0">public class </span><span class="s1">Methodes_Rutger </span><span class="s2">{</span>
+    <span class="s3">// Lijst van kogels</span>
+    <span class="s3">//public static ArrayList&lt;BulletClass&gt; bullets = new ArrayList&lt;&gt;();</span>
+    <span class="s0">public static </span><span class="s1">ArrayList</span><span class="s2">&lt;</span><span class="s1">CoinClass</span><span class="s2">&gt; </span><span class="s1">coins </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;&gt;();</span>
+    <span class="s0">public static </span><span class="s1">ArrayList</span><span class="s2">&lt;</span><span class="s1">MuzzleFlash</span><span class="s2">&gt; </span><span class="s1">muzzleFlashes </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;&gt;();</span>
+    <span class="s0">private static long </span><span class="s1">lastCoinSpawnTime </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;</span>
+    <span class="s0">private static boolean </span><span class="s1">bombOnCooldown </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+    <span class="s0">private static long </span><span class="s1">lastBombTime </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;</span>
+    <span class="s0">private static </span><span class="s1">ArrayList</span><span class="s2">&lt;</span><span class="s1">BombClass</span><span class="s2">&gt; </span><span class="s1">bombs </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;&gt;();</span>
+
+
+
+
+    <span class="s3">// Speler update (springen, bukken, tekenen, schieten)</span>
+    <span class="s0">public static void </span><span class="s1">update</span><span class="s2">(</span><span class="s1">PlayerClass player</span><span class="s2">, </span><span class="s1">unlimitedAmmoPowerupClass powerupClass</span><span class="s2">) {</span>
+        <span class="s3">// --- SPRINGEN ---</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">isKeyJustPressed</span><span class="s2">(</span><span class="s1">Input</span><span class="s2">.</span><span class="s1">Keys</span><span class="s2">.</span><span class="s1">SPACE</span><span class="s2">)) {</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">player</span><span class="s2">.</span><span class="s1">jumpCount </span><span class="s2">&lt; </span><span class="s4">2</span><span class="s2">) {</span>
+                <span class="s1">player</span><span class="s2">.</span><span class="s1">velocity </span><span class="s2">= </span><span class="s4">20</span><span class="s2">;</span>
+                <span class="s1">player</span><span class="s2">.</span><span class="s1">jumpCount</span><span class="s2">++;</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+
+        <span class="s3">// --- BUKKEN ---</span>
+        <span class="s0">int </span><span class="s1">currentGravity </span><span class="s2">= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">gravity</span><span class="s2">;</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">isKeyPressed</span><span class="s2">(</span><span class="s1">Input</span><span class="s2">.</span><span class="s1">Keys</span><span class="s2">.</span><span class="s1">SHIFT_LEFT</span><span class="s2">) || </span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">isKeyPressed</span><span class="s2">(</span><span class="s1">Input</span><span class="s2">.</span><span class="s1">Keys</span><span class="s2">.</span><span class="s1">SHIFT_RIGHT</span><span class="s2">)) {</span>
+            <span class="s1">currentGravity </span><span class="s2">= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">gravity </span><span class="s2">* </span><span class="s4">3</span><span class="s2">;</span>
+        <span class="s2">}</span>
+
+        <span class="s3">// --- BEWEGING VERTICAAL ---</span>
+        <span class="s1">player</span><span class="s2">.</span><span class="s1">velocity </span><span class="s2">-= </span><span class="s1">currentGravity</span><span class="s2">;</span>
+        <span class="s1">player</span><span class="s2">.</span><span class="s1">yPlayer </span><span class="s2">+= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">velocity</span><span class="s2">;</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">player</span><span class="s2">.</span><span class="s1">yPlayer </span><span class="s2">&lt; </span><span class="s1">player</span><span class="s2">.</span><span class="s1">groundLevel</span><span class="s2">) {</span>
+            <span class="s1">player</span><span class="s2">.</span><span class="s1">yPlayer </span><span class="s2">= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">groundLevel</span><span class="s2">;</span>
+            <span class="s1">player</span><span class="s2">.</span><span class="s1">velocity </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;</span>
+            <span class="s1">player</span><span class="s2">.</span><span class="s1">jumpCount </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;</span>
+        <span class="s2">}</span>
+
+<span class="s3">// --- RELOAD ---</span>
+<span class="s3">// Reload ALTIJD toestaan wanneer ammo &lt; maxAmmo</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">isKeyJustPressed</span><span class="s2">(</span><span class="s1">Input</span><span class="s2">.</span><span class="s1">Keys</span><span class="s2">.</span><span class="s1">R</span><span class="s2">) &amp;&amp; </span><span class="s1">player</span><span class="s2">.</span><span class="s1">ammo </span><span class="s2">&lt; </span><span class="s1">player</span><span class="s2">.</span><span class="s1">maxAmmo</span><span class="s2">) {</span>
+            <span class="s1">player</span><span class="s2">.</span><span class="s1">isReloading </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+            <span class="s1">player</span><span class="s2">.</span><span class="s1">reloadStartTime </span><span class="s2">= </span><span class="s1">System</span><span class="s2">.</span><span class="s1">currentTimeMillis</span><span class="s2">();</span>
+            <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">playSound</span><span class="s2">(</span><span class="s5">&quot;Reload&quot;</span><span class="s2">, </span><span class="s4">0.8f</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">player</span><span class="s2">.</span><span class="s1">isReloading</span><span class="s2">) {</span>
+            <span class="s0">long </span><span class="s1">now </span><span class="s2">= </span><span class="s1">System</span><span class="s2">.</span><span class="s1">currentTimeMillis</span><span class="s2">();</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">now </span><span class="s2">- </span><span class="s1">player</span><span class="s2">.</span><span class="s1">reloadStartTime </span><span class="s2">&gt;= </span><span class="s4">1500</span><span class="s2">) {</span>
+                <span class="s1">player</span><span class="s2">.</span><span class="s1">ammo </span><span class="s2">= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">maxAmmo</span><span class="s2">;  </span><span class="s3">// altijd 5</span>
+                <span class="s1">player</span><span class="s2">.</span><span class="s1">isReloading </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+        <span class="s3">// --- KOGELS UPDATEN ---</span>
+            <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s4">0</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt; </span><span class="s1">player</span><span class="s2">.</span><span class="s1">bullets</span><span class="s2">.</span><span class="s1">size</span><span class="s2">(); </span><span class="s1">i</span><span class="s2">++) {</span>
+                <span class="s1">BulletClass b </span><span class="s2">= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">bullets</span><span class="s2">.</span><span class="s1">get</span><span class="s2">(</span><span class="s1">i</span><span class="s2">);</span>
+                <span class="s1">b</span><span class="s2">.</span><span class="s1">x </span><span class="s2">+= </span><span class="s1">b</span><span class="s2">.</span><span class="s1">velocity</span><span class="s2">;</span>
+                <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawTexture</span><span class="s2">(</span><span class="s5">&quot;kogel&quot;</span><span class="s2">, </span><span class="s1">b</span><span class="s2">.</span><span class="s1">x</span><span class="s2">, </span><span class="s1">b</span><span class="s2">.</span><span class="s1">y</span><span class="s2">, </span><span class="s4">90</span><span class="s2">, </span><span class="s4">75</span><span class="s2">);</span>
+
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">b</span><span class="s2">.</span><span class="s1">x </span><span class="s2">&gt; </span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">getWorldWidth</span><span class="s2">()) {</span>
+                    <span class="s1">player</span><span class="s2">.</span><span class="s1">bullets</span><span class="s2">.</span><span class="s1">remove</span><span class="s2">(</span><span class="s1">i</span><span class="s2">);</span>
+                    <span class="s1">i</span><span class="s2">--;</span>
+                <span class="s2">}</span>
+        <span class="s2">}</span>
+
+        <span class="s3">// --- TEKENEN VAN DE BROCCOLI ---</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawTexture</span><span class="s2">(</span><span class="s5">&quot;brocolli&quot;</span><span class="s2">, </span><span class="s4">100</span><span class="s2">, </span><span class="s1">player</span><span class="s2">.</span><span class="s1">yPlayer</span><span class="s2">, </span><span class="s4">200</span><span class="s2">, </span><span class="s4">200</span><span class="s2">);</span>
+
+<span class="s3">// --- SCHIETEN ---</span>
+        <span class="s0">if </span><span class="s2">(!</span><span class="s1">player</span><span class="s2">.</span><span class="s1">isBlocking </span><span class="s2">&amp;&amp; </span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">isKeyJustPressed</span><span class="s2">(</span><span class="s1">Input</span><span class="s2">.</span><span class="s1">Keys</span><span class="s2">.</span><span class="s1">F</span><span class="s2">) &amp;&amp; !</span><span class="s1">player</span><span class="s2">.</span><span class="s1">isReloading</span><span class="s2">) {</span>
+
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">powerupClass</span><span class="s2">.</span><span class="s1">isactive</span><span class="s2">) {</span>
+                <span class="s3">// Powerup actief → altijd schieten zolang ammo &gt; 0</span>
+                <span class="s0">int </span><span class="s1">broccoliX </span><span class="s2">= </span><span class="s4">100</span><span class="s2">;</span>
+                <span class="s0">int </span><span class="s1">startX </span><span class="s2">= </span><span class="s1">broccoliX </span><span class="s2">+ </span><span class="s1">player</span><span class="s2">.</span><span class="s1">spriteWidth</span><span class="s2">;</span>
+                <span class="s0">int </span><span class="s1">startY </span><span class="s2">= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">yPlayer </span><span class="s2">+ </span><span class="s1">player</span><span class="s2">.</span><span class="s1">spriteHeight </span><span class="s2">/ </span><span class="s4">2</span><span class="s2">;</span>
+
+                <span class="s1">player</span><span class="s2">.</span><span class="s1">bullets</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BulletClass</span><span class="s2">(</span><span class="s1">startX</span><span class="s2">, </span><span class="s1">startY</span><span class="s2">));</span>
+                <span class="s1">player</span><span class="s2">.</span><span class="s1">ammo</span><span class="s2">--; </span><span class="s3">// telt af van 25 naar 0</span>
+
+                <span class="s1">muzzleFlashes</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">MuzzleFlash</span><span class="s2">(</span><span class="s1">startX</span><span class="s2">, </span><span class="s1">startY</span><span class="s2">));</span>
+                <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">playSound</span><span class="s2">(</span><span class="s5">&quot;shoot&quot;</span><span class="s2">);</span>
+                <span class="s1">player</span><span class="s2">.</span><span class="s1">shotsFired</span><span class="s2">++;</span>
+
+            <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+                <span class="s3">// Normale modus</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">player</span><span class="s2">.</span><span class="s1">ammo </span><span class="s2">&gt; </span><span class="s4">0</span><span class="s2">) {</span>
+                    <span class="s0">int </span><span class="s1">broccoliX </span><span class="s2">= </span><span class="s4">100</span><span class="s2">;</span>
+                    <span class="s0">int </span><span class="s1">startX </span><span class="s2">= </span><span class="s1">broccoliX </span><span class="s2">+ </span><span class="s1">player</span><span class="s2">.</span><span class="s1">spriteWidth</span><span class="s2">;</span>
+                    <span class="s0">int </span><span class="s1">startY </span><span class="s2">= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">yPlayer </span><span class="s2">+ </span><span class="s1">player</span><span class="s2">.</span><span class="s1">spriteHeight </span><span class="s2">/ </span><span class="s4">2</span><span class="s2">;</span>
+
+                    <span class="s1">player</span><span class="s2">.</span><span class="s1">bullets</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BulletClass</span><span class="s2">(</span><span class="s1">startX</span><span class="s2">, </span><span class="s1">startY</span><span class="s2">));</span>
+                    <span class="s1">player</span><span class="s2">.</span><span class="s1">ammo</span><span class="s2">--;</span>
+
+                    <span class="s1">muzzleFlashes</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">MuzzleFlash</span><span class="s2">(</span><span class="s1">startX</span><span class="s2">, </span><span class="s1">startY</span><span class="s2">));</span>
+                    <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">playSound</span><span class="s2">(</span><span class="s5">&quot;shoot&quot;</span><span class="s2">);</span>
+                    <span class="s1">player</span><span class="s2">.</span><span class="s1">shotsFired</span><span class="s2">++;</span>
+
+                <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+                    <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">playSound</span><span class="s2">(</span><span class="s5">&quot;NoAmmo&quot;</span><span class="s2">, </span><span class="s4">0.8f</span><span class="s2">);</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+        <span class="s3">// --- POWERUP AMMO CHECK ---</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">powerupClass</span><span class="s2">.</span><span class="s1">isactive</span><span class="s2">) {</span>
+            <span class="s3">// Als ammo op is → powerup eindigt</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">player</span><span class="s2">.</span><span class="s1">ammo </span><span class="s2">&lt;= </span><span class="s4">0</span><span class="s2">) {</span>
+                <span class="s1">powerupClass</span><span class="s2">.</span><span class="s1">isactive </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+                <span class="s1">player</span><span class="s2">.</span><span class="s1">maxAmmo </span><span class="s2">= </span><span class="s4">5</span><span class="s2">;</span>
+                <span class="s1">player</span><span class="s2">.</span><span class="s1">isReloading </span><span class="s2">= </span><span class="s0">false</span><span class="s2">; </span><span class="s3">// voor de zekerheid</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+
+        <span class="s3">// --- MUZZLE FLASH UPDATEN/TEKENEN ---</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s4">0</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt; </span><span class="s1">muzzleFlashes</span><span class="s2">.</span><span class="s1">size</span><span class="s2">(); </span><span class="s1">i</span><span class="s2">++) {</span>
+            <span class="s1">MuzzleFlash flash </span><span class="s2">= </span><span class="s1">muzzleFlashes</span><span class="s2">.</span><span class="s1">get</span><span class="s2">(</span><span class="s1">i</span><span class="s2">);</span>
+
+            <span class="s3">// Tijd bijwerken</span>
+            <span class="s1">flash</span><span class="s2">.</span><span class="s1">timer </span><span class="s2">+= </span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">getDeltaTime</span><span class="s2">();</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">flash</span><span class="s2">.</span><span class="s1">timer </span><span class="s2">&gt;= </span><span class="s1">MuzzleFlash</span><span class="s2">.</span><span class="s1">FRAME_DURATION</span><span class="s2">) {</span>
+                <span class="s1">flash</span><span class="s2">.</span><span class="s1">timer </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;</span>
+                <span class="s1">flash</span><span class="s2">.</span><span class="s1">frameIndex</span><span class="s2">++;</span>
+            <span class="s2">}</span>
+
+            <span class="s3">// Frame tekenen zolang we binnen range zitten</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">flash</span><span class="s2">.</span><span class="s1">frameIndex </span><span class="s2">&lt; </span><span class="s1">MuzzleFlash</span><span class="s2">.</span><span class="s1">TOTAL_FRAMES</span><span class="s2">) {</span>
+                <span class="s3">// Pas desnoods deze offsets aan voor perfecte uitlijning</span>
+                <span class="s0">int </span><span class="s1">drawX </span><span class="s2">= </span><span class="s1">flash</span><span class="s2">.</span><span class="s1">x </span><span class="s2">+ </span><span class="s4">75</span><span class="s2">;   </span><span class="s3">// kleine offset naar rechts vanaf broccoli</span>
+                <span class="s0">int </span><span class="s1">drawY </span><span class="s2">= </span><span class="s1">flash</span><span class="s2">.</span><span class="s1">y </span><span class="s2">- </span><span class="s4">22</span><span class="s2">;   </span><span class="s3">// kleine offset omlaag richting loop</span>
+                <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawTexture</span><span class="s2">(</span><span class="s5">&quot;muzzleFlash&quot; </span><span class="s2">+ </span><span class="s1">flash</span><span class="s2">.</span><span class="s1">frameIndex</span><span class="s2">, </span><span class="s1">drawX</span><span class="s2">, </span><span class="s1">drawY</span><span class="s2">, </span><span class="s4">64</span><span class="s2">, </span><span class="s4">64</span><span class="s2">);</span>
+            <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+                <span class="s3">// Animatie klaar -&gt; verwijderen</span>
+                <span class="s1">muzzleFlashes</span><span class="s2">.</span><span class="s1">remove</span><span class="s2">(</span><span class="s1">i</span><span class="s2">);</span>
+                <span class="s1">i</span><span class="s2">--;</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+        <span class="s0">public static void </span><span class="s1">updateCoins</span><span class="s2">(</span><span class="s1">PlayerClass player</span><span class="s2">) {</span>
+            <span class="s0">int </span><span class="s1">broccoliX </span><span class="s2">= </span><span class="s4">100</span><span class="s2">;</span>
+            <span class="s0">int </span><span class="s1">broccoliYTop </span><span class="s2">= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">yPlayer</span><span class="s2">;</span>
+            <span class="s0">int </span><span class="s1">broccoliYBottom </span><span class="s2">= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">yPlayer </span><span class="s2">+ </span><span class="s1">player</span><span class="s2">.</span><span class="s1">spriteHeight</span><span class="s2">;</span>
+
+            <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s4">0</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt; </span><span class="s1">coins</span><span class="s2">.</span><span class="s1">size</span><span class="s2">(); </span><span class="s1">i</span><span class="s2">++) {</span>
+                <span class="s1">CoinClass coin </span><span class="s2">= </span><span class="s1">coins</span><span class="s2">.</span><span class="s1">get</span><span class="s2">(</span><span class="s1">i</span><span class="s2">);</span>
+
+                <span class="s0">if </span><span class="s2">(!</span><span class="s1">coin</span><span class="s2">.</span><span class="s1">isCollected</span><span class="s2">) {</span>
+                    <span class="s3">// Munten bewegen naar links</span>
+                    <span class="s1">coin</span><span class="s2">.</span><span class="s1">x </span><span class="s2">-= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">speed </span><span class="s2">* </span><span class="s4">5</span><span class="s2">;</span>
+
+                    <span class="s3">// Teken munt</span>
+                    <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawTexture</span><span class="s2">(</span><span class="s5">&quot;coin&quot;</span><span class="s2">, </span><span class="s1">coin</span><span class="s2">.</span><span class="s1">x</span><span class="s2">, </span><span class="s1">coin</span><span class="s2">.</span><span class="s1">y</span><span class="s2">, </span><span class="s1">coin</span><span class="s2">.</span><span class="s1">width</span><span class="s2">, </span><span class="s1">coin</span><span class="s2">.</span><span class="s1">height</span><span class="s2">);</span>
+
+                    <span class="s3">// Collision check (AABB)</span>
+                    <span class="s0">boolean </span><span class="s1">overlap </span><span class="s2">=</span>
+                            <span class="s1">broccoliX </span><span class="s2">&lt; </span><span class="s1">coin</span><span class="s2">.</span><span class="s1">x </span><span class="s2">+ </span><span class="s1">coin</span><span class="s2">.</span><span class="s1">width </span><span class="s2">&amp;&amp;</span>
+                                    <span class="s1">broccoliX </span><span class="s2">+ </span><span class="s1">player</span><span class="s2">.</span><span class="s1">spriteWidth </span><span class="s2">&gt; </span><span class="s1">coin</span><span class="s2">.</span><span class="s1">x </span><span class="s2">&amp;&amp;</span>
+                                    <span class="s1">broccoliYTop </span><span class="s2">&lt; </span><span class="s1">coin</span><span class="s2">.</span><span class="s1">y </span><span class="s2">+ </span><span class="s1">coin</span><span class="s2">.</span><span class="s1">height </span><span class="s2">&amp;&amp;</span>
+                                    <span class="s1">broccoliYBottom </span><span class="s2">&gt; </span><span class="s1">coin</span><span class="s2">.</span><span class="s1">y</span><span class="s2">;</span>
+
+                    <span class="s0">if </span><span class="s2">(</span><span class="s1">overlap</span><span class="s2">) {</span>
+                        <span class="s1">coin</span><span class="s2">.</span><span class="s1">isCollected </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+                        <span class="s1">player</span><span class="s2">.</span><span class="s1">coinsPickedUp</span><span class="s2">++;</span>
+                        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">playSound</span><span class="s2">(</span><span class="s5">&quot;coin&quot;</span><span class="s2">, </span><span class="s4">0.25f</span><span class="s2">);</span>
+                    <span class="s2">}</span>
+
+                    <span class="s3">// Verwijder munt als hij uit beeld is</span>
+                    <span class="s0">if </span><span class="s2">(</span><span class="s1">coin</span><span class="s2">.</span><span class="s1">x </span><span class="s2">+ </span><span class="s1">coin</span><span class="s2">.</span><span class="s1">width </span><span class="s2">&lt; </span><span class="s4">0</span><span class="s2">) {</span>
+                        <span class="s1">coin</span><span class="s2">.</span><span class="s1">isCollected </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+                    <span class="s2">}</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+
+            <span class="s3">// HIER: echt uit de lijst slopen</span>
+            <span class="s1">coins</span><span class="s2">.</span><span class="s1">removeIf</span><span class="s2">(</span><span class="s1">c -&gt; c</span><span class="s2">.</span><span class="s1">isCollected </span><span class="s2">|| </span><span class="s1">c</span><span class="s2">.</span><span class="s1">x </span><span class="s2">+ </span><span class="s1">c</span><span class="s2">.</span><span class="s1">width </span><span class="s2">&lt; </span><span class="s4">0</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+
+    <span class="s0">public static void </span><span class="s1">spawnCoins</span><span class="s2">() {</span>
+        <span class="s0">long </span><span class="s1">now </span><span class="s2">= </span><span class="s1">System</span><span class="s2">.</span><span class="s1">currentTimeMillis</span><span class="s2">();</span>
+
+        <span class="s3">// Check of er minstens 5 seconden voorbij zijn</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">now </span><span class="s2">- </span><span class="s1">lastCoinSpawnTime </span><span class="s2">&gt;= </span><span class="s4">5000</span><span class="s2">) {</span>
+            <span class="s1">lastCoinSpawnTime </span><span class="s2">= </span><span class="s1">now</span><span class="s2">;</span>
+
+            <span class="s3">// Spawn helemaal rechts</span>
+            <span class="s0">int </span><span class="s1">x </span><span class="s2">= (</span><span class="s0">int</span><span class="s2">) </span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">getWorldWidth</span><span class="s2">();</span>
+
+            <span class="s3">// Random hoogte tussen groundLevel en worldHeight - 100</span>
+            <span class="s0">int </span><span class="s1">minY </span><span class="s2">= </span><span class="s4">100</span><span class="s2">; </span><span class="s3">// iets boven de grond</span>
+            <span class="s0">int </span><span class="s1">maxY </span><span class="s2">= (</span><span class="s0">int</span><span class="s2">) (</span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">getWorldHeight</span><span class="s2">() - </span><span class="s4">300</span><span class="s2">);</span>
+            <span class="s0">int </span><span class="s1">y </span><span class="s2">= (</span><span class="s0">int</span><span class="s2">) (</span><span class="s1">Math</span><span class="s2">.</span><span class="s1">random</span><span class="s2">() * (</span><span class="s1">maxY </span><span class="s2">- </span><span class="s1">minY</span><span class="s2">) + </span><span class="s1">minY</span><span class="s2">);</span>
+
+            <span class="s1">coins</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">CoinClass</span><span class="s2">(</span><span class="s1">x</span><span class="s2">, </span><span class="s1">y</span><span class="s2">));</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public static void </span><span class="s1">updateScore</span><span class="s2">(</span><span class="s1">PlayerClass player</span><span class="s2">, </span><span class="s0">double </span><span class="s1">delta</span><span class="s2">) {</span>
+        <span class="s3">// Tel meters op: snelheid (m/s) * tijd (s)</span>
+        <span class="s1">player</span><span class="s2">.</span><span class="s1">distanceTravelled </span><span class="s2">+= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">speed </span><span class="s2">* </span><span class="s1">delta</span><span class="s2">;</span>
+
+        <span class="s3">// Check of huidige afstand groter is dan highscore</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">player</span><span class="s2">.</span><span class="s1">distanceTravelled </span><span class="s2">&gt; </span><span class="s1">player</span><span class="s2">.</span><span class="s1">highScore</span><span class="s2">) {</span>
+            <span class="s1">player</span><span class="s2">.</span><span class="s1">highScore </span><span class="s2">= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">distanceTravelled</span><span class="s2">;</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public static void </span><span class="s1">drawMenuText</span><span class="s2">(</span><span class="s1">ScalableGameScreen screen</span><span class="s2">, </span><span class="s1">PlayerClass player</span><span class="s2">) {</span>
+        <span class="s3">// Titel (midden)</span>
+        <span class="s1">String title </span><span class="s2">= </span><span class="s5">&quot;Broccoli Blitz&quot;</span><span class="s2">;</span>
+        <span class="s0">int </span><span class="s1">centerX </span><span class="s2">= (</span><span class="s0">int</span><span class="s2">) (</span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">getWorldWidth</span><span class="s2">() / </span><span class="s4">2</span><span class="s2">);</span>
+        <span class="s0">int </span><span class="s1">centerY </span><span class="s2">= (</span><span class="s0">int</span><span class="s2">) (</span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">getWorldHeight</span><span class="s2">() / </span><span class="s4">2 </span><span class="s2">+ </span><span class="s4">200</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawTextCentered</span><span class="s2">(</span><span class="s5">&quot;basic&quot;</span><span class="s2">, </span><span class="s1">title</span><span class="s2">, </span><span class="s1">centerX</span><span class="s2">, </span><span class="s1">centerY</span><span class="s2">, </span><span class="s5">&quot;white&quot;</span><span class="s2">);</span>
+
+        <span class="s3">// Subtitel (midden)</span>
+        <span class="s1">String subtitle </span><span class="s2">= </span><span class="s5">&quot;jump to start!&quot;</span><span class="s2">;</span>
+        <span class="s0">int </span><span class="s1">subY </span><span class="s2">= (</span><span class="s0">int</span><span class="s2">) (</span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">getWorldHeight</span><span class="s2">() / </span><span class="s4">2 </span><span class="s2">+ </span><span class="s4">100</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawTextCentered</span><span class="s2">(</span><span class="s5">&quot;basic&quot;</span><span class="s2">, </span><span class="s1">subtitle</span><span class="s2">, </span><span class="s1">centerX</span><span class="s2">, </span><span class="s1">subY</span><span class="s2">, </span><span class="s5">&quot;white&quot;</span><span class="s2">);</span>
+
+        <span class="s3">// Statistieken rechtsboven (kleiner font)</span>
+        <span class="s1">String coinsText </span><span class="s2">= </span><span class="s5">&quot;Total Coins: &quot; </span><span class="s2">+ </span><span class="s1">player</span><span class="s2">.</span><span class="s1">totalCoins</span><span class="s2">;</span>
+        <span class="s1">String highScoreText </span><span class="s2">= </span><span class="s5">&quot;High Score: &quot; </span><span class="s2">+ </span><span class="s1">String</span><span class="s2">.</span><span class="s1">format</span><span class="s2">(</span><span class="s5">&quot;%.1f&quot;</span><span class="s2">, </span><span class="s1">player</span><span class="s2">.</span><span class="s1">highScore</span><span class="s2">) + </span><span class="s5">&quot; m&quot;</span><span class="s2">;</span>
+
+        <span class="s0">int </span><span class="s1">margin </span><span class="s2">= </span><span class="s4">20</span><span class="s2">;</span>
+        <span class="s0">int </span><span class="s1">topY </span><span class="s2">= (</span><span class="s0">int</span><span class="s2">) </span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">getWorldHeight</span><span class="s2">();</span>
+
+        <span class="s3">// Bereken breedte van de tekst zodat hij rechts uitgelijnd staat</span>
+        <span class="s0">int </span><span class="s1">coinsWidth </span><span class="s2">= (</span><span class="s0">int</span><span class="s2">) </span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">getTextWidth</span><span class="s2">(</span><span class="s5">&quot;small&quot;</span><span class="s2">, </span><span class="s1">coinsText</span><span class="s2">);</span>
+        <span class="s0">int </span><span class="s1">scoreWidth </span><span class="s2">= (</span><span class="s0">int</span><span class="s2">) </span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">getTextWidth</span><span class="s2">(</span><span class="s5">&quot;small&quot;</span><span class="s2">, </span><span class="s1">highScoreText</span><span class="s2">);</span>
+
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawText</span><span class="s2">(</span><span class="s5">&quot;small&quot;</span><span class="s2">, </span><span class="s1">coinsText</span><span class="s2">, </span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">getWorldWidth</span><span class="s2">() - </span><span class="s1">margin </span><span class="s2">- </span><span class="s1">coinsWidth</span><span class="s2">, </span><span class="s1">topY </span><span class="s2">- </span><span class="s4">30</span><span class="s2">, </span><span class="s5">&quot;white&quot;</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawText</span><span class="s2">(</span><span class="s5">&quot;small&quot;</span><span class="s2">, </span><span class="s1">highScoreText</span><span class="s2">, </span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">getWorldWidth</span><span class="s2">() - </span><span class="s1">margin </span><span class="s2">- </span><span class="s1">scoreWidth</span><span class="s2">, </span><span class="s1">topY </span><span class="s2">- </span><span class="s4">60</span><span class="s2">, </span><span class="s5">&quot;white&quot;</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public static boolean </span><span class="s1">checkDeath</span><span class="s2">(</span><span class="s1">PlayerClass player</span><span class="s2">) {</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">isKeyPressed</span><span class="s2">(</span><span class="s1">Input</span><span class="s2">.</span><span class="s1">Keys</span><span class="s2">.</span><span class="s1">ESCAPE</span><span class="s2">) &amp;&amp; </span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">isKeyPressed</span><span class="s2">(</span><span class="s1">Input</span><span class="s2">.</span><span class="s1">Keys</span><span class="s2">.</span><span class="s1">NUM_9</span><span class="s2">)) {</span>
+            <span class="s3">// Tellen bij einde ronde</span>
+            <span class="s1">player</span><span class="s2">.</span><span class="s1">totalCoins </span><span class="s2">+= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">coinsPickedUp</span><span class="s2">;</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">player</span><span class="s2">.</span><span class="s1">distanceTravelled </span><span class="s2">&gt; </span><span class="s1">player</span><span class="s2">.</span><span class="s1">highScore</span><span class="s2">) {</span>
+                <span class="s1">player</span><span class="s2">.</span><span class="s1">highScore </span><span class="s2">= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">distanceTravelled</span><span class="s2">;</span>
+            <span class="s2">}</span>
+
+            <span class="s3">// Niet resetten hier -&gt; eerst tonen in DeathScreen</span>
+            <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">switchScreen</span><span class="s2">(</span><span class="s5">&quot;DeathScreen&quot;</span><span class="s2">);</span>
+            <span class="s0">return true</span><span class="s2">;</span>
+        <span class="s2">}</span>
+        <span class="s0">return false</span><span class="s2">;</span>
+    <span class="s2">}</span>
+    <span class="s0">public static void </span><span class="s1">updateJump</span><span class="s2">(</span><span class="s1">PlayerClass player</span><span class="s2">) {</span>
+        <span class="s3">// --- SPRINGEN ---</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">isKeyJustPressed</span><span class="s2">(</span><span class="s1">Input</span><span class="s2">.</span><span class="s1">Keys</span><span class="s2">.</span><span class="s1">SPACE</span><span class="s2">)) {</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">player</span><span class="s2">.</span><span class="s1">jumpCount </span><span class="s2">&lt; </span><span class="s4">2</span><span class="s2">) {   </span><span class="s3">// maximaal 2 sprongen</span>
+                <span class="s1">player</span><span class="s2">.</span><span class="s1">velocity </span><span class="s2">= </span><span class="s4">20</span><span class="s2">;</span>
+                <span class="s1">player</span><span class="s2">.</span><span class="s1">jumpCount</span><span class="s2">++;</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+
+        <span class="s3">// --- GRAVITY ---</span>
+        <span class="s1">player</span><span class="s2">.</span><span class="s1">velocity </span><span class="s2">-= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">gravity</span><span class="s2">;</span>
+        <span class="s1">player</span><span class="s2">.</span><span class="s1">yPlayer </span><span class="s2">+= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">velocity</span><span class="s2">;</span>
+
+        <span class="s3">// --- LANDING ---</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">player</span><span class="s2">.</span><span class="s1">yPlayer </span><span class="s2">&lt; </span><span class="s1">player</span><span class="s2">.</span><span class="s1">groundLevel</span><span class="s2">) {</span>
+            <span class="s1">player</span><span class="s2">.</span><span class="s1">yPlayer </span><span class="s2">= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">groundLevel</span><span class="s2">;</span>
+            <span class="s1">player</span><span class="s2">.</span><span class="s1">velocity </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;</span>
+            <span class="s1">player</span><span class="s2">.</span><span class="s1">jumpCount </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+    <span class="s0">public static float </span><span class="s1">handleMenuBroccoli</span><span class="s2">(</span><span class="s1">PlayerClass player</span><span class="s2">, </span><span class="s0">float </span><span class="s1">broccoliX</span><span class="s2">, </span><span class="s0">boolean </span><span class="s1">isStarting</span><span class="s2">, </span><span class="s0">float </span><span class="s1">delta</span><span class="s2">) {</span>
+        <span class="s3">// Broccoli beweegt naar startpositie</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">isStarting </span><span class="s2">&amp;&amp; </span><span class="s1">broccoliX </span><span class="s2">&gt; </span><span class="s4">100</span><span class="s2">) {</span>
+            <span class="s1">broccoliX </span><span class="s2">-= </span><span class="s4">300 </span><span class="s2">* </span><span class="s1">delta</span><span class="s2">;</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">broccoliX </span><span class="s2">&lt; </span><span class="s4">100</span><span class="s2">) </span><span class="s1">broccoliX </span><span class="s2">= </span><span class="s4">100</span><span class="s2">;</span>
+        <span class="s2">}</span>
+
+        <span class="s3">// Zodra X bereikt is → start spel</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">isStarting </span><span class="s2">&amp;&amp; </span><span class="s1">broccoliX </span><span class="s2">== </span><span class="s4">100</span><span class="s2">) {</span>
+            <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">switchScreen</span><span class="s2">(</span><span class="s5">&quot;YourGameScreen&quot;</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s3">// Teken broccoli op huidige X en Y (nu met springen)</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawTexture</span><span class="s2">(</span><span class="s5">&quot;brocolli&quot;</span><span class="s2">, (</span><span class="s0">int</span><span class="s2">)</span><span class="s1">broccoliX</span><span class="s2">, </span><span class="s1">player</span><span class="s2">.</span><span class="s1">yPlayer</span><span class="s2">,</span><span class="s4">200</span><span class="s2">,</span><span class="s4">200</span><span class="s2">);</span>
+
+        <span class="s0">return </span><span class="s1">broccoliX</span><span class="s2">;</span>
+    <span class="s2">}</span>
+    <span class="s0">public static boolean </span><span class="s1">handleMenuStart</span><span class="s2">(</span><span class="s0">boolean </span><span class="s1">isStarting</span><span class="s2">) {</span>
+        <span class="s3">// Spatie activeert beweging</span>
+        <span class="s0">if </span><span class="s2">(!</span><span class="s1">isStarting </span><span class="s2">&amp;&amp; </span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">isKeyJustPressed</span><span class="s2">(</span><span class="s1">Input</span><span class="s2">.</span><span class="s1">Keys</span><span class="s2">.</span><span class="s1">SPACE</span><span class="s2">)) {</span>
+            <span class="s1">isStarting </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+            <span class="s3">// 🔊 Start sound afspelen bij game start</span>
+            <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">playSound</span><span class="s2">(</span><span class="s5">&quot;start&quot;</span><span class="s2">, </span><span class="s4">0.8f</span><span class="s2">); </span><span class="s3">// iets zachter volume</span>
+
+        <span class="s2">}</span>
+        <span class="s0">return </span><span class="s1">isStarting</span><span class="s2">; </span><span class="s3">// geef de bijgewerkte waarde terug</span>
+    <span class="s2">}</span>
+    <span class="s0">public static void </span><span class="s1">drawGameHud</span><span class="s2">(</span><span class="s1">PlayerClass player</span><span class="s2">) {</span>
+        <span class="s0">int </span><span class="s1">margin </span><span class="s2">= </span><span class="s4">20</span><span class="s2">;</span>
+        <span class="s0">int </span><span class="s1">topY </span><span class="s2">= (</span><span class="s0">int</span><span class="s2">) </span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">getWorldHeight</span><span class="s2">();</span>
+
+        <span class="s3">// Coins</span>
+        <span class="s1">drawTextRight</span><span class="s2">(</span><span class="s5">&quot;small&quot;</span><span class="s2">, </span><span class="s5">&quot;Coins: &quot; </span><span class="s2">+ </span><span class="s1">player</span><span class="s2">.</span><span class="s1">coinsPickedUp</span><span class="s2">, </span><span class="s1">margin</span><span class="s2">, </span><span class="s1">topY </span><span class="s2">- </span><span class="s4">30</span><span class="s2">, </span><span class="s5">&quot;white&quot;</span><span class="s2">);</span>
+
+        <span class="s3">// Ammo</span>
+        <span class="s1">drawTextRight</span><span class="s2">(</span><span class="s5">&quot;small&quot;</span><span class="s2">, </span><span class="s5">&quot;Ammo: &quot; </span><span class="s2">+ </span><span class="s1">player</span><span class="s2">.</span><span class="s1">ammo </span><span class="s2">+ </span><span class="s5">&quot;/&quot; </span><span class="s2">+ </span><span class="s1">player</span><span class="s2">.</span><span class="s1">maxAmmo</span><span class="s2">, </span><span class="s1">margin</span><span class="s2">, </span><span class="s1">topY </span><span class="s2">- </span><span class="s4">60</span><span class="s2">, </span><span class="s5">&quot;white&quot;</span><span class="s2">);</span>
+
+        <span class="s3">// Distance</span>
+        <span class="s1">drawTextRight</span><span class="s2">(</span><span class="s5">&quot;small&quot;</span><span class="s2">, </span><span class="s5">&quot;Distance: &quot; </span><span class="s2">+ </span><span class="s1">String</span><span class="s2">.</span><span class="s1">format</span><span class="s2">(</span><span class="s5">&quot;%.1f&quot;</span><span class="s2">, </span><span class="s1">player</span><span class="s2">.</span><span class="s1">distanceTravelled</span><span class="s2">) + </span><span class="s5">&quot; m&quot;</span><span class="s2">,</span>
+                <span class="s1">margin</span><span class="s2">, </span><span class="s1">topY </span><span class="s2">- </span><span class="s4">90</span><span class="s2">, </span><span class="s5">&quot;white&quot;</span><span class="s2">);</span>
+
+        <span class="s3">// Highscore</span>
+        <span class="s1">drawTextRight</span><span class="s2">(</span><span class="s5">&quot;small&quot;</span><span class="s2">, </span><span class="s5">&quot;High Score: &quot; </span><span class="s2">+ </span><span class="s1">String</span><span class="s2">.</span><span class="s1">format</span><span class="s2">(</span><span class="s5">&quot;%.1f&quot;</span><span class="s2">, </span><span class="s1">player</span><span class="s2">.</span><span class="s1">highScore</span><span class="s2">) + </span><span class="s5">&quot; m&quot;</span><span class="s2">,</span>
+                <span class="s1">margin</span><span class="s2">, </span><span class="s1">topY </span><span class="s2">- </span><span class="s4">120</span><span class="s2">, </span><span class="s5">&quot;white&quot;</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public static void </span><span class="s1">drawTextRight</span><span class="s2">(</span><span class="s1">String fontKey</span><span class="s2">, </span><span class="s1">String text</span><span class="s2">, </span><span class="s0">int </span><span class="s1">marginRight</span><span class="s2">, </span><span class="s0">int </span><span class="s1">y</span><span class="s2">, </span><span class="s1">String color</span><span class="s2">) {</span>
+        <span class="s0">int </span><span class="s1">textWidth </span><span class="s2">= (</span><span class="s0">int</span><span class="s2">) </span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">getTextWidth</span><span class="s2">(</span><span class="s1">fontKey</span><span class="s2">, </span><span class="s1">text</span><span class="s2">); </span><span class="s3">// breedte van de tekst</span>
+        <span class="s0">int </span><span class="s1">x </span><span class="s2">= (</span><span class="s0">int</span><span class="s2">) (</span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">getWorldWidth</span><span class="s2">() - </span><span class="s1">marginRight </span><span class="s2">- </span><span class="s1">textWidth</span><span class="s2">); </span><span class="s3">// corrigeer zodat tekst rechts staat</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawText</span><span class="s2">(</span><span class="s1">fontKey</span><span class="s2">, </span><span class="s1">text</span><span class="s2">, </span><span class="s1">x</span><span class="s2">, </span><span class="s1">y</span><span class="s2">, </span><span class="s1">color</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+    <span class="s0">public static void </span><span class="s1">checkBulletHitsEnemy</span><span class="s2">(</span><span class="s1">PlayerClass player</span><span class="s2">, </span><span class="s1">EnemyClass enemy</span><span class="s2">) {</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">allEnemies</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">()) </span><span class="s0">return</span><span class="s2">;</span>
+        <span class="s1">EnemyClass currentenemy </span><span class="s2">= </span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">allEnemies</span><span class="s2">.</span><span class="s1">get</span><span class="s2">(</span><span class="s4">0</span><span class="s2">);</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s4">0</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt; </span><span class="s1">player</span><span class="s2">.</span><span class="s1">bullets</span><span class="s2">.</span><span class="s1">size</span><span class="s2">(); </span><span class="s1">i</span><span class="s2">++) {</span>
+            <span class="s1">BulletClass bullet </span><span class="s2">= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">bullets</span><span class="s2">.</span><span class="s1">get</span><span class="s2">(</span><span class="s1">i</span><span class="s2">);</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">currentenemy</span><span class="s2">.</span><span class="s1">type </span><span class="s2">== </span><span class="s4">1</span><span class="s2">) {</span>
+
+
+                <span class="s0">boolean </span><span class="s1">overlapX </span><span class="s2">= </span><span class="s1">bullet</span><span class="s2">.</span><span class="s1">x </span><span class="s2">&lt; </span><span class="s1">currentenemy</span><span class="s2">.</span><span class="s1">enemyXPos </span><span class="s2">+ </span><span class="s4">100 </span><span class="s2">&amp;&amp; </span><span class="s1">bullet</span><span class="s2">.</span><span class="s1">x </span><span class="s2">+ </span><span class="s4">90 </span><span class="s2">&gt; </span><span class="s1">currentenemy</span><span class="s2">.</span><span class="s1">enemyXPos</span><span class="s2">;</span>
+                <span class="s0">boolean </span><span class="s1">overlapY </span><span class="s2">= </span><span class="s1">bullet</span><span class="s2">.</span><span class="s1">y </span><span class="s2">&lt; </span><span class="s1">currentenemy</span><span class="s2">.</span><span class="s1">enemyYPos </span><span class="s2">+ </span><span class="s4">100 </span><span class="s2">&amp;&amp; </span><span class="s1">bullet</span><span class="s2">.</span><span class="s1">y </span><span class="s2">+ </span><span class="s4">75 </span><span class="s2">&gt; </span><span class="s1">currentenemy</span><span class="s2">.</span><span class="s1">enemyYPos</span><span class="s2">;</span>
+
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">overlapX </span><span class="s2">&amp;&amp; </span><span class="s1">overlapY </span><span class="s2">&amp;&amp; !</span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">allEnemies</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">()) {</span>
+                    <span class="s1">player</span><span class="s2">.</span><span class="s1">bullets</span><span class="s2">.</span><span class="s1">remove</span><span class="s2">(</span><span class="s1">i</span><span class="s2">);</span>
+                    <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addSound</span><span class="s2">(</span><span class="s5">&quot;Enemydood&quot;</span><span class="s2">, </span><span class="s5">&quot;Sounds/enemydoosounds.mp3&quot;</span><span class="s2">);</span>
+                    <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">playSound</span><span class="s2">(</span><span class="s5">&quot;Enemydood&quot;</span><span class="s2">);</span>
+                    <span class="s1">i</span><span class="s2">--;</span>
+
+                    <span class="s1">player</span><span class="s2">.</span><span class="s1">enemiesDefeated</span><span class="s2">++; </span><span class="s3">// ✅ kill registreren</span>
+                    <span class="s1">enemy</span><span class="s2">.</span><span class="s1">allEnemies</span><span class="s2">.</span><span class="s1">remove</span><span class="s2">(</span><span class="s4">0</span><span class="s2">);</span>
+                    <span class="s1">enemy</span><span class="s2">.</span><span class="s1">type </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;</span>
+                <span class="s2">}</span>
+            <span class="s2">} </span><span class="s0">else if </span><span class="s2">(</span><span class="s1">currentenemy</span><span class="s2">.</span><span class="s1">type </span><span class="s2">== </span><span class="s4">2</span><span class="s2">) {</span>
+                <span class="s0">boolean </span><span class="s1">overlapX </span><span class="s2">= </span><span class="s1">bullet</span><span class="s2">.</span><span class="s1">x </span><span class="s2">&lt; </span><span class="s1">currentenemy</span><span class="s2">.</span><span class="s1">enemyXPos </span><span class="s2">+ </span><span class="s4">100 </span><span class="s2">&amp;&amp; </span><span class="s1">bullet</span><span class="s2">.</span><span class="s1">x </span><span class="s2">+ </span><span class="s4">90 </span><span class="s2">&gt; </span><span class="s1">currentenemy</span><span class="s2">.</span><span class="s1">enemyXPos</span><span class="s2">;</span>
+                <span class="s0">boolean </span><span class="s1">overlapY </span><span class="s2">= </span><span class="s1">bullet</span><span class="s2">.</span><span class="s1">y </span><span class="s2">&lt; </span><span class="s1">currentenemy</span><span class="s2">.</span><span class="s1">enemyYPos </span><span class="s2">+ </span><span class="s4">100 </span><span class="s2">&amp;&amp; </span><span class="s1">bullet</span><span class="s2">.</span><span class="s1">y </span><span class="s2">+ </span><span class="s4">75 </span><span class="s2">&gt; </span><span class="s1">currentenemy</span><span class="s2">.</span><span class="s1">enemyYPos</span><span class="s2">;</span>
+
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">overlapX </span><span class="s2">&amp;&amp; </span><span class="s1">overlapY </span><span class="s2">&amp;&amp; !</span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">allEnemies</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">()) {</span>
+                    <span class="s1">player</span><span class="s2">.</span><span class="s1">bullets</span><span class="s2">.</span><span class="s1">remove</span><span class="s2">(</span><span class="s1">i</span><span class="s2">);</span>
+                    <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addSound</span><span class="s2">(</span><span class="s5">&quot;Enemydood&quot;</span><span class="s2">, </span><span class="s5">&quot;Sounds/enemydoosounds.mp3&quot;</span><span class="s2">);</span>
+                    <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">playSound</span><span class="s2">(</span><span class="s5">&quot;Enemydood&quot;</span><span class="s2">);</span>
+                    <span class="s1">i</span><span class="s2">--;</span>
+
+                    <span class="s1">player</span><span class="s2">.</span><span class="s1">enemiesDefeated</span><span class="s2">++; </span><span class="s3">// ✅ kill registreren</span>
+                    <span class="s1">enemy</span><span class="s2">.</span><span class="s1">allEnemies</span><span class="s2">.</span><span class="s1">remove</span><span class="s2">(</span><span class="s4">0</span><span class="s2">);</span>
+                    <span class="s1">enemy</span><span class="s2">.</span><span class="s1">type </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+    <span class="s0">public static void </span><span class="s1">checkKogelCollisionSubEnemy</span><span class="s2">(</span><span class="s1">PlayerClass player</span><span class="s2">,</span><span class="s1">SubEnemyClass subEnemyClass</span><span class="s2">) {</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">subEnemyClass</span><span class="s2">.</span><span class="s1">subEnemies</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">()) </span><span class="s0">return</span><span class="s2">;</span>
+        <span class="s1">SubEnemyClass currentenemy </span><span class="s2">= </span><span class="s1">subEnemyClass</span><span class="s2">.</span><span class="s1">subEnemies</span><span class="s2">.</span><span class="s1">get</span><span class="s2">(</span><span class="s4">0</span><span class="s2">);</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s4">0</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt; </span><span class="s1">player</span><span class="s2">.</span><span class="s1">bullets</span><span class="s2">.</span><span class="s1">size</span><span class="s2">(); </span><span class="s1">i</span><span class="s2">++) {</span>
+            <span class="s1">BulletClass bullet </span><span class="s2">= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">bullets</span><span class="s2">.</span><span class="s1">get</span><span class="s2">(</span><span class="s1">i</span><span class="s2">);</span>
+            <span class="s0">boolean </span><span class="s1">overlapX </span><span class="s2">= </span><span class="s1">bullet</span><span class="s2">.</span><span class="s1">x </span><span class="s2">&lt; </span><span class="s1">currentenemy</span><span class="s2">.</span><span class="s1">enemyXPos </span><span class="s2">+ </span><span class="s4">100 </span><span class="s2">&amp;&amp; </span><span class="s1">bullet</span><span class="s2">.</span><span class="s1">x </span><span class="s2">+ </span><span class="s4">90 </span><span class="s2">&gt; </span><span class="s1">currentenemy</span><span class="s2">.</span><span class="s1">enemyXPos</span><span class="s2">;</span>
+            <span class="s0">boolean </span><span class="s1">overlapY </span><span class="s2">= </span><span class="s1">bullet</span><span class="s2">.</span><span class="s1">y </span><span class="s2">&lt; </span><span class="s1">currentenemy</span><span class="s2">.</span><span class="s1">enemyYPos </span><span class="s2">+ </span><span class="s4">100 </span><span class="s2">&amp;&amp; </span><span class="s1">bullet</span><span class="s2">.</span><span class="s1">y </span><span class="s2">+ </span><span class="s4">75 </span><span class="s2">&gt; </span><span class="s1">currentenemy</span><span class="s2">.</span><span class="s1">enemyYPos</span><span class="s2">;</span>
+
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">overlapX </span><span class="s2">&amp;&amp; </span><span class="s1">overlapY</span><span class="s2">) {</span>
+                <span class="s1">player</span><span class="s2">.</span><span class="s1">bullets</span><span class="s2">.</span><span class="s1">remove</span><span class="s2">(</span><span class="s1">i</span><span class="s2">);</span>
+                <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addSound</span><span class="s2">(</span><span class="s5">&quot;Enemydood&quot;</span><span class="s2">, </span><span class="s5">&quot;Sounds/enemydoosounds.mp3&quot;</span><span class="s2">);</span>
+                <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">playSound</span><span class="s2">(</span><span class="s5">&quot;Enemydood&quot;</span><span class="s2">);</span>
+                <span class="s1">i</span><span class="s2">--;</span>
+
+                <span class="s1">player</span><span class="s2">.</span><span class="s1">enemiesDefeated</span><span class="s2">++; </span><span class="s3">// ✅ kill registreren</span>
+                <span class="s1">subEnemyClass</span><span class="s2">.</span><span class="s1">subEnemies</span><span class="s2">.</span><span class="s1">remove</span><span class="s2">(</span><span class="s4">0</span><span class="s2">);</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+
+    <span class="s0">public static void </span><span class="s1">registerEnemyKill</span><span class="s2">(</span><span class="s1">PlayerClass player</span><span class="s2">) {</span>
+        <span class="s1">player</span><span class="s2">.</span><span class="s1">enemiesDefeated</span><span class="s2">++;</span>
+    <span class="s2">}</span>
+    <span class="s0">public static void </span><span class="s1">registerShot</span><span class="s2">(</span><span class="s1">PlayerClass player</span><span class="s2">) {</span>
+        <span class="s1">player</span><span class="s2">.</span><span class="s1">shotsFired</span><span class="s2">++;</span>
+    <span class="s2">}</span>
+    <span class="s0">public static void </span><span class="s1">updateSurvivalTime</span><span class="s2">(</span><span class="s1">PlayerClass player</span><span class="s2">, </span><span class="s0">float </span><span class="s1">delta</span><span class="s2">) {</span>
+        <span class="s1">player</span><span class="s2">.</span><span class="s1">survivalTime </span><span class="s2">+= </span><span class="s1">delta</span><span class="s2">;</span>
+    <span class="s2">}</span>
+    <span class="s0">public static void </span><span class="s1">drawDeathStats</span><span class="s2">(</span><span class="s1">PlayerClass player</span><span class="s2">, </span><span class="s1">ScalableGameScreen screen</span><span class="s2">) {</span>
+        <span class="s0">float </span><span class="s1">leftX </span><span class="s2">= </span><span class="s4">50</span><span class="s2">;</span>
+        <span class="s0">float </span><span class="s1">topY </span><span class="s2">= </span><span class="s1">screen</span><span class="s2">.</span><span class="s1">getWorldHeight</span><span class="s2">() - </span><span class="s4">100</span><span class="s2">;</span>
+        <span class="s0">float </span><span class="s1">line </span><span class="s2">= </span><span class="s4">40</span><span class="s2">;</span>
+
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawText</span><span class="s2">(</span><span class="s5">&quot;basic&quot;</span><span class="s2">, </span><span class="s5">&quot;GAME OVER&quot;</span><span class="s2">, </span><span class="s1">leftX</span><span class="s2">, </span><span class="s1">topY</span><span class="s2">, </span><span class="s5">&quot;white&quot;</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawText</span><span class="s2">(</span><span class="s5">&quot;small&quot;</span><span class="s2">, </span><span class="s5">&quot;Coins: &quot; </span><span class="s2">+ </span><span class="s1">player</span><span class="s2">.</span><span class="s1">totalCoins</span><span class="s2">, </span><span class="s1">leftX</span><span class="s2">, </span><span class="s1">topY </span><span class="s2">- </span><span class="s1">line </span><span class="s2">* </span><span class="s4">1</span><span class="s2">, </span><span class="s5">&quot;white&quot;</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawText</span><span class="s2">(</span><span class="s5">&quot;small&quot;</span><span class="s2">, </span><span class="s5">&quot;Score: &quot; </span><span class="s2">+ </span><span class="s1">String</span><span class="s2">.</span><span class="s1">format</span><span class="s2">(</span><span class="s5">&quot;%.1f&quot;</span><span class="s2">, </span><span class="s1">player</span><span class="s2">.</span><span class="s1">distanceTravelled</span><span class="s2">), </span><span class="s1">leftX</span><span class="s2">, </span><span class="s1">topY </span><span class="s2">- </span><span class="s1">line </span><span class="s2">* </span><span class="s4">2</span><span class="s2">, </span><span class="s5">&quot;white&quot;</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawText</span><span class="s2">(</span><span class="s5">&quot;small&quot;</span><span class="s2">, </span><span class="s5">&quot;Verslagen enemies: &quot; </span><span class="s2">+ </span><span class="s1">player</span><span class="s2">.</span><span class="s1">enemiesDefeated</span><span class="s2">, </span><span class="s1">leftX</span><span class="s2">, </span><span class="s1">topY </span><span class="s2">- </span><span class="s1">line </span><span class="s2">* </span><span class="s4">3</span><span class="s2">, </span><span class="s5">&quot;white&quot;</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawText</span><span class="s2">(</span><span class="s5">&quot;small&quot;</span><span class="s2">, </span><span class="s5">&quot;Aantal keer geschoten: &quot; </span><span class="s2">+ </span><span class="s1">player</span><span class="s2">.</span><span class="s1">shotsFired</span><span class="s2">, </span><span class="s1">leftX</span><span class="s2">, </span><span class="s1">topY </span><span class="s2">- </span><span class="s1">line </span><span class="s2">* </span><span class="s4">4</span><span class="s2">, </span><span class="s5">&quot;white&quot;</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawText</span><span class="s2">(</span><span class="s5">&quot;small&quot;</span><span class="s2">, </span><span class="s5">&quot;Overlevingstijd: &quot; </span><span class="s2">+ (</span><span class="s0">int</span><span class="s2">) </span><span class="s1">player</span><span class="s2">.</span><span class="s1">survivalTime </span><span class="s2">+ </span><span class="s5">&quot;s&quot;</span><span class="s2">, </span><span class="s1">leftX</span><span class="s2">, </span><span class="s1">topY </span><span class="s2">- </span><span class="s1">line </span><span class="s2">* </span><span class="s4">5</span><span class="s2">, </span><span class="s5">&quot;white&quot;</span><span class="s2">);</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawText</span><span class="s2">(</span><span class="s5">&quot;small&quot;</span><span class="s2">, </span><span class="s5">&quot;Druk [M] voor hoofdmenu&quot;</span><span class="s2">, </span><span class="s1">leftX</span><span class="s2">, </span><span class="s1">topY </span><span class="s2">- </span><span class="s1">line </span><span class="s2">* </span><span class="s4">7</span><span class="s2">, </span><span class="s5">&quot;white&quot;</span><span class="s2">);</span>
+    <span class="s2">}</span>
+    <span class="s0">public static void </span><span class="s1">resetRoundStats</span><span class="s2">(</span><span class="s1">PlayerClass player</span><span class="s2">) {</span>
+        <span class="s3">// Ronde-specifieke statistieken</span>
+        <span class="s1">player</span><span class="s2">.</span><span class="s1">coinsPickedUp </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;</span>
+        <span class="s1">player</span><span class="s2">.</span><span class="s1">enemiesDefeated </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;</span>
+        <span class="s1">player</span><span class="s2">.</span><span class="s1">shotsFired </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;</span>
+        <span class="s1">player</span><span class="s2">.</span><span class="s1">survivalTime </span><span class="s2">= </span><span class="s4">0f</span><span class="s2">;</span>
+        <span class="s1">player</span><span class="s2">.</span><span class="s1">distanceTravelled </span><span class="s2">= </span><span class="s4">0.0</span><span class="s2">;</span>
+
+        <span class="s3">// Spelerstatus</span>
+        <span class="s1">player</span><span class="s2">.</span><span class="s1">yPlayer </span><span class="s2">= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">groundLevel</span><span class="s2">;</span>
+        <span class="s1">player</span><span class="s2">.</span><span class="s1">velocity </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;</span>
+        <span class="s1">player</span><span class="s2">.</span><span class="s1">jumpCount </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;</span>
+        <span class="s1">player</span><span class="s2">.</span><span class="s1">ammo </span><span class="s2">= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">maxAmmo</span><span class="s2">;</span>
+
+        <span class="s3">// Lijsten opruimen</span>
+        <span class="s1">player</span><span class="s2">.</span><span class="s1">bullets</span><span class="s2">.</span><span class="s1">clear</span><span class="s2">();</span>
+        <span class="s1">coins</span><span class="s2">.</span><span class="s1">clear</span><span class="s2">();</span>
+        <span class="s1">muzzleFlashes</span><span class="s2">.</span><span class="s1">clear</span><span class="s2">();</span>
+    <span class="s2">}</span>
+    <span class="s0">public static void </span><span class="s1">updateBomb</span><span class="s2">(</span><span class="s1">PlayerClass player</span><span class="s2">, </span><span class="s1">EnemyClass enemy</span><span class="s2">) {</span>
+
+        <span class="s3">// --- BOM GOOIEN ---</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">isKeyJustPressed</span><span class="s2">(</span><span class="s1">Input</span><span class="s2">.</span><span class="s1">Keys</span><span class="s2">.</span><span class="s1">G</span><span class="s2">) &amp;&amp; !</span><span class="s1">bombOnCooldown</span><span class="s2">) {</span>
+            <span class="s0">int </span><span class="s1">startX </span><span class="s2">= </span><span class="s4">100 </span><span class="s2">+ </span><span class="s1">player</span><span class="s2">.</span><span class="s1">spriteWidth</span><span class="s2">;</span>
+            <span class="s0">int </span><span class="s1">startY </span><span class="s2">= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">yPlayer </span><span class="s2">+ </span><span class="s1">player</span><span class="s2">.</span><span class="s1">spriteHeight </span><span class="s2">/ </span><span class="s4">2</span><span class="s2">;</span>
+
+            <span class="s1">bombs</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BombClass</span><span class="s2">(</span><span class="s1">startX</span><span class="s2">, </span><span class="s1">startY</span><span class="s2">));</span>
+            <span class="s1">bombOnCooldown </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+            <span class="s1">lastBombTime </span><span class="s2">= </span><span class="s1">System</span><span class="s2">.</span><span class="s1">currentTimeMillis</span><span class="s2">();</span>
+        <span class="s2">}</span>
+
+        <span class="s3">// --- COOLDOWN RESETTEN ---</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">bombOnCooldown</span><span class="s2">) {</span>
+            <span class="s0">long </span><span class="s1">now </span><span class="s2">= </span><span class="s1">System</span><span class="s2">.</span><span class="s1">currentTimeMillis</span><span class="s2">();</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">now </span><span class="s2">- </span><span class="s1">lastBombTime </span><span class="s2">&gt;= </span><span class="s4">10000</span><span class="s2">) {</span>
+                <span class="s1">bombOnCooldown </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+
+        <span class="s3">// --- BOMMEN UPDATEN ---</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s4">0</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt; </span><span class="s1">bombs</span><span class="s2">.</span><span class="s1">size</span><span class="s2">(); </span><span class="s1">i</span><span class="s2">++) {</span>
+            <span class="s1">BombClass bomb </span><span class="s2">= </span><span class="s1">bombs</span><span class="s2">.</span><span class="s1">get</span><span class="s2">(</span><span class="s1">i</span><span class="s2">);</span>
+            <span class="s1">bomb</span><span class="s2">.</span><span class="s1">update</span><span class="s2">();</span>
+
+            <span class="s3">// --- IMPACT MET GROND ---</span>
+            <span class="s0">if </span><span class="s2">(!</span><span class="s1">bomb</span><span class="s2">.</span><span class="s1">exploded </span><span class="s2">&amp;&amp; </span><span class="s1">bomb</span><span class="s2">.</span><span class="s1">y </span><span class="s2">&lt;= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">groundLevel</span><span class="s2">) {</span>
+                <span class="s1">bomb</span><span class="s2">.</span><span class="s1">y </span><span class="s2">= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">groundLevel</span><span class="s2">;</span>
+                <span class="s1">bomb</span><span class="s2">.</span><span class="s1">exploded </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+                <span class="s1">bomb</span><span class="s2">.</span><span class="s1">frameIndex </span><span class="s2">= </span><span class="s4">5</span><span class="s2">;</span>
+                <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">playSound</span><span class="s2">(</span><span class="s5">&quot;Bomb&quot;</span><span class="s2">);</span>
+            <span class="s2">}</span>
+
+            <span class="s3">// --- IMPACT MET ENEMY (DIRECTE HIT) ---</span>
+            <span class="s0">if </span><span class="s2">(!</span><span class="s1">bomb</span><span class="s2">.</span><span class="s1">exploded </span><span class="s2">&amp;&amp; </span><span class="s1">enemy </span><span class="s2">!= </span><span class="s0">null </span><span class="s2">&amp;&amp; !</span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">allEnemies</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">()) {</span>
+
+                <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">e </span><span class="s2">= </span><span class="s4">0</span><span class="s2">; </span><span class="s1">e </span><span class="s2">&lt; </span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">allEnemies</span><span class="s2">.</span><span class="s1">size</span><span class="s2">(); </span><span class="s1">e</span><span class="s2">++) {</span>
+                    <span class="s1">EnemyClass en </span><span class="s2">= </span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">allEnemies</span><span class="s2">.</span><span class="s1">get</span><span class="s2">(</span><span class="s1">e</span><span class="s2">);</span>
+
+                    <span class="s0">boolean </span><span class="s1">overlapX </span><span class="s2">= </span><span class="s1">bomb</span><span class="s2">.</span><span class="s1">x </span><span class="s2">&lt; </span><span class="s1">en</span><span class="s2">.</span><span class="s1">enemyXPos </span><span class="s2">+ </span><span class="s4">100 </span><span class="s2">&amp;&amp;</span>
+                            <span class="s1">bomb</span><span class="s2">.</span><span class="s1">x </span><span class="s2">+ </span><span class="s4">128 </span><span class="s2">&gt; </span><span class="s1">en</span><span class="s2">.</span><span class="s1">enemyXPos</span><span class="s2">;</span>
+
+                    <span class="s0">boolean </span><span class="s1">overlapY </span><span class="s2">= </span><span class="s1">bomb</span><span class="s2">.</span><span class="s1">y </span><span class="s2">&lt; </span><span class="s1">en</span><span class="s2">.</span><span class="s1">enemyYPos </span><span class="s2">+ </span><span class="s4">100 </span><span class="s2">&amp;&amp;</span>
+                            <span class="s1">bomb</span><span class="s2">.</span><span class="s1">y </span><span class="s2">+ </span><span class="s4">128 </span><span class="s2">&gt; </span><span class="s1">en</span><span class="s2">.</span><span class="s1">enemyYPos</span><span class="s2">;</span>
+
+                    <span class="s0">if </span><span class="s2">(</span><span class="s1">overlapX </span><span class="s2">&amp;&amp; </span><span class="s1">overlapY</span><span class="s2">) {</span>
+                        <span class="s1">bomb</span><span class="s2">.</span><span class="s1">exploded </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+                        <span class="s1">bomb</span><span class="s2">.</span><span class="s1">frameIndex </span><span class="s2">= </span><span class="s4">5</span><span class="s2">;</span>
+                        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">playSound</span><span class="s2">(</span><span class="s5">&quot;Bomb&quot;</span><span class="s2">);</span>
+                        <span class="s0">break</span><span class="s2">; </span><span class="s3">// bom is ontploft → klaar</span>
+                    <span class="s2">}</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+
+            <span class="s3">// --- RADIUS DAMAGE (ALLEEN NA EXPLOSIE!) ---</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">bomb</span><span class="s2">.</span><span class="s1">exploded </span><span class="s2">&amp;&amp; </span><span class="s1">enemy </span><span class="s2">!= </span><span class="s0">null </span><span class="s2">&amp;&amp; !</span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">allEnemies</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">()) {</span>
+
+                <span class="s0">float </span><span class="s1">bombCenterX </span><span class="s2">= </span><span class="s1">bomb</span><span class="s2">.</span><span class="s1">x </span><span class="s2">+ </span><span class="s4">64</span><span class="s2">;</span>
+                <span class="s0">float </span><span class="s1">bombCenterY </span><span class="s2">= </span><span class="s1">bomb</span><span class="s2">.</span><span class="s1">y </span><span class="s2">+ </span><span class="s4">64</span><span class="s2">;</span>
+
+                <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">e </span><span class="s2">= </span><span class="s4">0</span><span class="s2">; </span><span class="s1">e </span><span class="s2">&lt; </span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">allEnemies</span><span class="s2">.</span><span class="s1">size</span><span class="s2">(); </span><span class="s1">e</span><span class="s2">++) {</span>
+
+                    <span class="s1">EnemyClass en </span><span class="s2">= </span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">allEnemies</span><span class="s2">.</span><span class="s1">get</span><span class="s2">(</span><span class="s1">e</span><span class="s2">);</span>
+
+                    <span class="s0">float </span><span class="s1">enemyCenterX </span><span class="s2">= </span><span class="s1">en</span><span class="s2">.</span><span class="s1">enemyXPos </span><span class="s2">+ </span><span class="s4">50</span><span class="s2">;</span>
+                    <span class="s0">float </span><span class="s1">enemyCenterY </span><span class="s2">= </span><span class="s1">en</span><span class="s2">.</span><span class="s1">enemyYPos </span><span class="s2">+ </span><span class="s4">50</span><span class="s2">;</span>
+
+                    <span class="s0">float </span><span class="s1">dx </span><span class="s2">= </span><span class="s1">bombCenterX </span><span class="s2">- </span><span class="s1">enemyCenterX</span><span class="s2">;</span>
+                    <span class="s0">float </span><span class="s1">dy </span><span class="s2">= </span><span class="s1">bombCenterY </span><span class="s2">- </span><span class="s1">enemyCenterY</span><span class="s2">;</span>
+                    <span class="s0">float </span><span class="s1">distance </span><span class="s2">= (</span><span class="s0">float</span><span class="s2">)</span><span class="s1">Math</span><span class="s2">.</span><span class="s1">sqrt</span><span class="s2">(</span><span class="s1">dx </span><span class="s2">* </span><span class="s1">dx </span><span class="s2">+ </span><span class="s1">dy </span><span class="s2">* </span><span class="s1">dy</span><span class="s2">);</span>
+
+                    <span class="s0">if </span><span class="s2">(</span><span class="s1">distance </span><span class="s2">&lt;= </span><span class="s1">BombClass</span><span class="s2">.</span><span class="s1">EXPLOSION_RADIUS</span><span class="s2">) {</span>
+                        <span class="s1">en</span><span class="s2">.</span><span class="s1">enemyIsDead </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+                        <span class="s1">player</span><span class="s2">.</span><span class="s1">enemiesDefeated</span><span class="s2">++;</span>
+                        <span class="s1">enemy</span><span class="s2">.</span><span class="s1">allEnemies</span><span class="s2">.</span><span class="s1">remove</span><span class="s2">(</span><span class="s1">e</span><span class="s2">);</span>
+                        <span class="s1">e</span><span class="s2">--; </span><span class="s3">// lijst corrigeren</span>
+                    <span class="s2">}</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+
+            <span class="s3">// --- BOM TEKENEN ---</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">bomb</span><span class="s2">.</span><span class="s1">frameIndex </span><span class="s2">&gt;= </span><span class="s4">1 </span><span class="s2">&amp;&amp; </span><span class="s1">bomb</span><span class="s2">.</span><span class="s1">frameIndex </span><span class="s2">&lt;= </span><span class="s1">BombClass</span><span class="s2">.</span><span class="s1">TOTAL_FRAMES</span><span class="s2">) {</span>
+                <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawTexture</span><span class="s2">(</span><span class="s5">&quot;bom&quot; </span><span class="s2">+ </span><span class="s1">bomb</span><span class="s2">.</span><span class="s1">frameIndex</span><span class="s2">, </span><span class="s1">bomb</span><span class="s2">.</span><span class="s1">x</span><span class="s2">, </span><span class="s1">bomb</span><span class="s2">.</span><span class="s1">y</span><span class="s2">, </span><span class="s4">128</span><span class="s2">, </span><span class="s4">128</span><span class="s2">);</span>
+            <span class="s2">}</span>
+
+            <span class="s3">// --- BOM VERWIJDEREN NA ANIMATIE ---</span>
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">bomb</span><span class="s2">.</span><span class="s1">exploded </span><span class="s2">&amp;&amp; </span><span class="s1">bomb</span><span class="s2">.</span><span class="s1">frameIndex </span><span class="s2">== </span><span class="s1">BombClass</span><span class="s2">.</span><span class="s1">TOTAL_FRAMES</span><span class="s2">) {</span>
+                <span class="s1">bombs</span><span class="s2">.</span><span class="s1">remove</span><span class="s2">(</span><span class="s1">i</span><span class="s2">);</span>
+                <span class="s1">i</span><span class="s2">--;</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+    <span class="s0">public static int </span><span class="s1">getBombCooldownRemaining</span><span class="s2">() {</span>
+        <span class="s0">if </span><span class="s2">(!</span><span class="s1">bombOnCooldown</span><span class="s2">) {</span>
+            <span class="s0">return </span><span class="s4">0</span><span class="s2">; </span><span class="s3">// direct beschikbaar</span>
+        <span class="s2">}</span>
+        <span class="s0">long </span><span class="s1">now </span><span class="s2">= </span><span class="s1">System</span><span class="s2">.</span><span class="s1">currentTimeMillis</span><span class="s2">();</span>
+        <span class="s0">long </span><span class="s1">elapsed </span><span class="s2">= </span><span class="s1">now </span><span class="s2">- </span><span class="s1">lastBombTime</span><span class="s2">;</span>
+        <span class="s0">int </span><span class="s1">remaining </span><span class="s2">= (</span><span class="s0">int</span><span class="s2">) ((</span><span class="s4">10000 </span><span class="s2">- </span><span class="s1">elapsed</span><span class="s2">) / </span><span class="s4">1000</span><span class="s2">); </span><span class="s3">// in seconden</span>
+        <span class="s0">return </span><span class="s1">Math</span><span class="s2">.</span><span class="s1">max</span><span class="s2">(</span><span class="s4">0</span><span class="s2">, </span><span class="s1">remaining</span><span class="s2">);</span>
+    <span class="s2">}</span>
+    <span class="s0">public static void </span><span class="s1">drawBombCooldown</span><span class="s2">() {</span>
+        <span class="s0">int </span><span class="s1">margin </span><span class="s2">= </span><span class="s4">20</span><span class="s2">;</span>
+        <span class="s0">int </span><span class="s1">topY </span><span class="s2">= (</span><span class="s0">int</span><span class="s2">) </span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">getWorldHeight</span><span class="s2">();</span>
+
+        <span class="s0">int </span><span class="s1">remaining </span><span class="s2">= </span><span class="s1">getBombCooldownRemaining</span><span class="s2">();</span>
+
+        <span class="s1">String text</span><span class="s2">;</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">remaining </span><span class="s2">== </span><span class="s4">0</span><span class="s2">) {</span>
+            <span class="s1">text </span><span class="s2">= </span><span class="s5">&quot;Bomb: READY&quot;</span><span class="s2">;</span>
+        <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+            <span class="s1">text </span><span class="s2">= </span><span class="s5">&quot;Bomb: &quot; </span><span class="s2">+ </span><span class="s1">remaining </span><span class="s2">+ </span><span class="s5">&quot;s&quot;</span><span class="s2">;</span>
+        <span class="s2">}</span>
+
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawText</span><span class="s2">(</span><span class="s5">&quot;small&quot;</span><span class="s2">, </span><span class="s1">text</span><span class="s2">, </span><span class="s1">margin</span><span class="s2">, </span><span class="s1">topY </span><span class="s2">- </span><span class="s4">30</span><span class="s2">, </span><span class="s5">&quot;white&quot;</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+
+<span class="s3">// --- Tutorial instructies tekenen ---</span>
+<span class="s0">public static void </span><span class="s1">drawTutorialText</span><span class="s2">(</span><span class="s1">ScalableGameScreen screen</span><span class="s2">, </span><span class="s0">int </span><span class="s1">step</span><span class="s2">) {</span>
+    <span class="s0">int </span><span class="s1">centerX </span><span class="s2">= (</span><span class="s0">int</span><span class="s2">) (</span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">getWorldWidth</span><span class="s2">() / </span><span class="s4">2</span><span class="s2">);</span>
+    <span class="s0">int </span><span class="s1">centerY </span><span class="s2">= (</span><span class="s0">int</span><span class="s2">) (</span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">getWorldHeight</span><span class="s2">() / </span><span class="s4">2</span><span class="s2">);</span>
+
+    <span class="s1">String text </span><span class="s2">= </span><span class="s5">&quot;&quot;</span><span class="s2">;</span>
+    <span class="s0">switch </span><span class="s2">(</span><span class="s1">step</span><span class="s2">) {</span>
+        <span class="s0">case </span><span class="s4">1</span><span class="s2">: </span><span class="s1">text </span><span class="s2">= </span><span class="s5">&quot;Press [F] to SHOOT&quot;</span><span class="s2">; </span><span class="s0">break</span><span class="s2">;</span>
+        <span class="s0">case </span><span class="s4">2</span><span class="s2">: </span><span class="s1">text </span><span class="s2">= </span><span class="s5">&quot;Press [R] to RELOAD&quot;</span><span class="s2">; </span><span class="s0">break</span><span class="s2">;</span>
+        <span class="s0">case </span><span class="s4">3</span><span class="s2">: </span><span class="s1">text </span><span class="s2">= </span><span class="s5">&quot;Press [G] to throw a BOMB&quot;</span><span class="s2">; </span><span class="s0">break</span><span class="s2">;</span>
+        <span class="s0">case </span><span class="s4">4</span><span class="s2">: </span><span class="s1">text </span><span class="s2">= </span><span class="s5">&quot;Collect the COIN&quot;</span><span class="s2">; </span><span class="s0">break</span><span class="s2">;</span>
+        <span class="s0">case </span><span class="s4">5</span><span class="s2">: </span><span class="s1">text </span><span class="s2">= </span><span class="s5">&quot;Defeat the ENEMY&quot;</span><span class="s2">; </span><span class="s0">break</span><span class="s2">;</span>
+        <span class="s0">default</span><span class="s2">: </span><span class="s1">text </span><span class="s2">= </span><span class="s5">&quot;Tutorial complete! Press [M] for Menu&quot;</span><span class="s2">; </span><span class="s0">break</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawTextCentered</span><span class="s2">(</span><span class="s5">&quot;basic&quot;</span><span class="s2">, </span><span class="s1">text</span><span class="s2">, </span><span class="s1">centerX</span><span class="s2">, </span><span class="s1">centerY</span><span class="s2">, </span><span class="s5">&quot;white&quot;</span><span class="s2">);</span>
+<span class="s2">}</span>
+
+<span class="s3">// --- Tutorial logica per stap ---</span>
+<span class="s0">public static boolean </span><span class="s1">tutorialShoot</span><span class="s2">(</span><span class="s1">PlayerClass player</span><span class="s2">) {</span>
+    <span class="s0">if </span><span class="s2">(</span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">isKeyJustPressed</span><span class="s2">(</span><span class="s1">Input</span><span class="s2">.</span><span class="s1">Keys</span><span class="s2">.</span><span class="s1">F</span><span class="s2">) &amp;&amp; </span><span class="s1">player</span><span class="s2">.</span><span class="s1">ammo </span><span class="s2">&gt; </span><span class="s4">0</span><span class="s2">) {</span>
+        <span class="s1">player</span><span class="s2">.</span><span class="s1">bullets</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BulletClass</span><span class="s2">(</span><span class="s4">100 </span><span class="s2">+ </span><span class="s1">player</span><span class="s2">.</span><span class="s1">spriteWidth</span><span class="s2">, </span><span class="s1">player</span><span class="s2">.</span><span class="s1">yPlayer </span><span class="s2">+ </span><span class="s1">player</span><span class="s2">.</span><span class="s1">spriteHeight </span><span class="s2">/ </span><span class="s4">2</span><span class="s2">));</span>
+        <span class="s1">player</span><span class="s2">.</span><span class="s1">ammo</span><span class="s2">--;</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">playSound</span><span class="s2">(</span><span class="s5">&quot;shoot&quot;</span><span class="s2">);</span>
+        <span class="s0">return true</span><span class="s2">; </span><span class="s3">// stap gehaald</span>
+    <span class="s2">}</span>
+    <span class="s0">return false</span><span class="s2">;</span>
+<span class="s2">}</span>
+
+<span class="s0">public static boolean </span><span class="s1">tutorialReload</span><span class="s2">(</span><span class="s1">PlayerClass player</span><span class="s2">) {</span>
+    <span class="s0">if </span><span class="s2">(</span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">isKeyJustPressed</span><span class="s2">(</span><span class="s1">Input</span><span class="s2">.</span><span class="s1">Keys</span><span class="s2">.</span><span class="s1">R</span><span class="s2">)) {</span>
+        <span class="s1">player</span><span class="s2">.</span><span class="s1">isReloading </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+        <span class="s1">player</span><span class="s2">.</span><span class="s1">reloadStartTime </span><span class="s2">= </span><span class="s1">System</span><span class="s2">.</span><span class="s1">currentTimeMillis</span><span class="s2">();</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">playSound</span><span class="s2">(</span><span class="s5">&quot;Reload&quot;</span><span class="s2">, </span><span class="s4">0.8f</span><span class="s2">);</span>
+        <span class="s0">return true</span><span class="s2">;</span>
+    <span class="s2">}</span>
+    <span class="s0">return false</span><span class="s2">;</span>
+<span class="s2">}</span>
+
+<span class="s0">public static boolean </span><span class="s1">tutorialBomb</span><span class="s2">(</span><span class="s1">PlayerClass player</span><span class="s2">, </span><span class="s1">EnemyClass enemy</span><span class="s2">) {</span>
+    <span class="s0">if </span><span class="s2">(</span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">isKeyJustPressed</span><span class="s2">(</span><span class="s1">Input</span><span class="s2">.</span><span class="s1">Keys</span><span class="s2">.</span><span class="s1">G</span><span class="s2">)) {</span>
+        <span class="s1">bombs</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">BombClass</span><span class="s2">(</span><span class="s4">100 </span><span class="s2">+ </span><span class="s1">player</span><span class="s2">.</span><span class="s1">spriteWidth</span><span class="s2">, </span><span class="s1">player</span><span class="s2">.</span><span class="s1">yPlayer </span><span class="s2">+ </span><span class="s1">player</span><span class="s2">.</span><span class="s1">spriteHeight </span><span class="s2">/ </span><span class="s4">2</span><span class="s2">));</span>
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">playSound</span><span class="s2">(</span><span class="s5">&quot;shoot&quot;</span><span class="s2">);</span>
+        <span class="s0">return true</span><span class="s2">;</span>
+    <span class="s2">}</span>
+    <span class="s0">return false</span><span class="s2">;</span>
+<span class="s2">}</span>
+    <span class="s0">public static boolean </span><span class="s1">tutorialCoin</span><span class="s2">(</span><span class="s1">PlayerClass player</span><span class="s2">) {</span>
+        <span class="s3">// Als er GEEN coins meer zijn → spawn er één nieuwe</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">coins</span><span class="s2">.</span><span class="s1">isEmpty</span><span class="s2">()) {</span>
+            <span class="s0">int </span><span class="s1">x </span><span class="s2">= (</span><span class="s0">int</span><span class="s2">) </span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">getWorldWidth</span><span class="s2">() - </span><span class="s4">200</span><span class="s2">;</span>
+            <span class="s0">int </span><span class="s1">y </span><span class="s2">= (</span><span class="s0">int</span><span class="s2">) (</span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">getWorldHeight</span><span class="s2">() / </span><span class="s4">2</span><span class="s2">);</span>
+            <span class="s1">coins</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">CoinClass</span><span class="s2">(</span><span class="s1">x</span><span class="s2">, </span><span class="s1">y</span><span class="s2">));</span>
+        <span class="s2">}</span>
+
+        <span class="s3">// Coins bewegen + collision</span>
+        <span class="s1">updateCoins</span><span class="s2">(</span><span class="s1">player</span><span class="s2">);</span>
+
+        <span class="s3">// Ga door naar volgende stap zodra speler er één heeft gepakt</span>
+        <span class="s0">return </span><span class="s1">player</span><span class="s2">.</span><span class="s1">coinsPickedUp </span><span class="s2">&gt; </span><span class="s4">0</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+<span class="s0">public static boolean </span><span class="s1">tutorialEnemy</span><span class="s2">(</span><span class="s1">PlayerClass player</span><span class="s2">, </span><span class="s1">EnemyClass enemy</span><span class="s2">) {</span>
+    <span class="s0">if </span><span class="s2">(!</span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyIsDead</span><span class="s2">) {</span>
+        <span class="s1">checkBulletHitsEnemy</span><span class="s2">(</span><span class="s1">player</span><span class="s2">, </span><span class="s1">enemy</span><span class="s2">);</span>
+    <span class="s2">}</span>
+    <span class="s0">return </span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyIsDead</span><span class="s2">;</span>
+<span class="s2">}</span>
+    <span class="s3">// --- Tutorial coin spawn (eenmalig) ---</span>
+    <span class="s0">private static boolean </span><span class="s1">tutorialCoinSpawned </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+
+    <span class="s0">public static void </span><span class="s1">spawnTutorialCoin</span><span class="s2">() {</span>
+        <span class="s0">if </span><span class="s2">(!</span><span class="s1">tutorialCoinSpawned</span><span class="s2">) {</span>
+            <span class="s0">int </span><span class="s1">x </span><span class="s2">= (</span><span class="s0">int</span><span class="s2">) </span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">getWorldWidth</span><span class="s2">() - </span><span class="s4">200</span><span class="s2">;</span>
+            <span class="s0">int </span><span class="s1">y </span><span class="s2">= (</span><span class="s0">int</span><span class="s2">) (</span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">getWorldHeight</span><span class="s2">() / </span><span class="s4">2</span><span class="s2">);</span>
+            <span class="s1">coins</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">CoinClass</span><span class="s2">(</span><span class="s1">x</span><span class="s2">, </span><span class="s1">y</span><span class="s2">));</span>
+            <span class="s1">tutorialCoinSpawned </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+
+    <span class="s3">// Reset flag zodat coin opnieuw kan verschijnen bij nieuwe ronde/tutorial</span>
+    <span class="s0">public static void </span><span class="s1">resetTutorialCoin</span><span class="s2">() {</span>
+        <span class="s1">tutorialCoinSpawned </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+    <span class="s2">}</span>
+    <span class="s0">public static void </span><span class="s1">checkBulletHitsTutorialEnemy</span><span class="s2">(</span><span class="s1">PlayerClass player</span><span class="s2">, </span><span class="s1">EnemyClass enemy</span><span class="s2">) {</span>
+        <span class="s3">// simpele hit-detectie voor EEN enkele enemy (geen allEnemies-lijst)</span>
+        <span class="s0">for </span><span class="s2">(</span><span class="s0">int </span><span class="s1">i </span><span class="s2">= </span><span class="s4">0</span><span class="s2">; </span><span class="s1">i </span><span class="s2">&lt; </span><span class="s1">player</span><span class="s2">.</span><span class="s1">bullets</span><span class="s2">.</span><span class="s1">size</span><span class="s2">(); </span><span class="s1">i</span><span class="s2">++) {</span>
+            <span class="s1">BulletClass bullet </span><span class="s2">= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">bullets</span><span class="s2">.</span><span class="s1">get</span><span class="s2">(</span><span class="s1">i</span><span class="s2">);</span>
+
+            <span class="s0">boolean </span><span class="s1">overlapX </span><span class="s2">= </span><span class="s1">bullet</span><span class="s2">.</span><span class="s1">x </span><span class="s2">&lt; </span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyXPos </span><span class="s2">+ </span><span class="s4">100 </span><span class="s2">&amp;&amp; </span><span class="s1">bullet</span><span class="s2">.</span><span class="s1">x </span><span class="s2">+ </span><span class="s4">90 </span><span class="s2">&gt; </span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyXPos</span><span class="s2">;</span>
+            <span class="s0">boolean </span><span class="s1">overlapY </span><span class="s2">= </span><span class="s1">bullet</span><span class="s2">.</span><span class="s1">y </span><span class="s2">&lt; </span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyYPos </span><span class="s2">+ </span><span class="s4">100 </span><span class="s2">&amp;&amp; </span><span class="s1">bullet</span><span class="s2">.</span><span class="s1">y </span><span class="s2">+ </span><span class="s4">75 </span><span class="s2">&gt; </span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyYPos</span><span class="s2">;</span>
+
+            <span class="s0">if </span><span class="s2">(</span><span class="s1">overlapX </span><span class="s2">&amp;&amp; </span><span class="s1">overlapY </span><span class="s2">&amp;&amp; !</span><span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyIsDead</span><span class="s2">) {</span>
+                <span class="s3">// kogel verwijderen</span>
+                <span class="s1">player</span><span class="s2">.</span><span class="s1">bullets</span><span class="s2">.</span><span class="s1">remove</span><span class="s2">(</span><span class="s1">i</span><span class="s2">);</span>
+                <span class="s1">i</span><span class="s2">--;</span>
+
+                <span class="s3">// sound + stats</span>
+                <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addSound</span><span class="s2">(</span><span class="s5">&quot;Enemydood&quot;</span><span class="s2">, </span><span class="s5">&quot;Sounds/enemydoosounds.mp3&quot;</span><span class="s2">);</span>
+                <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">playSound</span><span class="s2">(</span><span class="s5">&quot;Enemydood&quot;</span><span class="s2">);</span>
+                <span class="s1">player</span><span class="s2">.</span><span class="s1">enemiesDefeated</span><span class="s2">++;</span>
+
+                <span class="s3">// enemy markeren als dood</span>
+                <span class="s1">enemy</span><span class="s2">.</span><span class="s1">enemyIsDead </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+                <span class="s0">break</span><span class="s2">;</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+    <span class="s0">public static void </span><span class="s1">resetTutorial</span><span class="s2">(</span><span class="s1">PlayerClass player</span><span class="s2">) {</span>
+        <span class="s3">// Reset tutorial stap</span>
+        <span class="s1">player</span><span class="s2">.</span><span class="s1">coinsPickedUp </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;</span>
+
+        <span class="s3">// Reset coin systeem</span>
+        <span class="s1">coins</span><span class="s2">.</span><span class="s1">clear</span><span class="s2">();</span>
+        <span class="s1">tutorialCoinSpawned </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+
+        <span class="s3">// Reset bommen</span>
+        <span class="s1">bombs</span><span class="s2">.</span><span class="s1">clear</span><span class="s2">();</span>
+
+        <span class="s3">// Reset speler stats</span>
+        <span class="s1">player</span><span class="s2">.</span><span class="s1">bullets</span><span class="s2">.</span><span class="s1">clear</span><span class="s2">();</span>
+        <span class="s1">player</span><span class="s2">.</span><span class="s1">enemiesDefeated </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;</span>
+        <span class="s1">player</span><span class="s2">.</span><span class="s1">shotsFired </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;</span>
+
+        <span class="s3">// Reset enemy gerelateerde dingen gebeuren in SettingsScreen zelf</span>
+    <span class="s2">}</span>
+    <span class="s0">public static void </span><span class="s1">updatePowerupTimer</span><span class="s2">(</span><span class="s0">float </span><span class="s1">delta</span><span class="s2">, </span><span class="s1">PowerupClass powerUp</span><span class="s2">, </span><span class="s1">SchildClass schildClass</span><span class="s2">) {</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">powerUp </span><span class="s2">== </span><span class="s0">null</span><span class="s2">) </span><span class="s0">return</span><span class="s2">;</span>
+        <span class="s0">if </span><span class="s2">(!</span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">hasTimer</span><span class="s2">) </span><span class="s0">return</span><span class="s2">;</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">timeLeft </span><span class="s2">&lt;= </span><span class="s4">0</span><span class="s2">) </span><span class="s0">return</span><span class="s2">;</span>
+
+        <span class="s1">powerUp</span><span class="s2">.</span><span class="s1">timeLeft </span><span class="s2">-= </span><span class="s1">delta</span><span class="s2">;</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">timeLeft </span><span class="s2">&lt;= </span><span class="s4">0</span><span class="s2">) {</span>
+            <span class="s1">powerUp</span><span class="s2">.</span><span class="s1">timeLeft </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;</span>
+            <span class="s1">powerUp</span><span class="s2">.</span><span class="s1">hasTimer </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+
+            <span class="s1">schildClass</span><span class="s2">.</span><span class="s1">isactive </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+            <span class="s1">schildClass</span><span class="s2">.</span><span class="s1">HP </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;   </span><span class="s3">// ❗ BELANGRIJK</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+    <span class="s0">public static void </span><span class="s1">drawPowerupTimer</span><span class="s2">(</span><span class="s1">PowerupClass powerUp</span><span class="s2">) {</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">powerUp </span><span class="s2">== </span><span class="s0">null</span><span class="s2">) </span><span class="s0">return</span><span class="s2">;</span>
+        <span class="s0">if </span><span class="s2">(!</span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">hasTimer</span><span class="s2">) </span><span class="s0">return</span><span class="s2">;</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">timeLeft </span><span class="s2">&lt;= </span><span class="s4">0</span><span class="s2">) </span><span class="s0">return</span><span class="s2">;</span>
+
+        <span class="s0">float </span><span class="s1">topY </span><span class="s2">= </span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">getWorldHeight</span><span class="s2">();</span>
+
+        <span class="s1">String text </span><span class="s2">= </span><span class="s5">&quot;Powerup: &quot; </span><span class="s2">+ </span><span class="s1">String</span><span class="s2">.</span><span class="s1">format</span><span class="s2">(</span><span class="s5">&quot;%.1f&quot;</span><span class="s2">, </span><span class="s1">powerUp</span><span class="s2">.</span><span class="s1">timeLeft</span><span class="s2">) + </span><span class="s5">&quot;s&quot;</span><span class="s2">;</span>
+
+        <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawText</span><span class="s2">(</span><span class="s5">&quot;small&quot;</span><span class="s2">, </span><span class="s1">text</span><span class="s2">, </span><span class="s4">20</span><span class="s2">, </span><span class="s1">topY </span><span class="s2">- </span><span class="s4">65</span><span class="s2">, </span><span class="s5">&quot;white&quot;</span><span class="s2">);</span>
+    <span class="s2">}</span>
+    <span class="s0">public static void </span><span class="s1">updateBlocking</span><span class="s2">(</span><span class="s1">PlayerClass player</span><span class="s2">) {</span>
+
+        <span class="s3">// Block aan/uit</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">isKeyPressed</span><span class="s2">(</span><span class="s1">Input</span><span class="s2">.</span><span class="s1">Keys</span><span class="s2">.</span><span class="s1">E</span><span class="s2">)) {</span>
+            <span class="s1">player</span><span class="s2">.</span><span class="s1">isBlocking </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+        <span class="s2">} </span><span class="s0">else </span><span class="s2">{</span>
+            <span class="s1">player</span><span class="s2">.</span><span class="s1">isBlocking </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+        <span class="s2">}</span>
+
+        <span class="s3">// Block sprite tekenen</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s1">player</span><span class="s2">.</span><span class="s1">isBlocking</span><span class="s2">) {</span>
+            <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawTexture</span><span class="s2">(</span><span class="s5">&quot;block&quot;</span><span class="s2">, </span><span class="s4">130</span><span class="s2">, </span><span class="s1">player</span><span class="s2">.</span><span class="s1">yPlayer</span><span class="s2">-</span><span class="s4">50 </span><span class="s2">+ </span><span class="s4">20</span><span class="s2">, </span><span class="s4">200</span><span class="s2">,</span><span class="s4">150</span><span class="s2">);</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+
+</pre>
+</body>
+</html>

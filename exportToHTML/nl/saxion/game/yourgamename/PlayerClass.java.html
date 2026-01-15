@@ -1,0 +1,56 @@
+<html>
+<head>
+<title>PlayerClass.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #6aab73;}
+.s4 { color: #2aacb8;}
+.s5 { color: #7a7e85;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+PlayerClass.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">nl</span><span class="s2">.</span><span class="s1">saxion</span><span class="s2">.</span><span class="s1">game</span><span class="s2">.</span><span class="s1">yourgamename</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.</span><span class="s1">ArrayList</span><span class="s2">;</span>
+
+<span class="s0">public class </span><span class="s1">PlayerClass </span><span class="s2">{</span>
+    <span class="s0">int </span><span class="s1">coinsPickedUp</span><span class="s2">;</span>
+    <span class="s1">String filepath </span><span class="s2">= </span><span class="s3">&quot;img/brocolli3.png&quot;</span><span class="s2">;</span>
+    <span class="s0">int </span><span class="s1">velocity </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;</span>
+    <span class="s0">int </span><span class="s1">gravity </span><span class="s2">= </span><span class="s4">1</span><span class="s2">;</span>
+    <span class="s0">int </span><span class="s1">groundLevel </span><span class="s2">= </span><span class="s4">100</span><span class="s2">;</span>
+    <span class="s0">int </span><span class="s1">yPlayer </span><span class="s2">= </span><span class="s4">100</span><span class="s2">;</span>
+    <span class="s0">int </span><span class="s1">jumpCount </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;</span>
+    <span class="s0">int </span><span class="s1">spriteHeight </span><span class="s2">= </span><span class="s4">120</span><span class="s2">;</span>
+    <span class="s0">int </span><span class="s1">spriteWidth </span><span class="s2">= </span><span class="s4">80</span><span class="s2">;</span>
+    <span class="s1">ArrayList</span><span class="s2">&lt;</span><span class="s1">BulletClass</span><span class="s2">&gt; </span><span class="s1">bullets</span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;&gt;();</span>
+    <span class="s5">// --- Magazijn ---</span>
+    <span class="s0">int </span><span class="s1">ammo </span><span class="s2">= </span><span class="s4">5</span><span class="s2">;             </span><span class="s5">// huidige kogels</span>
+    <span class="s0">int </span><span class="s1">maxAmmo </span><span class="s2">= </span><span class="s4">5</span><span class="s2">;          </span><span class="s5">// maximale kogels</span>
+    <span class="s0">boolean </span><span class="s1">isReloading </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+    <span class="s0">long </span><span class="s1">reloadStartTime </span><span class="s2">= </span><span class="s4">0</span><span class="s2">; </span><span class="s5">// tijdstip herladen</span>
+
+    <span class="s5">// --- Nieuwe variabele ---</span>
+    <span class="s0">public double </span><span class="s1">speed </span><span class="s2">= </span><span class="s4">1</span><span class="s2">;</span>
+    <span class="s0">public double </span><span class="s1">distanceTravelled </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;</span>
+    <span class="s0">public static float </span><span class="s1">worldX </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;</span>
+
+    <span class="s0">public int </span><span class="s1">totalCoins </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;</span>
+    <span class="s0">public double </span><span class="s1">highScore </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;</span>
+
+    <span class="s5">// --- Statistieken voor DeathScreen ---</span>
+    <span class="s0">public int </span><span class="s1">enemiesDefeated </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;    </span><span class="s5">// aantal verslagen enemies</span>
+    <span class="s0">public int </span><span class="s1">shotsFired </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;         </span><span class="s5">// aantal keer geschoten</span>
+    <span class="s0">public float </span><span class="s1">survivalTime </span><span class="s2">= </span><span class="s4">0</span><span class="s2">;     </span><span class="s5">// tijd in seconden</span>
+    <span class="s0">public boolean </span><span class="s1">isBlocking </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+<span class="s2">}</span></pre>
+</body>
+</html>

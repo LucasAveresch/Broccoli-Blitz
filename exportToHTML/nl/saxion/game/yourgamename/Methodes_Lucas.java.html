@@ -1,0 +1,335 @@
+<html>
+<head>
+<title>Methodes_Lucas.java</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #5f826b; font-style: italic;}
+.s4 { color: #7a7e85;}
+.s5 { color: #6aab73;}
+.s6 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Methodes_Lucas.java</font>
+</center></td></tr></table>
+<pre><span class="s0">package </span><span class="s1">nl</span><span class="s2">.</span><span class="s1">saxion</span><span class="s2">.</span><span class="s1">game</span><span class="s2">.</span><span class="s1">yourgamename</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">nl</span><span class="s2">.</span><span class="s1">saxion</span><span class="s2">.</span><span class="s1">gameapp</span><span class="s2">.</span><span class="s1">GameApp</span><span class="s2">;</span>
+
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.</span><span class="s1">ArrayList</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.</span><span class="s1">Iterator</span><span class="s2">;</span>
+<span class="s0">import </span><span class="s1">java</span><span class="s2">.</span><span class="s1">util</span><span class="s2">.</span><span class="s1">Random</span><span class="s2">;</span>
+
+    <span class="s0">public class </span><span class="s1">Methodes_Lucas </span><span class="s2">{</span>
+
+        <span class="s3">/**</span>
+         <span class="s3">* Helper-methodes voor een simpele parallax achtergrond</span>
+         <span class="s3">* met één laag die eindeloos herhaalt.</span>
+         <span class="s3">*</span>
+         <span class="s3">* Gebruik in je Screen:</span>
+         <span class="s3">*  - LucasParallaxMethods.initParallax(0f); in show()</span>
+         <span class="s3">*  - LucasParallaxMethods.drawParallaxBackground(cameraX, getWorldWidth()); in render()</span>
+         <span class="s3">*  - LucasParallaxMethods.disposeParallax(); in hide()</span>
+         <span class="s3">*/</span>
+        <span class="s0">public static class </span><span class="s1">LucasParallaxMethods </span><span class="s2">{</span>
+
+            <span class="s4">// Namen voor de textures in de GameApp texture registry</span>
+            <span class="s0">private static final </span><span class="s1">String TEX_MID </span><span class="s2">= </span><span class="s5">&quot;lucas_bg_mid&quot;</span><span class="s2">;</span>
+
+            <span class="s4">// Bestandsnamen in src/main/resources/img</span>
+            <span class="s0">private static final </span><span class="s1">String TEX_MID_PATH </span><span class="s2">= </span><span class="s5">&quot;img/bg_mid.png&quot;</span><span class="s2">;</span>
+
+            <span class="s4">// Parallax snelheid (kleiner = lijkt verder weg)</span>
+            <span class="s0">private static final float </span><span class="s1">SPEED_MID </span><span class="s2">= </span><span class="s6">0.5f</span><span class="s2">;</span>
+
+            <span class="s4">// Y-positie waarop de achtergrond getekend wordt</span>
+            <span class="s0">private static float </span><span class="s1">baseY </span><span class="s2">= </span><span class="s6">0f</span><span class="s2">;</span>
+
+            <span class="s4">// Om te voorkomen dat we textures dubbel laden</span>
+            <span class="s0">private static boolean </span><span class="s1">initialized </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+
+            <span class="s3">/**</span>
+             <span class="s3">* Roept je één keer aan bij het opstarten van je level.</span>
+             <span class="s3">* Bijvoorbeeld in show() van je ScalableGameScreen.</span>
+             <span class="s3">*/</span>
+            <span class="s0">public static void </span><span class="s1">initParallax</span><span class="s2">(</span><span class="s0">float </span><span class="s1">parallaxBaseY</span><span class="s2">) {</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">initialized</span><span class="s2">) {</span>
+                    <span class="s0">return</span><span class="s2">;</span>
+                <span class="s2">}</span>
+
+                <span class="s1">baseY </span><span class="s2">= </span><span class="s1">parallaxBaseY</span><span class="s2">;</span>
+
+                <span class="s4">// Textures registreren in de globale texture registry</span>
+                <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addTexture</span><span class="s2">(</span><span class="s1">TEX_MID</span><span class="s2">, </span><span class="s1">TEX_MID_PATH</span><span class="s2">);</span>
+
+                <span class="s1">initialized </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+            <span class="s2">}</span>
+
+            <span class="s3">/**</span>
+             <span class="s3">* Ruimt de textures weer op.</span>
+             <span class="s3">* Roept je aan in hide() van je Screen.</span>
+             <span class="s3">*/</span>
+            <span class="s0">public static void </span><span class="s1">disposeParallax</span><span class="s2">() {</span>
+                <span class="s0">if </span><span class="s2">(!</span><span class="s1">initialized</span><span class="s2">) {</span>
+                    <span class="s0">return</span><span class="s2">;</span>
+                <span class="s2">}</span>
+
+                <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">disposeTexture</span><span class="s2">(</span><span class="s1">TEX_MID</span><span class="s2">);</span>
+
+                <span class="s1">initialized </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+            <span class="s2">}</span>
+
+            <span class="s3">/**</span>
+             <span class="s3">* Tekent de parallax achtergrond met één laag die eindeloos herhaalt.</span>
+             <span class="s3">* Roept je elke frame aan nadat GameApp.startSpriteRendering() is aangeroepen.</span>
+             <span class="s3">*/</span>
+            <span class="s0">public static void </span><span class="s1">drawParallaxBackground</span><span class="s2">(</span><span class="s0">float </span><span class="s1">cameraX</span><span class="s2">, </span><span class="s0">float </span><span class="s1">worldWidth</span><span class="s2">) {</span>
+                <span class="s0">if </span><span class="s2">(!</span><span class="s1">initialized</span><span class="s2">) {</span>
+                    <span class="s1">initParallax</span><span class="s2">(</span><span class="s1">baseY</span><span class="s2">);</span>
+                <span class="s2">}</span>
+
+                <span class="s4">// Middenlaag dichterbij</span>
+                <span class="s1">drawLayer</span><span class="s2">(</span><span class="s1">TEX_MID</span><span class="s2">, </span><span class="s1">SPEED_MID</span><span class="s2">, </span><span class="s1">cameraX</span><span class="s2">, </span><span class="s1">worldWidth</span><span class="s2">);</span>
+            <span class="s2">}</span>
+
+            <span class="s4">// Interne hulpfunctie voor één laag</span>
+            <span class="s0">private static void </span><span class="s1">drawLayer</span><span class="s2">(</span><span class="s1">String textureName</span><span class="s2">,</span>
+                                          <span class="s0">float </span><span class="s1">speed</span><span class="s2">,</span>
+                                          <span class="s0">float </span><span class="s1">cameraX</span><span class="s2">,</span>
+                                          <span class="s0">float </span><span class="s1">worldWidth</span><span class="s2">) {</span>
+
+                <span class="s4">// Breedte van de texture in pixels</span>
+                <span class="s0">float </span><span class="s1">texWidth </span><span class="s2">= </span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">getTextureWidth</span><span class="s2">(</span><span class="s1">textureName</span><span class="s2">);</span>
+
+                <span class="s4">// Parallax: beweegt langzamer dan de camera</span>
+                <span class="s0">float </span><span class="s1">worldX </span><span class="s2">= -</span><span class="s1">cameraX </span><span class="s2">* </span><span class="s1">speed</span><span class="s2">;</span>
+
+                <span class="s4">// Beginpositie binnen één tile-breedte</span>
+                <span class="s0">float </span><span class="s1">startX </span><span class="s2">= </span><span class="s1">worldX </span><span class="s2">% </span><span class="s1">texWidth</span><span class="s2">;</span>
+
+                <span class="s4">// Zorg dat startX niet positief is, zodat we links van 0 beginnen</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">startX </span><span class="s2">&gt; </span><span class="s6">0</span><span class="s2">) {</span>
+                    <span class="s1">startX </span><span class="s2">-= </span><span class="s1">texWidth</span><span class="s2">;</span>
+                <span class="s2">}</span>
+
+                <span class="s4">// Tiles tekenen van links naar rechts tot de hele wereldbreedte gevuld is</span>
+                <span class="s0">for </span><span class="s2">(</span><span class="s0">float </span><span class="s1">x </span><span class="s2">= </span><span class="s1">startX</span><span class="s2">; </span><span class="s1">x </span><span class="s2">&lt; </span><span class="s1">worldWidth</span><span class="s2">; </span><span class="s1">x </span><span class="s2">+= </span><span class="s1">texWidth</span><span class="s2">) {</span>
+                    <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawTexture</span><span class="s2">(</span><span class="s1">textureName</span><span class="s2">, </span><span class="s1">x</span><span class="s2">, </span><span class="s1">baseY</span><span class="s2">);</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+
+        <span class="s3">/**</span>
+         <span class="s3">* LucasLevelSegments:</span>
+         <span class="s3">* segment-gebaseerde platforms (keuken-obstakels) die naar links schuiven.</span>
+         <span class="s3">* De speler staat altijd op x = 100; de wereld beweegt.</span>
+         <span class="s3">*/</span>
+        <span class="s0">public static class </span><span class="s1">LucasLevelSegments </span><span class="s2">{</span>
+
+            <span class="s4">// Één platform (bijv. een aanrecht / pan / keukenkast)</span>
+            <span class="s0">private static class </span><span class="s1">Platform </span><span class="s2">{</span>
+                <span class="s0">float </span><span class="s1">x</span><span class="s2">;</span>
+                <span class="s0">float </span><span class="s1">y</span><span class="s2">;</span>
+                <span class="s0">float </span><span class="s1">width</span><span class="s2">;</span>
+                <span class="s0">float </span><span class="s1">height</span><span class="s2">;</span>
+                <span class="s1">String textureKey</span><span class="s2">;</span>
+
+                <span class="s1">Platform</span><span class="s2">(</span><span class="s0">float </span><span class="s1">x</span><span class="s2">, </span><span class="s0">float </span><span class="s1">y</span><span class="s2">, </span><span class="s0">float </span><span class="s1">width</span><span class="s2">, </span><span class="s0">float </span><span class="s1">height</span><span class="s2">, </span><span class="s1">String textureKey</span><span class="s2">) {</span>
+                    <span class="s0">this</span><span class="s2">.</span><span class="s1">x </span><span class="s2">= </span><span class="s1">x</span><span class="s2">;</span>
+                    <span class="s0">this</span><span class="s2">.</span><span class="s1">y </span><span class="s2">= </span><span class="s1">y</span><span class="s2">;</span>
+                    <span class="s0">this</span><span class="s2">.</span><span class="s1">width </span><span class="s2">= </span><span class="s1">width</span><span class="s2">;</span>
+                    <span class="s0">this</span><span class="s2">.</span><span class="s1">height </span><span class="s2">= </span><span class="s1">height</span><span class="s2">;</span>
+                    <span class="s0">this</span><span class="s2">.</span><span class="s1">textureKey </span><span class="s2">= </span><span class="s1">textureKey</span><span class="s2">;</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+
+            <span class="s0">private static final int </span><span class="s1">PLAYER_X </span><span class="s2">= </span><span class="s6">100</span><span class="s2">;           </span><span class="s4">// vaste X van broccoli-speler</span>
+            <span class="s0">private static final float </span><span class="s1">PLATFORM_HEIGHT </span><span class="s2">= </span><span class="s6">40f</span><span class="s2">;</span>
+            <span class="s0">private static final float </span><span class="s1">SMALL_PLATFORM_WIDTH </span><span class="s2">= </span><span class="s6">80f</span><span class="s2">;</span>
+            <span class="s0">private static final float </span><span class="s1">BIG_PLATFORM_WIDTH </span><span class="s2">= </span><span class="s6">140f</span><span class="s2">;</span>
+
+            <span class="s4">// Afstand tussen segmenten (in meters)</span>
+            <span class="s0">private static final float </span><span class="s1">BASE_SEGMENT_DISTANCE </span><span class="s2">= </span><span class="s6">6f</span><span class="s2">;</span>
+            <span class="s0">private static final float </span><span class="s1">MIN_SEGMENT_DISTANCE </span><span class="s2">= </span><span class="s6">3f</span><span class="s2">;</span>
+            <span class="s0">private static final float </span><span class="s1">MAX_SEGMENT_DISTANCE </span><span class="s2">= </span><span class="s6">10f</span><span class="s2">;</span>
+
+            <span class="s4">// Waar we platforms weggooien (links buiten beeld)</span>
+            <span class="s0">private static final float </span><span class="s1">DESPAWN_X </span><span class="s2">= -</span><span class="s6">200f</span><span class="s2">;</span>
+
+            <span class="s0">private static final </span><span class="s1">ArrayList</span><span class="s2">&lt;</span><span class="s1">Platform</span><span class="s2">&gt; </span><span class="s1">platforms </span><span class="s2">= </span><span class="s0">new </span><span class="s1">ArrayList</span><span class="s2">&lt;&gt;();</span>
+            <span class="s0">private static final </span><span class="s1">Random random </span><span class="s2">= </span><span class="s0">new </span><span class="s1">Random</span><span class="s2">();</span>
+
+            <span class="s0">private static float </span><span class="s1">metersSinceLastSegment </span><span class="s2">= </span><span class="s6">0f</span><span class="s2">;</span>
+
+            <span class="s0">private static boolean </span><span class="s1">initialized </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+
+            <span class="s4">// Keuken-platform textures laden (keukenapparatuur)</span>
+            <span class="s0">private static void </span><span class="s1">init</span><span class="s2">() {</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">initialized</span><span class="s2">) </span><span class="s0">return</span><span class="s2">;</span>
+
+                <span class="s4">// Zorg dat je deze bestanden in src/main/resources/img zet:</span>
+                <span class="s4">//  - platform_small.png (bijv. pan / krat)</span>
+                <span class="s4">//  - platform_big.png   (bijv. groot aanrecht)</span>
+                <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addTexture</span><span class="s2">(</span><span class="s5">&quot;platform_small&quot;</span><span class="s2">, </span><span class="s5">&quot;img/platform_small.png&quot;</span><span class="s2">);</span>
+                <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">addTexture</span><span class="s2">(</span><span class="s5">&quot;platform_big&quot;</span><span class="s2">, </span><span class="s5">&quot;img/platform_big.png&quot;</span><span class="s2">);</span>
+
+                <span class="s1">initialized </span><span class="s2">= </span><span class="s0">true</span><span class="s2">;</span>
+            <span class="s2">}</span>
+
+            <span class="s0">public static void </span><span class="s1">dispose</span><span class="s2">() {</span>
+                <span class="s0">if </span><span class="s2">(!</span><span class="s1">initialized</span><span class="s2">) </span><span class="s0">return</span><span class="s2">;</span>
+
+                <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">disposeTexture</span><span class="s2">(</span><span class="s5">&quot;platform_small&quot;</span><span class="s2">);</span>
+                <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">disposeTexture</span><span class="s2">(</span><span class="s5">&quot;platform_big&quot;</span><span class="s2">);</span>
+
+                <span class="s1">platforms</span><span class="s2">.</span><span class="s1">clear</span><span class="s2">();</span>
+                <span class="s1">metersSinceLastSegment </span><span class="s2">= </span><span class="s6">0f</span><span class="s2">;</span>
+                <span class="s1">initialized </span><span class="s2">= </span><span class="s0">false</span><span class="s2">;</span>
+            <span class="s2">}</span>
+
+            <span class="s3">/**</span>
+             <span class="s3">* Roept je elke frame vanuit YourGameScreen.render().</span>
+             <span class="s3">* - Spawnt nieuwe segmenten op basis van distanceTravelled (difficulty)</span>
+             <span class="s3">* - Beweegt platforms naar links</span>
+             <span class="s3">* - Tekent platforms</span>
+             <span class="s3">*/</span>
+            <span class="s0">public static void </span><span class="s1">updateAndDrawSegments</span><span class="s2">(</span><span class="s1">PlayerClass player</span><span class="s2">, </span><span class="s0">float </span><span class="s1">delta</span><span class="s2">) {</span>
+                <span class="s1">init</span><span class="s2">(); </span><span class="s4">// textures één keer laden</span>
+
+                <span class="s4">// 1. Difficulty obv afstand</span>
+                <span class="s0">float </span><span class="s1">difficulty </span><span class="s2">= </span><span class="s6">1f </span><span class="s2">+ (</span><span class="s0">float</span><span class="s2">) (</span><span class="s1">player</span><span class="s2">.</span><span class="s1">distanceTravelled </span><span class="s2">/ </span><span class="s6">30.0</span><span class="s2">); </span><span class="s4">// hoe verder, hoe moeilijker</span>
+                <span class="s0">float </span><span class="s1">targetDistance </span><span class="s2">= </span><span class="s1">BASE_SEGMENT_DISTANCE </span><span class="s2">/ </span><span class="s1">difficulty</span><span class="s2">;</span>
+
+                <span class="s4">// Clamp min/max afstand</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">targetDistance </span><span class="s2">&lt; </span><span class="s1">MIN_SEGMENT_DISTANCE</span><span class="s2">) </span><span class="s1">targetDistance </span><span class="s2">= </span><span class="s1">MIN_SEGMENT_DISTANCE</span><span class="s2">;</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">targetDistance </span><span class="s2">&gt; </span><span class="s1">MAX_SEGMENT_DISTANCE</span><span class="s2">) </span><span class="s1">targetDistance </span><span class="s2">= </span><span class="s1">MAX_SEGMENT_DISTANCE</span><span class="s2">;</span>
+
+                <span class="s4">// 2. Meters sinds laatste segment optellen</span>
+                <span class="s1">metersSinceLastSegment </span><span class="s2">+= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">speed </span><span class="s2">* </span><span class="s1">delta</span><span class="s2">;</span>
+
+                <span class="s4">// 3. Nieuw segment maken als we ver genoeg zijn</span>
+                <span class="s0">if </span><span class="s2">(</span><span class="s1">metersSinceLastSegment </span><span class="s2">&gt;= </span><span class="s1">targetDistance</span><span class="s2">) {</span>
+                    <span class="s1">metersSinceLastSegment </span><span class="s2">= </span><span class="s6">0f</span><span class="s2">;</span>
+                    <span class="s1">spawnSegment</span><span class="s2">(</span><span class="s1">player</span><span class="s2">);</span>
+                <span class="s2">}</span>
+
+                <span class="s4">// 4. Platforms updaten + tekenen</span>
+                <span class="s0">float </span><span class="s1">screenSpeed </span><span class="s2">= (</span><span class="s0">float</span><span class="s2">) (</span><span class="s1">player</span><span class="s2">.</span><span class="s1">speed </span><span class="s2">* </span><span class="s6">5.0</span><span class="s2">); </span><span class="s4">// zelfde als munten</span>
+
+                <span class="s1">Iterator</span><span class="s2">&lt;</span><span class="s1">Platform</span><span class="s2">&gt; </span><span class="s1">it </span><span class="s2">= </span><span class="s1">platforms</span><span class="s2">.</span><span class="s1">iterator</span><span class="s2">();</span>
+                <span class="s0">while </span><span class="s2">(</span><span class="s1">it</span><span class="s2">.</span><span class="s1">hasNext</span><span class="s2">()) {</span>
+                    <span class="s1">Platform p </span><span class="s2">= </span><span class="s1">it</span><span class="s2">.</span><span class="s1">next</span><span class="s2">();</span>
+
+                    <span class="s4">// naar links bewegen</span>
+                    <span class="s1">p</span><span class="s2">.</span><span class="s1">x </span><span class="s2">-= </span><span class="s1">screenSpeed</span><span class="s2">;</span>
+
+                    <span class="s4">// tekenen</span>
+                    <span class="s1">GameApp</span><span class="s2">.</span><span class="s1">drawTexture</span><span class="s2">(</span><span class="s1">p</span><span class="s2">.</span><span class="s1">textureKey</span><span class="s2">, </span><span class="s1">p</span><span class="s2">.</span><span class="s1">x</span><span class="s2">, </span><span class="s1">p</span><span class="s2">.</span><span class="s1">y</span><span class="s2">, </span><span class="s1">p</span><span class="s2">.</span><span class="s1">width</span><span class="s2">, </span><span class="s1">p</span><span class="s2">.</span><span class="s1">height</span><span class="s2">);</span>
+
+                    <span class="s4">// despawn als platform uit beeld is</span>
+                    <span class="s0">if </span><span class="s2">(</span><span class="s1">p</span><span class="s2">.</span><span class="s1">x </span><span class="s2">+ </span><span class="s1">p</span><span class="s2">.</span><span class="s1">width </span><span class="s2">&lt; </span><span class="s1">DESPAWN_X</span><span class="s2">) {</span>
+                        <span class="s1">it</span><span class="s2">.</span><span class="s1">remove</span><span class="s2">();</span>
+                    <span class="s2">}</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+
+            <span class="s4">// === SEGMENT-GENERATIE ===</span>
+
+            <span class="s0">private static void </span><span class="s1">spawnSegment</span><span class="s2">(</span><span class="s1">PlayerClass player</span><span class="s2">) {</span>
+                <span class="s0">float </span><span class="s1">startX </span><span class="s2">= </span><span class="s1">GameApp</span><span class="s2">.</span><span class="s1">getWorldWidth</span><span class="s2">() + </span><span class="s6">50f</span><span class="s2">;</span>
+
+                <span class="s0">int </span><span class="s1">templateIndex </span><span class="s2">= </span><span class="s1">random</span><span class="s2">.</span><span class="s1">nextInt</span><span class="s2">(</span><span class="s6">3</span><span class="s2">); </span><span class="s4">// drie basis-templates</span>
+
+                <span class="s0">switch </span><span class="s2">(</span><span class="s1">templateIndex</span><span class="s2">) {</span>
+                    <span class="s0">case </span><span class="s6">0</span><span class="s2">:</span>
+                        <span class="s1">spawnLowDouble</span><span class="s2">(</span><span class="s1">startX</span><span class="s2">, </span><span class="s1">player</span><span class="s2">);</span>
+                        <span class="s0">break</span><span class="s2">;</span>
+                    <span class="s0">case </span><span class="s6">1</span><span class="s2">:</span>
+                        <span class="s1">spawnHighPlatform</span><span class="s2">(</span><span class="s1">startX</span><span class="s2">, </span><span class="s1">player</span><span class="s2">);</span>
+                        <span class="s0">break</span><span class="s2">;</span>
+                    <span class="s0">default</span><span class="s2">:</span>
+                        <span class="s1">spawnStairs</span><span class="s2">(</span><span class="s1">startX</span><span class="s2">, </span><span class="s1">player</span><span class="s2">);</span>
+                        <span class="s0">break</span><span class="s2">;</span>
+                <span class="s2">}</span>
+            <span class="s2">}</span>
+
+            <span class="s4">// Template 1: twee lage &quot;keukenobjecten&quot; op de grond (er OVERheen springen)</span>
+            <span class="s0">private static void </span><span class="s1">spawnLowDouble</span><span class="s2">(</span><span class="s0">float </span><span class="s1">startX</span><span class="s2">, </span><span class="s1">PlayerClass player</span><span class="s2">) {</span>
+                <span class="s0">float </span><span class="s1">groundY </span><span class="s2">= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">groundLevel</span><span class="s2">;</span>
+
+                <span class="s0">float </span><span class="s1">w1 </span><span class="s2">= </span><span class="s1">SMALL_PLATFORM_WIDTH</span><span class="s2">;</span>
+                <span class="s0">float </span><span class="s1">h1 </span><span class="s2">= </span><span class="s1">PLATFORM_HEIGHT</span><span class="s2">;</span>
+                <span class="s1">platforms</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Platform</span><span class="s2">(</span><span class="s1">startX</span><span class="s2">, </span><span class="s1">groundY</span><span class="s2">, </span><span class="s1">w1</span><span class="s2">, </span><span class="s1">h1</span><span class="s2">, </span><span class="s5">&quot;platform_small&quot;</span><span class="s2">));</span>
+
+                <span class="s0">float </span><span class="s1">gap </span><span class="s2">= </span><span class="s6">80f</span><span class="s2">; </span><span class="s4">// afstand ertussen</span>
+                <span class="s0">float </span><span class="s1">w2 </span><span class="s2">= </span><span class="s1">SMALL_PLATFORM_WIDTH</span><span class="s2">;</span>
+                <span class="s1">platforms</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Platform</span><span class="s2">(</span><span class="s1">startX </span><span class="s2">+ </span><span class="s1">w1 </span><span class="s2">+ </span><span class="s1">gap</span><span class="s2">, </span><span class="s1">groundY</span><span class="s2">, </span><span class="s1">w2</span><span class="s2">, </span><span class="s1">h1</span><span class="s2">, </span><span class="s5">&quot;platform_small&quot;</span><span class="s2">));</span>
+            <span class="s2">}</span>
+
+            <span class="s4">// Template 2: lage keukentafel + hoger blok om op te landen</span>
+            <span class="s0">private static void </span><span class="s1">spawnHighPlatform</span><span class="s2">(</span><span class="s0">float </span><span class="s1">startX</span><span class="s2">, </span><span class="s1">PlayerClass player</span><span class="s2">) {</span>
+                <span class="s0">float </span><span class="s1">groundY </span><span class="s2">= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">groundLevel</span><span class="s2">;</span>
+
+                <span class="s4">// lage keukentafel</span>
+                <span class="s0">float </span><span class="s1">w1 </span><span class="s2">= </span><span class="s1">BIG_PLATFORM_WIDTH</span><span class="s2">;</span>
+                <span class="s1">platforms</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Platform</span><span class="s2">(</span><span class="s1">startX</span><span class="s2">, </span><span class="s1">groundY</span><span class="s2">, </span><span class="s1">w1</span><span class="s2">, </span><span class="s1">PLATFORM_HEIGHT</span><span class="s2">, </span><span class="s5">&quot;platform_big&quot;</span><span class="s2">));</span>
+
+                <span class="s4">// hoog keukenblok</span>
+                <span class="s0">float </span><span class="s1">gap </span><span class="s2">= </span><span class="s6">60f</span><span class="s2">;</span>
+                <span class="s0">float </span><span class="s1">highY </span><span class="s2">= </span><span class="s1">groundY </span><span class="s2">+ </span><span class="s6">80f</span><span class="s2">;</span>
+                <span class="s0">float </span><span class="s1">w2 </span><span class="s2">= </span><span class="s1">SMALL_PLATFORM_WIDTH</span><span class="s2">;</span>
+                <span class="s1">platforms</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Platform</span><span class="s2">(</span><span class="s1">startX </span><span class="s2">+ </span><span class="s1">w1 </span><span class="s2">+ </span><span class="s1">gap</span><span class="s2">, </span><span class="s1">highY</span><span class="s2">, </span><span class="s1">w2</span><span class="s2">, </span><span class="s1">PLATFORM_HEIGHT</span><span class="s2">, </span><span class="s5">&quot;platform_small&quot;</span><span class="s2">));</span>
+            <span class="s2">}</span>
+
+            <span class="s4">// Template 3: trappetje van keukenobjecten</span>
+            <span class="s0">private static void </span><span class="s1">spawnStairs</span><span class="s2">(</span><span class="s0">float </span><span class="s1">startX</span><span class="s2">, </span><span class="s1">PlayerClass player</span><span class="s2">) {</span>
+                <span class="s0">float </span><span class="s1">groundY </span><span class="s2">= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">groundLevel</span><span class="s2">;</span>
+                <span class="s0">float </span><span class="s1">stepHeight </span><span class="s2">= </span><span class="s6">35f</span><span class="s2">;</span>
+                <span class="s0">float </span><span class="s1">stepWidth </span><span class="s2">= </span><span class="s1">SMALL_PLATFORM_WIDTH</span><span class="s2">;</span>
+                <span class="s0">float </span><span class="s1">gap </span><span class="s2">= </span><span class="s6">40f</span><span class="s2">;</span>
+
+                <span class="s1">platforms</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Platform</span><span class="s2">(</span><span class="s1">startX</span><span class="s2">, </span><span class="s1">groundY</span><span class="s2">, </span><span class="s1">stepWidth</span><span class="s2">, </span><span class="s1">PLATFORM_HEIGHT</span><span class="s2">, </span><span class="s5">&quot;platform_small&quot;</span><span class="s2">));</span>
+                <span class="s1">platforms</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Platform</span><span class="s2">(</span><span class="s1">startX </span><span class="s2">+ </span><span class="s1">stepWidth </span><span class="s2">+ </span><span class="s1">gap</span><span class="s2">, </span><span class="s1">groundY </span><span class="s2">+ </span><span class="s1">stepHeight</span><span class="s2">, </span><span class="s1">stepWidth</span><span class="s2">, </span><span class="s1">PLATFORM_HEIGHT</span><span class="s2">, </span><span class="s5">&quot;platform_small&quot;</span><span class="s2">));</span>
+                <span class="s1">platforms</span><span class="s2">.</span><span class="s1">add</span><span class="s2">(</span><span class="s0">new </span><span class="s1">Platform</span><span class="s2">(</span><span class="s1">startX </span><span class="s2">+ </span><span class="s6">2 </span><span class="s2">* (</span><span class="s1">stepWidth </span><span class="s2">+ </span><span class="s1">gap</span><span class="s2">), </span><span class="s1">groundY </span><span class="s2">+ </span><span class="s6">2 </span><span class="s2">* </span><span class="s1">stepHeight</span><span class="s2">, </span><span class="s1">stepWidth</span><span class="s2">, </span><span class="s1">PLATFORM_HEIGHT</span><span class="s2">, </span><span class="s5">&quot;platform_small&quot;</span><span class="s2">));</span>
+            <span class="s2">}</span>
+
+            <span class="s3">/**</span>
+             <span class="s3">* Geeft terug wat de &quot;grondhoogte&quot; is onder de speler:</span>
+             <span class="s3">* - standaard player.groundLevel</span>
+             <span class="s3">* - of de bovenkant van het hoogste platform onder de speler</span>
+             <span class="s3">*/</span>
+            <span class="s0">public static int </span><span class="s1">getGroundYAtPlayer</span><span class="s2">(</span><span class="s1">PlayerClass player</span><span class="s2">) {</span>
+                <span class="s0">int </span><span class="s1">ground </span><span class="s2">= </span><span class="s1">player</span><span class="s2">.</span><span class="s1">groundLevel</span><span class="s2">;</span>
+
+                <span class="s0">int </span><span class="s1">playerLeft </span><span class="s2">= </span><span class="s1">PLAYER_X</span><span class="s2">;</span>
+                <span class="s0">int </span><span class="s1">playerRight </span><span class="s2">= </span><span class="s1">PLAYER_X </span><span class="s2">+ </span><span class="s1">player</span><span class="s2">.</span><span class="s1">spriteWidth</span><span class="s2">;</span>
+
+                <span class="s0">for </span><span class="s2">(</span><span class="s1">Platform p </span><span class="s2">: </span><span class="s1">platforms</span><span class="s2">) {</span>
+                    <span class="s0">float </span><span class="s1">platformLeft </span><span class="s2">= </span><span class="s1">p</span><span class="s2">.</span><span class="s1">x</span><span class="s2">;</span>
+                    <span class="s0">float </span><span class="s1">platformRight </span><span class="s2">= </span><span class="s1">p</span><span class="s2">.</span><span class="s1">x </span><span class="s2">+ </span><span class="s1">p</span><span class="s2">.</span><span class="s1">width</span><span class="s2">;</span>
+
+                    <span class="s4">// horizontale overlap met speler?</span>
+                    <span class="s0">if </span><span class="s2">(</span><span class="s1">playerRight </span><span class="s2">&gt;= </span><span class="s1">platformLeft </span><span class="s2">&amp;&amp; </span><span class="s1">playerLeft </span><span class="s2">&lt;= </span><span class="s1">platformRight</span><span class="s2">) {</span>
+                        <span class="s0">int </span><span class="s1">platformTop </span><span class="s2">= (</span><span class="s0">int</span><span class="s2">) (</span><span class="s1">p</span><span class="s2">.</span><span class="s1">y </span><span class="s2">+ </span><span class="s1">p</span><span class="s2">.</span><span class="s1">height</span><span class="s2">);</span>
+
+                        <span class="s4">// neem alleen platforms boven de normale grond</span>
+                        <span class="s0">if </span><span class="s2">(</span><span class="s1">platformTop </span><span class="s2">&gt; </span><span class="s1">ground </span><span class="s2">&amp;&amp; </span><span class="s1">platformTop </span><span class="s2">&lt;= </span><span class="s1">ground </span><span class="s2">+ </span><span class="s6">200</span><span class="s2">) {</span>
+                            <span class="s1">ground </span><span class="s2">= </span><span class="s1">platformTop</span><span class="s2">;</span>
+                        <span class="s2">}</span>
+                    <span class="s2">}</span>
+                <span class="s2">}</span>
+
+                <span class="s0">return </span><span class="s1">ground</span><span class="s2">;</span>
+            <span class="s2">}</span>
+        <span class="s2">}</span>
+    <span class="s2">}</span>
+    
+</pre>
+</body>
+</html>
