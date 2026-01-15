@@ -190,7 +190,6 @@ public class YourGameScreen extends ScalableGameScreen {
         }
 
         Methodes_Rutger.checkBulletHitsEnemy(player, enemyClass);
-        Methodes_Rutger.checkKogelCollisionSubEnemy(player, subEnemyClass);
         Methodes_Maxje.checkCollsionMes(projectileClass, player);
         Methodes_Maxje.checkCollisionEnemy(player, enemyClass, subEnemyClass, schildClass, powerupClassSchild);
         Methodes_Maxje.checkForPowerupPickup(player, powerupClassSchild);
@@ -209,6 +208,7 @@ public class YourGameScreen extends ScalableGameScreen {
         Methodes_Rutger.drawPowerupTimer(powerupClassSchild);
         Methodes_Maxje.genereerRandomPowerup(powerupClassSchild, delta);
         Methodes_Maxje.tekenFlamethrower(delta, flamethrowerClass, enemyClass);
+        Methodes_Maxje.checkFlamethrowerCollision(flamethrowerClass,player,schildClass);
 
         GameApp.endSpriteRendering();
     }

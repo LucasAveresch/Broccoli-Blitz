@@ -7,7 +7,7 @@ public float interval =0.1f;
 public float timer;
 public int frame= 0;
 public float x,y;
-public float speed = 500f;
+public float speed = 750f;
 public boolean hasstarted = false;
     public boolean fired = false;
     public flamethrowerClass(float x, float y) {

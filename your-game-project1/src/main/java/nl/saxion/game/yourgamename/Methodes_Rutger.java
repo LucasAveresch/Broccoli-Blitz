@@ -22,8 +22,6 @@ public class Methodes_Rutger {
     private static ArrayList<BombClass> bombs = new ArrayList<>();
 
 
-
-
     // Speler update (springen, bukken, tekenen, schieten)
     public static void update(PlayerClass player, unlimitedAmmoPowerupClass powerupClass) {
         // --- SPRINGEN ---
@@ -66,15 +64,15 @@ public class Methodes_Rutger {
             }
         }
         // --- KOGELS UPDATEN ---
-            for (int i = 0; i < player.bullets.size(); i++) {
-                BulletClass b = player.bullets.get(i);
-                b.x += b.velocity;
-                GameApp.drawTexture("kogel", b.x, b.y, 45, 40);
+        for (int i = 0; i < player.bullets.size(); i++) {
+            BulletClass b = player.bullets.get(i);
+            b.x += b.velocity;
+            GameApp.drawTexture("kogel", b.x, b.y, 45, 40);
 
-                if (b.x > GameApp.getWorldWidth()) {
-                    player.bullets.remove(i);
-                    i--;
-                }
+            if (b.x > GameApp.getWorldWidth()) {
+                player.bullets.remove(i);
+                i--;
+            }
         }
 
         // --- TEKENEN VAN DE BROCCOLI ---
@@ -149,44 +147,45 @@ public class Methodes_Rutger {
             }
         }
     }
-        public static void updateCoins(PlayerClass player) {
-            int broccoliX = 100;
-            int broccoliYTop = player.yPlayer;
-            int broccoliYBottom = player.yPlayer + player.spriteHeight;
 
-            for (int i = 0; i < coins.size(); i++) {
-                CoinClass coin = coins.get(i);
+    public static void updateCoins(PlayerClass player) {
+        int broccoliX = 100;
+        int broccoliYTop = player.yPlayer;
+        int broccoliYBottom = player.yPlayer + player.spriteHeight;
 
-                if (!coin.isCollected) {
-                    // Munten bewegen naar links
-                    coin.x -= player.speed * 5;
+        for (int i = 0; i < coins.size(); i++) {
+            CoinClass coin = coins.get(i);
 
-                    // Teken munt
-                    GameApp.drawTexture("coin", coin.x, coin.y, coin.width, coin.height);
+            if (!coin.isCollected) {
+                // Munten bewegen naar links
+                coin.x -= player.speed * 5;
 
-                    // Collision check (AABB)
-                    boolean overlap =
-                            broccoliX < coin.x + coin.width &&
-                                    broccoliX + player.spriteWidth > coin.x &&
-                                    broccoliYTop < coin.y + coin.height &&
-                                    broccoliYBottom > coin.y;
+                // Teken munt
+                GameApp.drawTexture("coin", coin.x, coin.y, coin.width, coin.height);
 
-                    if (overlap) {
-                        coin.isCollected = true;
-                        player.coinsPickedUp++;
-                        GameApp.playSound("coin", 0.25f);
-                    }
+                // Collision check (AABB)
+                boolean overlap =
+                        broccoliX < coin.x + coin.width &&
+                                broccoliX + player.spriteWidth > coin.x &&
+                                broccoliYTop < coin.y + coin.height &&
+                                broccoliYBottom > coin.y;
 
-                    // Verwijder munt als hij uit beeld is
-                    if (coin.x + coin.width < 0) {
-                        coin.isCollected = true;
-                    }
+                if (overlap) {
+                    coin.isCollected = true;
+                    player.coinsPickedUp++;
+                    GameApp.playSound("coin", 0.25f);
+                }
+
+                // Verwijder munt als hij uit beeld is
+                if (coin.x + coin.width < 0) {
+                    coin.isCollected = true;
                 }
             }
-
-            // HIER: echt uit de lijst slopen
-            coins.removeIf(c -> c.isCollected || c.x + c.width < 0);
         }
+
+        // HIER: echt uit de lijst slopen
+        coins.removeIf(c -> c.isCollected || c.x + c.width < 0);
+    }
 
 
     public static void spawnCoins() {
@@ -259,6 +258,7 @@ public class Methodes_Rutger {
         }
         return false;
     }
+
     public static void updateJump(PlayerClass player) {
         // --- SPRINGEN ---
         if (GameApp.isKeyJustPressed(Input.Keys.SPACE)) {
@@ -279,6 +279,7 @@ public class Methodes_Rutger {
             player.jumpCount = 0;
         }
     }
+
     public static float handleMenuBroccoli(PlayerClass player, float broccoliX, boolean isStarting, float delta) {
         // Broccoli beweegt naar startpositie
         if (isStarting && broccoliX > 100) {
@@ -292,10 +293,11 @@ public class Methodes_Rutger {
         }
 
         // Teken broccoli op huidige X en Y (nu met springen)
-        GameApp.drawTexture("brocolli", (int)broccoliX, player.yPlayer,200,200);
+        GameApp.drawTexture("brocolli", (int) broccoliX, player.yPlayer, 200, 200);
 
         return broccoliX;
     }
+
     public static boolean handleMenuStart(boolean isStarting) {
         // Spatie activeert beweging
         if (!isStarting && GameApp.isKeyJustPressed(Input.Keys.SPACE)) {
@@ -306,6 +308,7 @@ public class Methodes_Rutger {
         }
         return isStarting; // geef de bijgewerkte waarde terug
     }
+
     public static void drawGameHud(PlayerClass player) {
         int margin = 20;
         int topY = (int) GameApp.getWorldHeight();
@@ -366,26 +369,25 @@ public class Methodes_Rutger {
                     enemy.allEnemies.remove(0);
                     enemy.type = 0;
                 }
-            }
-        }
-    }
-    public static void checkKogelCollisionSubEnemy(PlayerClass player,SubEnemyClass subEnemyClass) {
+            } else if (currentenemy.type == 3) {
+                boolean overlapX = bullet.x < currentenemy.enemyXPos + 100 && bullet.x + 45 > currentenemy.enemyXPos;
+                boolean overlapY = bullet.y < currentenemy.enemyYPos + 140 && bullet.y + 40 > currentenemy.enemyYPos;
 
-        if (subEnemyClass.subEnemies.isEmpty()) return;
-        SubEnemyClass currentenemy = subEnemyClass.subEnemies.get(0);
-        for (int i = 0; i < player.bullets.size(); i++) {
-            BulletClass bullet = player.bullets.get(i);
-            boolean overlapX = bullet.x < currentenemy.enemyXPos + 140 && bullet.x + 45 > currentenemy.enemyXPos;
-            boolean overlapY = bullet.y < currentenemy.enemyYPos + 140 && bullet.y + 40 > currentenemy.enemyYPos;
-
-            if (overlapX && overlapY) {
-                player.bullets.remove(i);
-                GameApp.addSound("Enemydood", "Sounds/enemydoosounds.mp3");
-                GameApp.playSound("Enemydood");
-                i--;
-
-                player.enemiesDefeated++; // ✅ kill registreren
-                subEnemyClass.subEnemies.remove(0);
+                if (overlapX && overlapY && !enemy.allEnemies.isEmpty() && currentenemy.hp > 1) {
+                    player.bullets.remove(i);
+                    currentenemy.hp--;
+                    i--;
+                    System.out.println(currentenemy.hp);
+                } else if (overlapX && overlapY && !enemy.allEnemies.isEmpty() && currentenemy.hp == 1) {
+                    player.bullets.remove(i);
+                    System.out.println("I RUN");
+                    GameApp.addSound("Enemydood", "Sounds/enemydoosounds.mp3");
+                    GameApp.playSound("Enemydood");
+                    i--;
+                    player.enemiesDefeated++; // ✅ kill registreren
+                    enemy.allEnemies.remove(0);
+                    enemy.type = 0;
+                }
             }
         }
     }
