@@ -377,10 +377,8 @@ public class Methodes_Rutger {
                     player.bullets.remove(i);
                     currentenemy.hp--;
                     i--;
-                    System.out.println(currentenemy.hp);
                 } else if (overlapX && overlapY && !enemy.allEnemies.isEmpty() && currentenemy.hp == 1) {
                     player.bullets.remove(i);
-                    System.out.println("I RUN");
                     GameApp.addSound("Enemydood", "Sounds/enemydoosounds.mp3");
                     GameApp.playSound("Enemydood");
                     i--;

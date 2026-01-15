@@ -16,6 +16,7 @@ public class YourGameScreen extends ScalableGameScreen {
     public unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass;
     public SubEnemyClass subEnemyClass;
     public flamethrowerClass flamethrowerClass;
+    public managerClass managerClass;
 
     private final Random rng = new Random();
 
@@ -79,9 +80,18 @@ public class YourGameScreen extends ScalableGameScreen {
         flamethrowerClass = new flamethrowerClass(0, 0);
         enemyClass = new EnemyClass("img/chef.png", "chef", "img/ketchup.png", "enemy2", 1100, 150, 1000);
 
+        String[] knifeFrames = {
+                "img/knife1.png",
+                "img/knife2.png",
+                "img/knife3.png",
+                "img/knife4.png",
+                "img/knife5.png",
+                "img/knife6.png",
+                "img/knife7.png",
+                "img/knife8.png"
+        };
         projectileClass = new ProjectileClass(
-                "img/mes.png",
-                "mes",
+                knifeFrames,
                 enemyClass.enemyXPos,
                 enemyClass.enemyYPos + 20,
                 200
@@ -95,14 +105,6 @@ public class YourGameScreen extends ScalableGameScreen {
         );
 
         unlimitedAmmoPowerupClass = new unlimitedAmmoPowerupClass();
-
-        subEnemyClass = new SubEnemyClass(
-                "img/stokbrood.png",
-                "stokbrood",
-                enemyClass.enemyXPos,
-                enemyClass.enemyYPos,
-                350
-        );
 
         powerupClassSchild = new PowerupClass(
                 "img/schild.png",
@@ -131,7 +133,7 @@ public class YourGameScreen extends ScalableGameScreen {
         GameApp.startSpriteRendering();
 
         // wereld beweegt
-        PlayerClass.worldX += 300 * delta;
+        PlayerClass.worldX += 600 * delta;
 
         // achtergrond
         Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(
@@ -165,11 +167,12 @@ public class YourGameScreen extends ScalableGameScreen {
         // platform collision → vloer/verhogingen zoals Kaasje
         for (PlatformClass p : activePlatforms) {
             if (p.playerIsOnTop(player)) {
-                int top = (int) (p.y + p.height);
+                int top = (int) (p.y+p.height);
                 if (player.yPlayer < top) {
                     player.yPlayer = top;
                 }
                 player.groundLevel = top;
+
             }
         }
 
@@ -208,12 +211,15 @@ public class YourGameScreen extends ScalableGameScreen {
         Methodes_Rutger.updateBlocking(player);
         Methodes_Rutger.updateBomb(player, enemyClass);
         Methodes_Maxje.addMes(delta, projectileClass, enemyClass);
-        Methodes_Maxje.updateMes(delta, projectileClass, enemyClass);
+        Methodes_Maxje.updateMes(delta, projectileClass);
         Methodes_Rutger.updatePowerupTimer(delta, powerupClassSchild, schildClass);
         Methodes_Rutger.drawPowerupTimer(powerupClassSchild);
-        Methodes_Maxje.genereerRandomPowerup(powerupClassSchild, delta);
+        Methodes_Maxje.genereerRandomPowerup(powerupClassSchild,managerClass);
         Methodes_Maxje.tekenFlamethrower(delta, flamethrowerClass, enemyClass);
         Methodes_Maxje.checkFlamethrowerCollision(flamethrowerClass,player,schildClass);
+        Methodes_Maxje.addSpatel(delta,projectileClass,enemyClass);
+        Methodes_Maxje.updateSpatel(delta,projectileClass);
+        Methodes_Maxje.checkCollsionSpatel(projectileClass,player);
 
         GameApp.endSpriteRendering();
     }

@@ -60,7 +60,7 @@ public class Methodes_Maxje {
         Random r = new Random();
         boolean spawnNewEnemy = false;
 
-        enemyClass.currentTimer += delta;
+
 
         if (enemyClass.currentTimer >= enemyClass.spawnInterval) {
             spawnNewEnemy = true;
@@ -87,31 +87,66 @@ public class Methodes_Maxje {
         if (projectileClass.spawnTimer > projectileClass.spawnInterval) {
             projectileClass.spawnTimer = 0f;
 
-            ProjectileClass newknife = new ProjectileClass(
-                    "img/mes.png", "mes",
+            String[] knifeFrames = {
+                    "img/knife1.png",
+                    "img/knife2.png",
+                    "img/knife3.png",
+                    "img/knife4.png",
+                    "img/knife5.png",
+                    "img/knife6.png",
+                    "img/knife7.png",
+                    "img/knife8.png"
+            };
+
+            ProjectileClass knife = new ProjectileClass(
+                    knifeFrames,
                     enemyClass.allEnemies.get(0).enemyXPos,
                     enemyClass.enemyYPos + 30,
-                    600
+                    500
             );
 
-            projectileClass.projectiles.add(newknife);
-            GameApp.drawTexture(newknife.textureKey, newknife.xposition, newknife.yposition);
+            projectileClass.projectiles.add(knife);
+            GameApp.addSound("mes","sounds/knife.mp3");
+            GameApp.playSound("mes");
         }
     }
 
-    public static void updateMes(float delta, ProjectileClass projectileClass, EnemyClass enemyClass) {
-        for (ProjectileClass knife : projectileClass.projectiles) {
+
+    public static void updateMes(float delta, ProjectileClass projectileClass) {
+
+        for (int i = 0; i < projectileClass.projectiles.size(); i++) {
+            ProjectileClass knife = projectileClass.projectiles.get(i);
+
             knife.xposition -= knife.speed * delta;
-            GameApp.drawTexture(knife.textureKey, knife.xposition, knife.yposition);
+
+            knife.frameTimer += delta;
+            if (knife.frameTimer >= knife.frameInterval) {
+                knife.frameTimer = 0f;
+                knife.currentFrame++;
+
+                if (knife.currentFrame >= knife.frames.length) {
+                    knife.currentFrame = 0;
+                }
+            }
+
+            GameApp.drawTexture(
+                    knife.getCurrentTexture(),
+                    knife.xposition,
+                    knife.yposition,80,80
+            );
+
+            if (knife.xposition < -100) {
+                projectileClass.projectiles.remove(i);
+                i--;
+            }
         }
     }
+
 
     public static void checkCollsionMes(ProjectileClass projectileClass, PlayerClass playerClass) {
 
-        // Stop als er geen messen zijn
         if (projectileClass.projectiles.isEmpty()) return;
 
-        // We checken alleen het eerste mes (zoals jij al doet)
         ProjectileClass knife = projectileClass.projectiles.get(0);
 
         boolean collisionX =
@@ -124,7 +159,6 @@ public class Methodes_Maxje {
 
         if (collisionX && collisionY) {
 
-            // 🟩 BLOCK → mes tegenhouden
             if (playerClass.isBlocking) {
 
                 GameApp.addSound("block", "Sounds/block.mp3");
@@ -134,7 +168,98 @@ public class Methodes_Maxje {
                 return;
             }
 
-            // 🟥 GEEN BLOCK → dood
+            GameApp.switchScreen("DeathScreen");
+        }
+    }
+
+    public static void addSpatel(float delta, ProjectileClass projectileClass, EnemyClass enemyClass) {
+        if (enemyClass.allEnemies.isEmpty() || enemyClass.allEnemies.get(0).type != 3) return;
+
+        projectileClass.spawnTimer += delta;
+        if (projectileClass.spawnTimer > projectileClass.spawnInterval) {
+            projectileClass.spawnTimer = 0f;
+
+            String[] knifeFrames = {
+                    "img/spatel1.png",
+                    "img/spatel2.png",
+                    "img/spatel3.png",
+                    "img/spatel4.png",
+                    "img/spatel5.png",
+                    "img/spatel6.png",
+                    "img/spatel7.png",
+                    "img/spatel8.png"
+            };
+
+            ProjectileClass knife = new ProjectileClass(
+                    knifeFrames,
+                    enemyClass.allEnemies.get(0).enemyXPos,
+                    enemyClass.enemyYPos + 30,
+                    500
+            );
+
+            projectileClass.projectiles.add(knife);
+            GameApp.addSound("mes","sounds/knife.mp3");
+            GameApp.playSound("mes");
+        }
+    }
+
+
+    public static void updateSpatel(float delta, ProjectileClass projectileClass) {
+
+        for (int i = 0; i < projectileClass.projectiles.size(); i++) {
+            ProjectileClass knife = projectileClass.projectiles.get(i);
+
+            knife.xposition -= knife.speed * delta;
+
+            knife.frameTimer += delta;
+            if (knife.frameTimer >= knife.frameInterval) {
+                knife.frameTimer = 0f;
+                knife.currentFrame++;
+
+                if (knife.currentFrame >= knife.frames.length) {
+                    knife.currentFrame = 0;
+                }
+            }
+
+            GameApp.drawTexture(
+                    knife.getCurrentTexture(),
+                    knife.xposition,
+                    knife.yposition,80,80
+            );
+
+            if (knife.xposition < -100) {
+                projectileClass.projectiles.remove(i);
+                i--;
+            }
+        }
+    }
+
+
+    public static void checkCollsionSpatel(ProjectileClass projectileClass, PlayerClass playerClass) {
+
+        if (projectileClass.projectiles.isEmpty()) return;
+
+        ProjectileClass knife = projectileClass.projectiles.get(0);
+
+        boolean collisionX =
+                knife.xposition > 100 + playerClass.spriteWidth &&
+                        knife.xposition < 120 + playerClass.spriteWidth;
+
+        boolean collisionY =
+                knife.yposition < playerClass.yPlayer + playerClass.spriteHeight &&
+                        knife.yposition + 16 > playerClass.yPlayer;
+
+        if (collisionX && collisionY) {
+
+            if (playerClass.isBlocking) {
+
+                GameApp.addSound("block", "Sounds/block.mp3");
+                GameApp.playSound("block", 5.0f);
+
+                projectileClass.projectiles.remove(0); // gewoon simpel verwijderen
+                return;
+            }
+
             GameApp.switchScreen("DeathScreen");
         }
     }
@@ -220,14 +345,15 @@ public class Methodes_Maxje {
         }
     }
 
-    public static void genereerRandomPowerup(PowerupClass powerupClass, float delta) {
-        powerupClass.spawntimer += delta;
-        if (powerupClass.spawntimer >= powerupClass.spawninterval) {
+    public static void genereerRandomPowerup(PowerupClass powerupClass, managerClass managerClass) {
+        if (managerClass.spawnPowerup) {
             Random r = new Random();
             int randomint = r.nextInt(1, 3);
             powerupClass.type = randomint;
             powerupClass.xPosition = 1200;
             powerupClass.spawntimer = 0f;
+            managerClass.spawnPowerup = false;
+            managerClass.powerupActive = true;
         }
     }
 
@@ -239,7 +365,7 @@ public class Methodes_Maxje {
             powerUp.xPosition -= powerUp.speed * delta;
 
             if (powerUp.xPosition > -200) {
-                GameApp.drawTexture(powerUp.textureName, powerUp.xPosition, powerUp.yposition);
+                GameApp.drawTexture(powerUp.textureName, powerUp.xPosition, powerUp.yposition,110,110);
             }
         }
 
@@ -270,7 +396,7 @@ public class Methodes_Maxje {
             if (powerUp.xPosition < 0) {
                 return;
             }
-            GameApp.drawTexture(powerUp.texurename2, powerUp.xPosition, powerUp.yposition);
+            GameApp.drawTexture(powerUp.texurename2, powerUp.xPosition, powerUp.yposition,110,110);
         }
 
         if (powerUp.powerupPickedup && powerUp.type == 2) {
@@ -434,6 +560,16 @@ public class Methodes_Maxje {
         boolean collisionY =
                 flamethrowerClass.y < playerClass.yPlayer + playerClass.spriteHeight &&
                         flamethrowerClass.y + 16 > playerClass.yPlayer;
+
+        if (playerClass.isBlocking && collisionX && collisionY) {
+            GameApp.addSound("block", "Sounds/block.mp3");
+            GameApp.playSound("block", 5.0f);
+            flamethrowerClass.frame = 0;
+            flamethrowerClass.fired = false;
+            flamethrowerClass.timer = 0f;
+            flamethrowerClass.x = -900;
+            return;
+        }
 
         if(schildClass.HP == 0 && collisionX && collisionY){
             GameApp.switchScreen("DeathScreen");
