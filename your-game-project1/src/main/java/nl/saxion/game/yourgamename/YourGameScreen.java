@@ -113,6 +113,8 @@ public class YourGameScreen extends ScalableGameScreen {
                 "unlimitedkogels"
         );
 
+        managerClass = new managerClass();
+
         // Kaasje-style segment generator
         segmentGenerator = new SegmentGenerator(baseGroundLevel);
         nextSegmentX = 1800;
