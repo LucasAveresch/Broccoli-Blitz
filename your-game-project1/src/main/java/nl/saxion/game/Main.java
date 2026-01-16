@@ -6,7 +6,7 @@ import static nl.saxion.game.yourgamename.Methodes_Rutger.*;
 import static nl.saxion.game.yourgamename.Methodes_Maxje.*;
 import static nl.saxion.game.yourgamename.Methodes_Lucas.*;
 
-public class Main {
+public class  Main {
     public static void main(String[] args) {
         // Add screens
         PlayerClass player = new PlayerClass();

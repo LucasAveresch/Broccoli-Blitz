@@ -30,7 +30,7 @@ public class Methodes_Maxje {
         if (enemyClass.allEnemies.isEmpty()) return;
         EnemyClass enemy = enemyClass.allEnemies.get(0);
         if (enemy.type == 1) {
-            enemy.enemyXPos -= enemy.enemyspeed * delta;
+            enemy.enemyXPos -= 200 * YourGameScreen.gameSpeed * delta;
 
             if (enemy.enemyXPos < 0) {
                 enemyClass.allEnemies.remove(0);
@@ -41,7 +41,7 @@ public class Methodes_Maxje {
 
             GameApp.drawTexture(enemy.textureKey, enemy.enemyXPos, enemy.enemyYPos - 50, 150, 250);
         } else if (enemy.type == 2) {
-            enemy.enemyXPos -= enemy.enemyspeed * delta;
+            enemy.enemyXPos -= 200 * YourGameScreen.gameSpeed * delta;
 
             if (enemy.enemyXPos < 0) {
                 enemyClass.allEnemies.remove(0);
@@ -60,7 +60,7 @@ public class Methodes_Maxje {
                 enemy.hasShotFlame = true;
             }
         } else if (enemy.type == 3) {
-            enemy.enemyXPos -= enemy.enemyspeed * delta;
+            enemy.enemyXPos -= 150 * YourGameScreen.gameSpeed * delta;
 
             if (enemy.enemyXPos < 0) {
                 enemyClass.allEnemies.remove(0);
@@ -396,7 +396,7 @@ public class Methodes_Maxje {
 
         // 1. Tekenen zolang hij nog niet is opgepakt
         if (!powerUp.powerupPickedup && powerUp.type == 1) {
-            powerUp.xPosition -= powerUp.speed * delta;
+            powerUp.xPosition -= 300 * YourGameScreen.gameSpeed * delta;
 
             if (powerUp.xPosition > -200) {
                 GameApp.drawTexture(powerUp.textureName, powerUp.xPosition, powerUp.yposition, 110, 110);
@@ -425,7 +425,7 @@ public class Methodes_Maxje {
                                              unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass, PlayerClass player) {
 
         if (!powerUp.powerupPickedup && powerUp.type == 2) {
-            powerUp.xPosition -= powerUp.speed * delta;
+            powerUp.xPosition -= 300 * YourGameScreen.gameSpeed * delta;
 
             if (powerUp.xPosition < 0) {
                 return;
