@@ -10,7 +10,7 @@ public class ObstacleClass {
     public float width;
     public float height;
 
-    // TEXTURE GROOTTE
+    // SPRITE
     public float textureWidth;
     public float textureHeight;
 
@@ -25,11 +25,13 @@ public class ObstacleClass {
         this.x = x;
         this.y = y;
 
-        this.width = width;               // hitbox
-        this.height = height;             // hitbox
-
-        this.textureWidth = textureWidth; // sprite
+        // SPRITE
+        this.textureWidth = textureWidth;
         this.textureHeight = textureHeight;
+
+        // ⭐ HITBOX = SPRITE
+        this.width = textureWidth;
+        this.height = textureHeight;
 
         this.textureKey = textureKey;
     }

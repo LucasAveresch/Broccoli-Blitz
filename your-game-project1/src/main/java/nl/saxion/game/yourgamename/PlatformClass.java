@@ -5,11 +5,16 @@ import nl.saxion.gameapp.GameApp;
 public class PlatformClass {
 
     public float x, y;
+
+    // HITBOX
     public float width, height;
+
+    // SPRITE
     public float textureWidth, textureHeight;
+
     public String textureKey;
 
-    // ⭐ Nieuw: bewegen of niet
+    // bewegen of niet
     public boolean moves;
 
     private float moveSpeed;
@@ -18,8 +23,8 @@ public class PlatformClass {
     private boolean moveUp = true;
 
     public PlatformClass(float x, float y,
-                         float width, float height,
-                         float textureWidth, float textureHeight,
+                         float width, float height,              // HITBOX (bijv. 300 × 70)
+                         float textureWidth, float textureHeight, // SPRITE (bijv. 300 × 120)
                          String textureKey,
                          boolean moves,
                          float moveSpeed,
@@ -28,11 +33,16 @@ public class PlatformClass {
         this.x = x;
         this.y = y;
 
-        this.width = width;
-        this.height = height;
-
+        // SPRITE (visueel)
         this.textureWidth = textureWidth;
         this.textureHeight = textureHeight;
+
+        // HITBOX (collision)
+        // ⭐ width komt 1-op-1 uit de generator
+        // ⭐ textureWidth komt 1-op-1 uit de generator
+        // → beide zijn gelijk
+        this.width = width;
+        this.height = height;
 
         this.textureKey = textureKey;
 
@@ -46,7 +56,6 @@ public class PlatformClass {
         // beweegt mee met wereld
         x -= 300 * delta;
 
-        // ⭐ Alleen bewegen als moves == true
         if (moves) {
             if (moveUp) {
                 y += moveSpeed * delta;
@@ -63,7 +72,7 @@ public class PlatformClass {
     }
 
     public boolean playerIsOnTop(PlayerClass player) {
-        float px = 100;
+        float px = 120;
         float pw = player.spriteWidth;
 
         boolean horizontal = px + pw > x && px < x + width;

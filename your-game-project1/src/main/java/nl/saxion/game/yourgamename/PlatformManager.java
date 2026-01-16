@@ -18,19 +18,21 @@ public class PlatformManager {
         float randomHeight = baseGroundLevel + 100 + rng.nextInt(250);
         float randomWidth = 250 + rng.nextInt(300);
 
-        // ⭐ Random: 40% kans dat een platform beweegt
         boolean moves = rng.nextFloat() < 0.4f;
 
         float randomMoveSpeed = 30 + rng.nextInt(50);
         float randomMoveRange = 40 + rng.nextInt(80);
 
+        float textureWidth = randomWidth;
+        float textureHeight = 120; // jouw platform sprite hoogte
+
         PlatformClass p = new PlatformClass(
                 worldX,
                 randomHeight,
-                randomWidth,
-                40,
-                randomWidth,
-                60,
+                textureWidth,      // maakt niet meer uit, hitbox = sprite
+                textureHeight,
+                textureWidth,
+                textureHeight,
                 "platform",
                 moves,
                 randomMoveSpeed,
@@ -39,8 +41,7 @@ public class PlatformManager {
 
         platforms.add(p);
 
-        // ⭐ NIEUW: Coin bovenop het platform spawnen
-        // Coin staat in het midden van het platform
+        // Coin bovenop het platform
         int coinX = (int) (p.x + p.width / 2f - 50);
         int coinY = (int) (p.y + p.height + 10);
 
@@ -52,7 +53,6 @@ public class PlatformManager {
             p.update(delta);
         }
 
-        // platforms verwijderen die uit beeld zijn
         platforms.removeIf(p -> p.x + p.width < 0);
     }
 
