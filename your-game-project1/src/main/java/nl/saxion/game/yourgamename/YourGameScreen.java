@@ -53,7 +53,7 @@ public class YourGameScreen extends ScalableGameScreen {
         GameApp.addTexture("block", "img/block1.png");
         GameApp.addTexture("coin", "img/munt.png");
 
-        // oude obstacle/platform keys kun je laten staan als je ze nog gebruikt
+        // oude obstacle/platform keys
         GameApp.addTexture("obstacle", "img/obstacle.png");
         GameApp.addTexture("platform", "img/platform.png");
 
@@ -155,12 +155,12 @@ public class YourGameScreen extends ScalableGameScreen {
         if (managerClass.spawnObstacle) {
             managerClass.spawnObstacle = false;
             managerClass.obstacleActive = true;
-                SegmentGenerator.GeneratedSegment seg =
-                        segmentGenerator.generate(nextSegmentX);
 
-                activePlatforms.addAll(seg.platforms);
-                activeObstacles.addAll(seg.obstacles);
+            SegmentGenerator.GeneratedSegment seg =
+                    segmentGenerator.generate(nextSegmentX);
 
+            activePlatforms.addAll(seg.platforms);
+            activeObstacles.addAll(seg.obstacles);
         }
 
         // platforms updaten + tekenen
@@ -171,17 +171,46 @@ public class YourGameScreen extends ScalableGameScreen {
 
         activePlatforms.removeIf(p -> p.x + p.width < 0);
 
-        // platform collision → vloer/verhogingen zoals Kaasje
+        // ⭐ PLATFORM COLLISION — massieve raises
         for (PlatformClass p : activePlatforms) {
-            if (p.playerIsOnTop(player)) {
-                int top = (int) (p.y+p.height);
-                if (player.yPlayer < top) {
-                    player.yPlayer = top;
-                }
-                player.groundLevel = top;
 
+            // Player (broccoli)
+            int px1 = 100;
+            int px2 = px1 + (int) player.spriteWidth;
+            int feet = (int) player.yPlayer;
+            int head = feet + (int) player.spriteHeight;
+
+            // Platform hitbox
+            int platLeft   = (int) p.x;
+            int platRight  = platLeft + (int) p.width;
+            int platBottom = (int) p.y;
+            int platTop    = platBottom + (int) p.height;
+
+            boolean horizontalOverlap = px2 > platLeft && px1 < platRight;
+            boolean verticalOverlap   = head > platBottom && feet < platTop;
+            boolean falling           = player.velocity < 0;
+
+            // ⭐ TOP COLLISION — landen op raise
+            // Voeten gaan door platTop heen terwijl je valt
+            if (horizontalOverlap && falling && head > platTop && feet <= platTop) {
+                player.yPlayer   = platTop;              // voeten op bovenkant
+                player.groundLevel = platTop;
+                player.velocity  = 0;
+                continue;
+            }
+
+            // ⭐ SIDE COLLISION — tegen zijkant knallen = dood
+            // Je overlapt verticaal met het platform, maar staat er niet bovenop
+            if (horizontalOverlap && verticalOverlap && !(feet >= platTop - 2)) {
+                Methodes_Rutger.killPlayer(player);
+                GameApp.endSpriteRendering();
+                return;
             }
         }
+
+
+
+
 
         // obstacles updaten + tekenen
         for (ObstacleClass o : activeObstacles) {
@@ -189,7 +218,8 @@ public class YourGameScreen extends ScalableGameScreen {
             o.draw();
         }
         activeObstacles.removeIf(o -> o.x + o.width < 0);
-        if(managerClass.obstacleActive) {
+
+        if (managerClass.obstacleActive) {
             if (activePlatforms.isEmpty() || activeObstacles.isEmpty()) {
                 managerClass.obstacleActive = false;
             } else if (activePlatforms.getLast().x < 300 && activeObstacles.getLast().x < 300) {
@@ -197,8 +227,41 @@ public class YourGameScreen extends ScalableGameScreen {
             }
         }
 
+        // ⭐ SPIKE COLLISION — kleinere, logische hitbox
+        for (ObstacleClass o : activeObstacles) {
 
-        // physics / movement
+            int px1 = 100;
+            int px2 = px1 + (int) player.spriteWidth;
+            int feet = (int) player.yPlayer;
+            int head = feet + (int) player.spriteHeight;
+
+            // Volledige obstacle hitbox
+            int obsLeft   = (int) o.x;
+            int obsRight  = obsLeft + (int) o.width;
+            int obsBottom = (int) o.y;
+            int obsTop    = obsBottom + (int) o.height;
+
+            // ⭐ verkleinde spike-hitbox: alleen de puntjes bovenaan
+            int marginX   = 10;                          // links/rechts iets kleiner
+            int spikeLeft = obsLeft + marginX;
+            int spikeRight = obsRight - marginX;
+
+            int spikeHeight = (int) (o.height * 0.4f);   // bovenste 40% is dodelijk
+            int spikeBottom = obsTop - spikeHeight;
+            int spikeTop    = obsTop;
+
+            boolean horizontal = px2 > spikeLeft && px1 < spikeRight;
+            boolean vertical   = head > spikeBottom && feet < spikeTop;
+
+            if (horizontal && vertical) {
+                Methodes_Rutger.killPlayer(player);
+                GameApp.endSpriteRendering();
+                return;
+            }
+        }
+
+
+        // physics / movement + tekenen van player / bullets / muzzle flashes
         Methodes_Rutger.update(player, unlimitedAmmoPowerupClass, false);
 
         // rest van je game logic
@@ -208,17 +271,16 @@ public class YourGameScreen extends ScalableGameScreen {
         Methodes_Rutger.drawGameHud(player);
         Methodes_Rutger.drawBombCooldown();
 
-
-        Methodes_Maxje.updateEnemies(delta, enemyClass,subEnemyClass,flamethrowerClass,managerClass);
-        Methodes_Rutger.checkBulletHitsEnemy(player, enemyClass,managerClass);
+        Methodes_Maxje.updateEnemies(delta, enemyClass, subEnemyClass, flamethrowerClass, managerClass);
+        Methodes_Rutger.checkBulletHitsEnemy(player, enemyClass, managerClass);
         Methodes_Maxje.checkCollsionMes(projectileClass, player);
         Methodes_Maxje.checkCollisionEnemy(player, enemyClass, subEnemyClass, schildClass, powerupClassSchild);
-        Methodes_Maxje.checkForPowerupPickup(player, powerupClassSchild,managerClass);
+        Methodes_Maxje.checkForPowerupPickup(player, powerupClassSchild, managerClass);
         Methodes_Maxje.updateSchildPowerup(delta, powerupClassSchild, schildClass);
         Methodes_Maxje.updateunlimitedKogels(delta, powerupClassSchild, unlimitedAmmoPowerupClass, player);
         Methodes_Maxje.unlimitedKogelsLogic(delta, unlimitedAmmoPowerupClass, player, powerupClassSchild);
         Methodes_Maxje.activeSchildUpdate(schildClass, player);
-        Methodes_Maxje.selectEnemyWillekeurig(delta, enemyClass,managerClass);
+        Methodes_Maxje.selectEnemyWillekeurig(delta, enemyClass, managerClass);
         Methodes_Maxje.checkShieldCollisionKnife(schildClass, projectileClass, player);
         Methodes_Rutger.updateSurvivalTime(player, delta);
         Methodes_Rutger.updateBlocking(player);
@@ -227,47 +289,14 @@ public class YourGameScreen extends ScalableGameScreen {
         Methodes_Maxje.updateMes(delta, projectileClass);
         Methodes_Rutger.updatePowerupTimer(delta, powerupClassSchild, schildClass);
         Methodes_Rutger.drawPowerupTimer(powerupClassSchild);
-        Methodes_Maxje.genereerRandomPowerup(powerupClassSchild,delta);
+        Methodes_Maxje.genereerRandomPowerup(powerupClassSchild, delta);
         Methodes_Maxje.tekenFlamethrower(delta, flamethrowerClass, enemyClass);
-        Methodes_Maxje.checkFlamethrowerCollision(flamethrowerClass,player,schildClass);
-        Methodes_Maxje.addSpatel(delta,projectileClass,enemyClass);
-        Methodes_Maxje.updateSpatel(delta,projectileClass);
-        Methodes_Maxje.checkCollsionSpatel(projectileClass,player);
-        Methodes_Maxje.generateGameLogic(managerClass,delta);
-        Methodes_Maxje.updateManagerTimer(managerClass,delta);
-
-        // 1. Enemies updaten + tekenen
-        Methodes_Maxje.updateEnemies(delta, enemyClass, subEnemyClass, flamethrowerClass,managerClass);
-
-// 2. Flame tekenen
-        Methodes_Maxje.tekenFlamethrower(delta, flamethrowerClass, enemyClass);
-
-// 3. Flame collision checken
-        Methodes_Maxje.checkFlamethrowerCollision(flamethrowerClass, player,schildClass);
-
-        // 🔥 DEBUG HITBOX FLAME (rechts → links)
-        if (Methodes_Maxje.DEBUG_FLAME && flamethrowerClass != null && flamethrowerClass.frame > 0) {
-
-            int f = flamethrowerClass.frame;
-
-            // Sprite beginpunt
-            float drawX = flamethrowerClass.x - 450;
-            float drawY = flamethrowerClass.y;
-
-            // Flame groeit van rechts naar links
-            float flameRight = drawX + 500;
-            float flameLeft  = flameRight - Methodes_Maxje.flameHitboxWidth[f];
-
-            // Debug‑texture tekenen
-            GameApp.drawTexture(
-                    "platform",          // jouw debug PNG
-                    flameLeft,           // x‑positie
-                    drawY,               // y‑positie
-                    Methodes_Maxje.flameHitboxWidth[f], // breedte per frame
-                    100                  // hoogte van flame
-            );
-        }
-
+        Methodes_Maxje.checkFlamethrowerCollision(flamethrowerClass, player, schildClass);
+        Methodes_Maxje.addSpatel(delta, projectileClass, enemyClass);
+        Methodes_Maxje.updateSpatel(delta, projectileClass);
+        Methodes_Maxje.checkCollsionSpatel(projectileClass, player);
+        Methodes_Maxje.generateGameLogic(managerClass, delta);
+        Methodes_Maxje.updateManagerTimer(managerClass, delta);
 
         GameApp.endSpriteRendering();
     }

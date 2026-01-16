@@ -292,6 +292,19 @@ public class Methodes_Rutger {
         return false;
     }
 
+    public static void killPlayer(PlayerClass player) {
+
+        // Stats opslaan
+        player.totalCoins += player.coinsPickedUp;
+
+        if (player.distanceTravelled > player.highScore) {
+            player.highScore = player.distanceTravelled;
+        }
+
+        // Naar DeathScreen
+        GameApp.switchScreen("DeathScreen");
+    }
+
     public static void updateJump(PlayerClass player) {
         // --- SPRINGEN ---
         if (GameApp.isKeyJustPressed(Input.Keys.SPACE)) {
@@ -759,6 +772,15 @@ public class Methodes_Rutger {
             GameApp.drawTexture("block", 130, player.yPlayer-50 + 20, 200,150);
         }
     }
+    public static boolean checkSegmentObstacleCollision(PlayerClass player, ArrayList<ObstacleClass> obstacles) {
+        for (ObstacleClass o : obstacles) {
+            if (o.collidesWith(player)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
 }
 
