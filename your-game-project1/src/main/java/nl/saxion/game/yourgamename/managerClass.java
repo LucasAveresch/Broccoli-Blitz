@@ -27,5 +27,4 @@ public class managerClass {
     public int enemiesToSpawn = 0;
     public int enemiesSpawned = 0;
 
-
 }

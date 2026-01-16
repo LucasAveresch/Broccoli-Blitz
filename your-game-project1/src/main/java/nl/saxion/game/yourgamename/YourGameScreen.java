@@ -172,15 +172,15 @@ public class YourGameScreen extends ScalableGameScreen {
         activePlatforms.removeIf(p -> p.x + p.width < 0);
 
 // ⭐ PLATFORM COLLISION — massieve raises
+        boolean shieldTriggered = false;
+
         for (PlatformClass p : activePlatforms) {
 
-            // Player (broccoli)
             int px1 = 100;
             int px2 = px1 + (int) player.spriteWidth;
             int feet = (int) player.yPlayer;
             int head = feet + (int) player.spriteHeight;
 
-            // Platform hitbox
             int platLeft   = (int) p.x;
             int platRight  = platLeft + (int) p.width;
             int platBottom = (int) p.y;
@@ -190,29 +190,31 @@ public class YourGameScreen extends ScalableGameScreen {
             boolean verticalOverlap   = head > platBottom && feet < platTop;
             boolean falling           = player.velocity < 0;
 
-            // ⭐ TOP COLLISION — landen op raise
-            // Voeten gaan door platTop heen terwijl je valt
             if (horizontalOverlap && falling && head > platTop && feet <= platTop) {
-                player.yPlayer   = platTop;              // voeten op bovenkant
+                player.yPlayer = platTop;
                 player.groundLevel = platTop;
-                player.velocity  = 0;
+                player.velocity = 0;
                 continue;
             }
 
-            // ⭐ SIDE COLLISION — tegen zijkant knallen = dood
-            // Je overlapt verticaal met het platform, maar staat er niet bovenop
             if (horizontalOverlap && verticalOverlap && !(feet >= platTop - 2)) {
-                Methodes_Rutger.killPlayer(player);
-                GameApp.endSpriteRendering();
-                return;
+
+                if (schildClass.HP == 0) {
+                    Methodes_Rutger.killPlayer(player);
+                    GameApp.endSpriteRendering();
+                    return;
+                }
+
+                schildClass.HP--;
+                shieldTriggered = true;
             }
         }
 
-        // obstacles updaten + tekenen
         for (ObstacleClass o : activeObstacles) {
             o.update(delta);
             o.draw();
         }
+
         activeObstacles.removeIf(o -> o.x + o.width < 0);
 
         if (managerClass.obstacleActive) {
@@ -223,46 +225,47 @@ public class YourGameScreen extends ScalableGameScreen {
             }
         }
 
-// ⭐ SPIKE COLLISION — kleine maar iets grotere hitbox
-        // ⭐ SPIKE COLLISION — volledige spike, iets smaller
         for (ObstacleClass o : activeObstacles) {
 
-            // Player hitbox
             int px1 = 100;
             int px2 = px1 + (int) player.spriteWidth;
             int py1 = (int) player.yPlayer;
             int py2 = py1 + (int) player.spriteHeight;
 
-            // Spike volledige hitbox
             int ox1_full = (int) o.x;
             int ox2_full = ox1_full + (int) o.width;
             int oy1_full = (int) o.y;
             int oy2_full = oy1_full + (int) o.height;
 
-            // 🔧 Maak spike iets smaller (fairness)
-            int shrinkX = (int) (o.width * 0.4f); // 20% eraf links/rechts
+            int shrinkX = (int) (o.width * 0.4f);
 
             int ox1 = ox1_full + shrinkX;
             int ox2 = ox2_full - shrinkX;
 
-            int oy1 = oy1_full;
-            int oy2 = oy2_full;
-
             boolean intersects =
                     px2 > ox1 &&
                             px1 < ox2 &&
-                            py2 > oy1 &&
-                            py1 < oy2;
+                            py2 > oy1_full &&
+                            py1 < oy2_full;
 
             if (intersects) {
-                Methodes_Rutger.killPlayer(player);
-                GameApp.endSpriteRendering();
-                return;
+
+                if (schildClass.HP == 0) {
+                    Methodes_Rutger.killPlayer(player);
+                    GameApp.endSpriteRendering();
+                    return;
+                }
+
+                schildClass.HP--;
+                shieldTriggered = true;
             }
         }
 
-
-        // physics / movement
+        if (shieldTriggered) {
+            activePlatforms.clear();
+            activeObstacles.clear();
+            managerClass.obstacleActive = false;
+        } // physics / movement
         Methodes_Rutger.update(player, unlimitedAmmoPowerupClass, false);
 
         // rest van je game logic

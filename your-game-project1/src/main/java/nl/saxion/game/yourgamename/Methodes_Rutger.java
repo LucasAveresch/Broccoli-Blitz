@@ -294,19 +294,16 @@ public class Methodes_Rutger {
 
     public static void killPlayer(PlayerClass player) {
 
-        // Stats opslaan
         player.totalCoins += player.coinsPickedUp;
 
         if (player.distanceTravelled > player.highScore) {
             player.highScore = player.distanceTravelled;
         }
 
-        // Naar DeathScreen
         GameApp.switchScreen("DeathScreen");
     }
 
     public static void updateJump(PlayerClass player) {
-        // --- SPRINGEN ---
         if (GameApp.isKeyJustPressed(Input.Keys.SPACE)) {
             if (player.jumpCount < 2) {   // maximaal 2 sprongen
                 player.velocity = 20;
@@ -314,11 +311,9 @@ public class Methodes_Rutger {
             }
         }
 
-        // --- GRAVITY ---
         player.velocity -= player.gravity;
         player.yPlayer += player.velocity;
 
-        // --- LANDING ---
         if (player.yPlayer < player.groundLevel) {
             player.yPlayer = player.groundLevel;
             player.velocity = 0;
