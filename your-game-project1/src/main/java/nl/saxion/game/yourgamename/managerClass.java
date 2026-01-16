@@ -10,13 +10,22 @@ public class managerClass {
     public boolean enemyActive = false;
     public boolean obstacleActive = false;
 
-    public boolean spawnNewEnemyTime = false;
 
     float enemytimer = 0f;
 
-    public int lastEvent = 0;      // 1 = enemy, 2 = obstacle, 3 = powerup (if you add it)
-    public int repeatCount = 0;
 
     public float enemyCooldown = 0f;
     public boolean enemyJustSpawned = false;
+
+    public boolean inParkourPhase = true;
+    public boolean spawnInterParkourEnemy = false;
+
+
+    public int parkourToSpawn = 0;
+    public int parkourSpawned = 0;
+
+    public int enemiesToSpawn = 0;
+    public int enemiesSpawned = 0;
+
+
 }

@@ -214,13 +214,7 @@ public class YourGameScreen extends ScalableGameScreen {
             o.draw();
         }
         activeObstacles.removeIf(o -> o.x + o.width < 0);
-        if(managerClass.obstacleActive) {
-            if (activePlatforms.isEmpty() || activeObstacles.isEmpty()) {
-                managerClass.obstacleActive = false;
-            } else if (activePlatforms.getLast().x < 300 && activeObstacles.getLast().x < 300) {
-                managerClass.obstacleActive = false;
-            }
-        }
+
         if (managerClass.obstacleActive) {
             if (activePlatforms.isEmpty() || activeObstacles.isEmpty()) {
                 managerClass.obstacleActive = false;
@@ -230,6 +224,7 @@ public class YourGameScreen extends ScalableGameScreen {
         }
 
 // ⭐ SPIKE COLLISION — kleine maar iets grotere hitbox
+        // ⭐ SPIKE COLLISION — volledige spike, iets smaller
         for (ObstacleClass o : activeObstacles) {
 
             // Player hitbox
@@ -238,25 +233,19 @@ public class YourGameScreen extends ScalableGameScreen {
             int py1 = (int) player.yPlayer;
             int py2 = py1 + (int) player.spriteHeight;
 
-            // Volledige obstacle hitbox
+            // Spike volledige hitbox
             int ox1_full = (int) o.x;
             int ox2_full = ox1_full + (int) o.width;
             int oy1_full = (int) o.y;
             int oy2_full = oy1_full + (int) o.height;
 
-            // ⭐ iets grotere spike-hitbox
-            // hoogte = 15% van de spike
-            int spikeHeight = (int) (o.height * 0.15f);
+            // 🔧 Maak spike iets smaller (fairness)
+            int shrinkX = (int) (o.width * 0.4f); // 20% eraf links/rechts
 
-            // breedte = 40% van de spike
-            int spikeWidth = (int) (o.width * 0.40f);
+            int ox1 = ox1_full + shrinkX;
+            int ox2 = ox2_full - shrinkX;
 
-            // gecentreerd
-            int ox1 = ox1_full + (int)((o.width - spikeWidth) / 2f);
-            int ox2 = ox1 + spikeWidth;
-
-            // alleen bovenste deel
-            int oy1 = oy2_full - spikeHeight;
+            int oy1 = oy1_full;
             int oy2 = oy2_full;
 
             boolean intersects =

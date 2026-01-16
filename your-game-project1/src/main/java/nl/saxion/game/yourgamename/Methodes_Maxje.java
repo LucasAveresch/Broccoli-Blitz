@@ -25,7 +25,7 @@ public class Methodes_Maxje {
             50    // frame 10 (small tail)
     };
 
-    public static void updateEnemies(float delta, EnemyClass enemyClass, SubEnemyClass subEnemyClass, flamethrowerClass flame,managerClass managerClass) {
+    public static void updateEnemies(float delta, EnemyClass enemyClass, SubEnemyClass subEnemyClass, flamethrowerClass flame, managerClass managerClass) {
 
         if (enemyClass.allEnemies.isEmpty()) return;
         EnemyClass enemy = enemyClass.allEnemies.get(0);
@@ -39,7 +39,7 @@ public class Methodes_Maxje {
                 return;
             }
 
-            GameApp.drawTexture(enemy.textureKey, enemy.enemyXPos, enemy.enemyYPos- 50, 150,250);
+            GameApp.drawTexture(enemy.textureKey, enemy.enemyXPos, enemy.enemyYPos - 50, 150, 250);
         } else if (enemy.type == 2) {
             enemy.enemyXPos -= enemy.enemyspeed * delta;
 
@@ -59,7 +59,7 @@ public class Methodes_Maxje {
 
                 enemy.hasShotFlame = true;
             }
-        } else if(enemy.type == 3){
+        } else if (enemy.type == 3) {
             enemy.enemyXPos -= enemy.enemyspeed * delta;
 
             if (enemy.enemyXPos < 0) {
@@ -68,14 +68,12 @@ public class Methodes_Maxje {
                 managerClass.enemyActive = false;
                 return;
             }
-            if(enemy.hp == 3){
-                GameApp.drawTexture("tank1",enemy.enemyXPos,enemy.enemyYPos - 50, 200, 200);
-            }
-            else if(enemy.hp == 2){
-                GameApp.drawTexture("tank2",enemy.enemyXPos,enemy.enemyYPos - 50 , 200, 200);
-            }
-            else if(enemy.hp == 1){
-                GameApp.drawTexture("tank3",enemy.enemyXPos,enemy.enemyYPos - 50,200,200);
+            if (enemy.hp == 3) {
+                GameApp.drawTexture("tank1", enemy.enemyXPos, enemy.enemyYPos - 50, 200, 200);
+            } else if (enemy.hp == 2) {
+                GameApp.drawTexture("tank2", enemy.enemyXPos, enemy.enemyYPos - 50, 200, 200);
+            } else if (enemy.hp == 1) {
+                GameApp.drawTexture("tank3", enemy.enemyXPos, enemy.enemyYPos - 50, 200, 200);
             }
         } else if (enemy.type == 4) {
 
@@ -90,10 +88,10 @@ public class Methodes_Maxje {
             }
         }
     }
-    public static void selectEnemyWillekeurig(float delta, EnemyClass enemyClass,managerClass managerClass) {
+
+    public static void selectEnemyWillekeurig(float delta, EnemyClass enemyClass, managerClass managerClass) {
         Random r = new Random();
         boolean spawnNewEnemy = false;
-
 
 
         if (managerClass.spawnEnenmy) {
@@ -106,7 +104,7 @@ public class Methodes_Maxje {
             EnemyClass enemyClass1 = new EnemyClass("img/chef.png", "chef", "img/ketchup.png", "enemy2", 1400, 150, 200);
             enemyClass1.type = randomnumber;
             enemyClass1.hp = 3;
-            if(enemyClass1.type == 3){
+            if (enemyClass1.type == 3) {
                 enemyClass1.enemyspeed = 100;
             }
             managerClass.enemyActive = true;
@@ -142,7 +140,7 @@ public class Methodes_Maxje {
             );
 
             projectileClass.projectiles.add(knife);
-            GameApp.addSound("mes","sounds/knife.mp3");
+            GameApp.addSound("mes", "sounds/knife.mp3");
             GameApp.playSound("mes");
         }
     }
@@ -168,7 +166,7 @@ public class Methodes_Maxje {
             GameApp.drawTexture(
                     knife.getCurrentTexture(),
                     knife.xposition,
-                    knife.yposition,80,80
+                    knife.yposition, 80, 80
             );
 
             if (knife.xposition < -100) {
@@ -234,7 +232,7 @@ public class Methodes_Maxje {
             );
 
             projectileClass.projectiles.add(knife);
-            GameApp.addSound("mes","sounds/knife.mp3");
+            GameApp.addSound("mes", "sounds/knife.mp3");
             GameApp.playSound("mes");
         }
     }
@@ -260,7 +258,7 @@ public class Methodes_Maxje {
             GameApp.drawTexture(
                     knife.getCurrentTexture(),
                     knife.xposition,
-                    knife.yposition,80,80
+                    knife.yposition, 80, 80
             );
 
             if (knife.xposition < -100) {
@@ -381,7 +379,7 @@ public class Methodes_Maxje {
         }
     }
 
-    public static void genereerRandomPowerup(PowerupClass powerupClass,float delta) {
+    public static void genereerRandomPowerup(PowerupClass powerupClass, float delta) {
         powerupClass.spawntimer += delta;
         if (powerupClass.spawntimer > powerupClass.spawninterval) {
             Random r = new Random();
@@ -401,7 +399,7 @@ public class Methodes_Maxje {
             powerUp.xPosition -= powerUp.speed * delta;
 
             if (powerUp.xPosition > -200) {
-                GameApp.drawTexture(powerUp.textureName, powerUp.xPosition, powerUp.yposition,110,110);
+                GameApp.drawTexture(powerUp.textureName, powerUp.xPosition, powerUp.yposition, 110, 110);
             }
         }
 
@@ -432,7 +430,7 @@ public class Methodes_Maxje {
             if (powerUp.xPosition < 0) {
                 return;
             }
-            GameApp.drawTexture(powerUp.texurename2, powerUp.xPosition, powerUp.yposition,110,110);
+            GameApp.drawTexture(powerUp.texurename2, powerUp.xPosition, powerUp.yposition, 110, 110);
         }
 
         if (powerUp.powerupPickedup && powerUp.type == 2) {
@@ -465,7 +463,7 @@ public class Methodes_Maxje {
     }
 
 
-    public static void checkForPowerupPickup(PlayerClass player, PowerupClass powerUp,managerClass managerClass) {
+    public static void checkForPowerupPickup(PlayerClass player, PowerupClass powerUp, managerClass managerClass) {
         boolean yCollision = player.yPlayer < powerUp.yposition + powerUp.spriteHeight &&
                 player.yPlayer + player.spriteHeight > powerUp.yposition;
 
@@ -528,6 +526,7 @@ public class Methodes_Maxje {
             projectileClass.projectiles.removeIf(p -> p.remove);
         }
     }
+
     public static void tekenFlamethrower(float delta, flamethrowerClass flame, EnemyClass enemyClass) {
         if (flame == null || enemyClass.allEnemies.isEmpty()) return;
         EnemyClass enemy = enemyClass.allEnemies.get(0);
@@ -562,14 +561,14 @@ public class Methodes_Maxje {
         float drawX = flame.x - 450;
         float drawY = flame.y;
 
-        float flameRight  = drawX + 500;
-        float flameLeft   = flameRight - flameHitboxWidth[f];
-        float flameTop    = drawY + 100;
+        float flameRight = drawX + 500;
+        float flameLeft = flameRight - flameHitboxWidth[f];
+        float flameTop = drawY + 100;
         float flameBottom = drawY;
 
-        float playerLeft   = 100;
-        float playerRight  = 100 + player.spriteWidth;
-        float playerTop    = player.yPlayer + player.spriteHeight;
+        float playerLeft = 100;
+        float playerRight = 100 + player.spriteWidth;
+        float playerTop = player.yPlayer + player.spriteHeight;
         float playerBottom = player.yPlayer;
 
         boolean overlap =
@@ -608,46 +607,91 @@ public class Methodes_Maxje {
     }
 
 
-
     public static void generateGameLogic(managerClass managerClass, float delta) {
 
         if (managerClass.spawnObstacle || managerClass.spawnPowerup || managerClass.spawnEnenmy) return;
         if (managerClass.powerupActive || managerClass.obstacleActive) return;
+        if (managerClass.enemyJustSpawned) return;
 
         Random r = new Random();
-        int random = r.nextInt(1, 3);
 
-        if (random == managerClass.lastEvent) {
-            managerClass.repeatCount++;
-            if (managerClass.repeatCount >= 3) {
-                random = (random == 1) ? 2 : 1;
-                managerClass.repeatCount = 0;
+        // =========================
+        // PARKOUR FASE
+        // =========================
+        if (managerClass.inParkourPhase) {
+
+            // init parkour count
+            if (managerClass.parkourToSpawn == 0) {
+                managerClass.parkourToSpawn = 1 + r.nextInt(3); // 1–3
+                managerClass.parkourSpawned = 0;
+                managerClass.spawnInterParkourEnemy = false;
             }
-        } else {
-            managerClass.repeatCount = 0;
+
+            // 🚧 eerst inter-parkour enemy
+            if (managerClass.spawnInterParkourEnemy &&
+                    managerClass.enemytimer > 1f) {
+
+                managerClass.spawnEnenmy = true;
+                managerClass.enemytimer = 0f;
+
+                managerClass.enemyJustSpawned = true;
+                managerClass.enemyCooldown = 0f;
+
+                managerClass.spawnInterParkourEnemy = false;
+                return;
+            }
+
+            // 🧱 parkour spawn
+            if (managerClass.parkourSpawned < managerClass.parkourToSpawn) {
+
+                managerClass.spawnObstacle = true;
+                managerClass.parkourSpawned++;
+
+                // 👉 komt er nog een parkour? → 1 enemy ertussen
+                if (managerClass.parkourSpawned < managerClass.parkourToSpawn) {
+                    managerClass.spawnInterParkourEnemy = true;
+                }
+
+                return;
+            }
+
+            // switch naar enemy fase
+            managerClass.inParkourPhase = false;
+            managerClass.parkourToSpawn = 0;
+            return;
         }
 
-        managerClass.lastEvent = random;
+        // =========================
+        // ENEMY FASE (1–5)
+        // =========================
+        if (!managerClass.inParkourPhase) {
 
-        switch (random) {
+            if (managerClass.enemiesToSpawn == 0) {
+                managerClass.enemiesToSpawn = 1 + r.nextInt(5);
+                managerClass.enemiesSpawned = 0;
+            }
 
-            case 1:
-                if (managerClass.enemytimer > 1 && !managerClass.enemyJustSpawned) {
+            if (managerClass.enemytimer > 1f &&
+                    managerClass.enemiesSpawned < managerClass.enemiesToSpawn) {
 
-                    managerClass.spawnEnenmy = true;
-                    managerClass.enemytimer = 0;
+                managerClass.spawnEnenmy = true;
+                managerClass.enemytimer = 0f;
 
+                managerClass.enemyJustSpawned = true;
+                managerClass.enemyCooldown = 0f;
 
-                    managerClass.enemyJustSpawned = true;
-                    managerClass.enemyCooldown = 0f;
-                }
-                break;
+                managerClass.enemiesSpawned++;
+                return;
+            }
 
-            case 2: // obstacle
-                managerClass.spawnObstacle = true;
-                break;
+            if (managerClass.enemiesSpawned >= managerClass.enemiesToSpawn) {
+                managerClass.inParkourPhase = true;
+                managerClass.enemiesToSpawn = 0;
+            }
         }
     }
+
+
     public static void updateManagerTimer(managerClass managerClass, float delta) {
 
         if (!managerClass.enemyActive) {
@@ -663,11 +707,4 @@ public class Methodes_Maxje {
             }
         }
     }
-
-
 }
-
-
-
-
-
