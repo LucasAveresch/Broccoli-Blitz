@@ -599,6 +599,7 @@ public class Methodes_Maxje {
             return;
         }
 
+        // Shield absorbeert hit
         shield.HP--;
         if (shield.HP <= 0) shield.isactive = false;
 
@@ -614,7 +615,9 @@ public class Methodes_Maxje {
 
         Random r = new Random();
 
-
+        // =========================
+        // PARKOUR FASE
+        // =========================
         if (managerClass.inParkourPhase) {
 
             // init parkour count
@@ -624,6 +627,7 @@ public class Methodes_Maxje {
                 managerClass.spawnInterParkourEnemy = false;
             }
 
+            // 🚧 eerst inter-parkour enemy
             if (managerClass.spawnInterParkourEnemy &&
                     managerClass.enemytimer > 1f) {
 
@@ -637,11 +641,13 @@ public class Methodes_Maxje {
                 return;
             }
 
+            // 🧱 parkour spawn
             if (managerClass.parkourSpawned < managerClass.parkourToSpawn) {
 
                 managerClass.spawnObstacle = true;
                 managerClass.parkourSpawned++;
 
+                // 👉 komt er nog een parkour? → 1 enemy ertussen
                 if (managerClass.parkourSpawned < managerClass.parkourToSpawn) {
                     managerClass.spawnInterParkourEnemy = true;
                 }
@@ -649,12 +655,15 @@ public class Methodes_Maxje {
                 return;
             }
 
+            // switch naar enemy fase
             managerClass.inParkourPhase = false;
             managerClass.parkourToSpawn = 0;
             return;
         }
 
-
+        // =========================
+        // ENEMY FASE (1–5)
+        // =========================
         if (!managerClass.inParkourPhase) {
 
             if (managerClass.enemiesToSpawn == 0) {
