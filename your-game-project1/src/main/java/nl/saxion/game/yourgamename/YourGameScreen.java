@@ -156,7 +156,7 @@ public class YourGameScreen extends ScalableGameScreen {
             managerClass.spawnObstacle = false;
             managerClass.obstacleActive = true;
                 SegmentGenerator.GeneratedSegment seg =
-                        segmentGenerator.generate(nextSegmentX);
+                        segmentGenerator.generate(nextSegmentX,enemyClass);
 
                 activePlatforms.addAll(seg.platforms);
                 activeObstacles.addAll(seg.obstacles);

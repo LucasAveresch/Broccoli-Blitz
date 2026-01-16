@@ -16,4 +16,7 @@ public class managerClass {
 
     public int lastEvent = 0;      // 1 = enemy, 2 = obstacle, 3 = powerup (if you add it)
     public int repeatCount = 0;
+
+    public float enemyCooldown = 0f;
+    public boolean enemyJustSpawned = false;
 }
