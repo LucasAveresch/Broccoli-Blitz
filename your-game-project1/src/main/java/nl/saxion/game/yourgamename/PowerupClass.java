@@ -19,7 +19,7 @@ public class PowerupClass {
     public float duration = 0f;
     public float timeLeft = 0f;
     public boolean timerStarted = false;
-    public float spawninterval = 5f;
+    public float spawninterval = 30f;
     public float spawntimer = 0f;
 
     public PowerupClass(String filepath, String textureName, String filepath2, String texurename2){

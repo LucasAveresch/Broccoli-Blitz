@@ -77,6 +77,17 @@ public class Methodes_Maxje {
             else if(enemy.hp == 1){
                 GameApp.drawTexture("tank3",enemy.enemyXPos,enemy.enemyYPos - 50,200,200);
             }
+        } else if (enemy.type == 4) {
+
+            // Stationary enemy does NOT move
+            GameApp.drawTexture("chef", enemy.enemyXPos, enemy.enemyYPos - 50, 150, 250);
+
+            // Remove when off-screen
+            if (enemy.enemyXPos < -200) {
+                enemyClass.allEnemies.remove(0);
+                managerClass.enemyActive = false;
+                return;
+            }
         }
     }
     public static void selectEnemyWillekeurig(float delta, EnemyClass enemyClass,managerClass managerClass) {
@@ -95,6 +106,9 @@ public class Methodes_Maxje {
             EnemyClass enemyClass1 = new EnemyClass("img/chef.png", "chef", "img/ketchup.png", "enemy2", 1400, 150, 200);
             enemyClass1.type = randomnumber;
             enemyClass1.hp = 3;
+            if(enemyClass1.type == 3){
+                enemyClass1.enemyspeed = 100;
+            }
             managerClass.enemyActive = true;
             enemyClass.allEnemies.add(enemyClass1);
             spawnNewEnemy = false;
@@ -598,7 +612,7 @@ public class Methodes_Maxje {
     public static void generateGameLogic(managerClass managerClass, float delta) {
 
         if (managerClass.spawnObstacle || managerClass.spawnPowerup || managerClass.spawnEnenmy) return;
-        if (managerClass.powerupActive || managerClass.enemyActive || managerClass.obstacleActive) return;
+        if (managerClass.powerupActive || managerClass.obstacleActive) return;
 
         Random r = new Random();
         int random = r.nextInt(1, 3);
@@ -606,7 +620,6 @@ public class Methodes_Maxje {
         if (random == managerClass.lastEvent) {
             managerClass.repeatCount++;
             if (managerClass.repeatCount >= 3) {
-                // force switch
                 random = (random == 1) ? 2 : 1;
                 managerClass.repeatCount = 0;
             }
@@ -616,30 +629,43 @@ public class Methodes_Maxje {
 
         managerClass.lastEvent = random;
 
-
         switch (random) {
+
             case 1:
-                if (managerClass.enemytimer > 3) {
+                if (managerClass.enemytimer > 1 && !managerClass.enemyJustSpawned) {
+
                     managerClass.spawnEnenmy = true;
                     managerClass.enemytimer = 0;
+
+
+                    managerClass.enemyJustSpawned = true;
+                    managerClass.enemyCooldown = 0f;
                 }
                 break;
 
-            case 2:
+            case 2: // obstacle
                 managerClass.spawnObstacle = true;
                 break;
         }
     }
+    public static void updateManagerTimer(managerClass managerClass, float delta) {
 
-        public static  void updateManagerTimer(managerClass managerClass,float delta){
-        if(!managerClass.enemyActive) {
+        if (!managerClass.enemyActive) {
             managerClass.enemytimer += delta;
         }
 
+        if (managerClass.enemyJustSpawned) {
+            managerClass.enemyCooldown += delta;
 
+            if (managerClass.enemyCooldown >= 2f) {
+                managerClass.enemyJustSpawned = false;
+                managerClass.enemyCooldown = 0f;
+            }
         }
+    }
 
-        }
+
+}
 
 
 
