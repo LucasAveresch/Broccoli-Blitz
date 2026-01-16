@@ -34,6 +34,9 @@ public class YourGameScreen extends ScalableGameScreen {
         this.player = player;
     }
 
+    public static float gameSpeed = 1.0f;
+    private float speedIncreaseRate = 0.0005f;
+
     @Override
     public void show() {
 
@@ -129,6 +132,7 @@ public class YourGameScreen extends ScalableGameScreen {
 
     @Override
     public void render(float delta) {
+        gameSpeed += speedIncreaseRate;
         super.render(delta);
 
         if (Methodes_Rutger.checkDeath(player)) {
@@ -139,7 +143,7 @@ public class YourGameScreen extends ScalableGameScreen {
         GameApp.startSpriteRendering();
 
         // wereld beweegt
-        PlayerClass.worldX += 1000 * delta;
+        PlayerClass.worldX += 1000 * gameSpeed * delta;
 
         // achtergrond
         Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(

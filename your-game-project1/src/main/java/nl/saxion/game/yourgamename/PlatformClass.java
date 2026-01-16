@@ -54,8 +54,7 @@ public class PlatformClass {
 
     public void update(float delta) {
         // beweegt mee met wereld
-        x -= 300 * delta;
-
+        x -= 300 * YourGameScreen.gameSpeed * delta;
         if (moves) {
             if (moveUp) {
                 y += moveSpeed * delta;

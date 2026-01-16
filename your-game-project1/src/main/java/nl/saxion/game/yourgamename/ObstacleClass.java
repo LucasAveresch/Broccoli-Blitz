@@ -37,7 +37,7 @@ public class ObstacleClass {
     }
 
     public void update(float delta) {
-        x -= 300 * delta;
+        x -= 300 * YourGameScreen.gameSpeed * delta;
     }
 
     public void draw() {
