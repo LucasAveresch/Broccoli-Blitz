@@ -112,8 +112,9 @@ public class SettingsScreen extends ScalableGameScreen {
                 }
 
                 if (!enemy.enemyIsDead) {
+                    managerClass managerClass =new managerClass();
                     GameApp.drawTexture(enemy.textureKey, enemy.enemyXPos, enemy.enemyYPos-50, 150, 220);
-                    Methodes_Rutger.checkBulletHitsTutorialEnemy(player, enemy);
+                    Methodes_Rutger.checkBulletHitsTutorialEnemy(player, enemy,managerClass);
                 }
 
                 if (enemy.enemyIsDead) {

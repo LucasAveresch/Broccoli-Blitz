@@ -68,7 +68,7 @@ public class SegmentGenerator {
                 seg.obstacles.add(new ObstacleClass(startX + 480, baseGroundLevel, 150, 70, 150, 150, "spike"));
                 break;
             case 6:
-                seg.obstacles.add(new ObstacleClass(startX + 480, baseGroundLevel, 150, 70, 150, 150, "spikeTriple"));
+                seg.obstacles.add(new ObstacleClass(startX + 480, baseGroundLevel, 150, 70, 450, 150, "spikeTriple"));
                 break;
 
         }

@@ -25,7 +25,7 @@ public class Methodes_Maxje {
             50    // frame 10 (small tail)
     };
 
-    public static void updateEnemies(float delta, EnemyClass enemyClass, SubEnemyClass subEnemyClass, flamethrowerClass flame) {
+    public static void updateEnemies(float delta, EnemyClass enemyClass, SubEnemyClass subEnemyClass, flamethrowerClass flame,managerClass managerClass) {
 
         if (enemyClass.allEnemies.isEmpty()) return;
         EnemyClass enemy = enemyClass.allEnemies.get(0);
@@ -35,6 +35,7 @@ public class Methodes_Maxje {
             if (enemy.enemyXPos < 0) {
                 enemyClass.allEnemies.remove(0);
                 enemy.type = 0;
+                managerClass.enemyActive = false;
                 return;
             }
 
@@ -45,6 +46,7 @@ public class Methodes_Maxje {
             if (enemy.enemyXPos < 0) {
                 enemyClass.allEnemies.remove(0);
                 enemy.type = 0;
+                managerClass.enemyActive = false;
                 return;
             }
 
@@ -63,6 +65,7 @@ public class Methodes_Maxje {
             if (enemy.enemyXPos < 0) {
                 enemyClass.allEnemies.remove(0);
                 enemy.type = 0;
+                managerClass.enemyActive = false;
                 return;
             }
             if(enemy.hp == 3){
@@ -85,15 +88,14 @@ public class Methodes_Maxje {
         if (managerClass.spawnEnenmy) {
             spawnNewEnemy = true;
             enemyClass.currentTimer = 0f;
+            managerClass.spawnEnenmy = false;
         }
         if (enemyClass.allEnemies.isEmpty() && spawnNewEnemy) {
             int randomnumber = r.nextInt(1, 4);
-            randomnumber = 2;
-            EnemyClass enemyClass1 = new EnemyClass("img/chef.png", "chef", "img/ketchup.png", "enemy2", 1100, 150, 200);
+            EnemyClass enemyClass1 = new EnemyClass("img/chef.png", "chef", "img/ketchup.png", "enemy2", 1400, 150, 200);
             enemyClass1.type = randomnumber;
             enemyClass1.hp = 3;
-
-
+            managerClass.enemyActive = true;
             enemyClass.allEnemies.add(enemyClass1);
             spawnNewEnemy = false;
         }
@@ -365,23 +367,23 @@ public class Methodes_Maxje {
         }
     }
 
-    public static void genereerRandomPowerup(PowerupClass powerupClass, managerClass managerClass) {
-        if (managerClass.spawnPowerup) {
+    public static void genereerRandomPowerup(PowerupClass powerupClass,float delta) {
+        powerupClass.spawntimer += delta;
+        if (powerupClass.spawntimer > powerupClass.spawninterval) {
             Random r = new Random();
             int randomint = r.nextInt(1, 3);
             powerupClass.type = randomint;
             powerupClass.xPosition = 1200;
             powerupClass.spawntimer = 0f;
-            managerClass.spawnPowerup = false;
-            managerClass.powerupActive = true;
+            System.out.println("i run");
         }
     }
 
 
-    public static void updateSchildPowerup(float delta, PowerupClass powerUp, SchildClass schildClass,managerClass managerClass) {
+    public static void updateSchildPowerup(float delta, PowerupClass powerUp, SchildClass schildClass) {
 
         // 1. Tekenen zolang hij nog niet is opgepakt
-        if (managerClass.powerupActive && powerUp.type == 1) {
+        if (!powerUp.powerupPickedup && powerUp.type == 1) {
             powerUp.xPosition -= powerUp.speed * delta;
 
             if (powerUp.xPosition > -200) {
@@ -408,10 +410,9 @@ public class Methodes_Maxje {
     }
 
     public static void updateunlimitedKogels(float delta, PowerupClass powerUp,
-                                             unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass, PlayerClass player,
-                                             managerClass managerClass) {
+                                             unlimitedAmmoPowerupClass unlimitedAmmoPowerupClass, PlayerClass player) {
 
-        if (managerClass.spawnPowerup && powerUp.type == 2) {
+        if (!powerUp.powerupPickedup && powerUp.type == 2) {
             powerUp.xPosition -= powerUp.speed * delta;
 
             if (powerUp.xPosition < 0) {
@@ -422,6 +423,7 @@ public class Methodes_Maxje {
 
         if (powerUp.powerupPickedup && powerUp.type == 2) {
             unlimitedAmmoPowerupClass.isactive = true;
+
 
             player.isReloading = false;
             player.reloadStartTime = 0;
@@ -443,14 +445,13 @@ public class Methodes_Maxje {
                 unlimitedAmmoPowerupClass.currentTime = 0f;
                 powerupClass.powerupPickedup = false;
                 unlimitedAmmoPowerupClass.isactive = false;
-
             }
 
         }
     }
 
 
-    public static void checkForPowerupPickup(PlayerClass player, PowerupClass powerUp) {
+    public static void checkForPowerupPickup(PlayerClass player, PowerupClass powerUp,managerClass managerClass) {
         boolean yCollision = player.yPlayer < powerUp.yposition + powerUp.spriteHeight &&
                 player.yPlayer + player.spriteHeight > powerUp.yposition;
 
@@ -459,6 +460,7 @@ public class Methodes_Maxje {
 
         if (yCollision && xCollision) {
             powerUp.powerupPickedup = true;
+            managerClass.powerupActive = false;
         }
 
     }
@@ -593,12 +595,53 @@ public class Methodes_Maxje {
 
 
 
-    public static void generateGameLogic(managerClass managerClass,float delta){
-        if(managerClass.spawnObstacle||managerClass.spawnPowerup||managerClass.spawnEnenmy){return;}
+    public static void generateGameLogic(managerClass managerClass, float delta) {
 
-        Random r =  new Random();
+        if (managerClass.spawnObstacle || managerClass.spawnPowerup || managerClass.spawnEnenmy) return;
+        if (managerClass.powerupActive || managerClass.enemyActive || managerClass.obstacleActive) return;
+
+        Random r = new Random();
+        int random = r.nextInt(1, 3);
+
+        if (random == managerClass.lastEvent) {
+            managerClass.repeatCount++;
+            if (managerClass.repeatCount >= 3) {
+                // force switch
+                random = (random == 1) ? 2 : 1;
+                managerClass.repeatCount = 0;
+            }
+        } else {
+            managerClass.repeatCount = 0;
         }
 
+        managerClass.lastEvent = random;
+
+
+        switch (random) {
+            case 1:
+                if (managerClass.enemytimer > 3) {
+                    managerClass.spawnEnenmy = true;
+                    managerClass.enemytimer = 0;
+                }
+                break;
+
+            case 2:
+                managerClass.spawnObstacle = true;
+                break;
+        }
     }
+
+        public static  void updateManagerTimer(managerClass managerClass,float delta){
+        if(!managerClass.enemyActive) {
+            managerClass.enemytimer += delta;
+        }
+
+
+        }
+
+        }
+
+
+
 
 
