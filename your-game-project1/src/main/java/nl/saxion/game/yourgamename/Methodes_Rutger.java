@@ -20,6 +20,7 @@ public class Methodes_Rutger {
     private static boolean bombOnCooldown = false;
     private static long lastBombTime = 0;
     private static ArrayList<BombClass> bombs = new ArrayList<>();
+   private static managerClass managerClasstutorial = new managerClass();
     public static void drawTextWithOutline(String font, String text, int x, int y, String color) {
         int o = 3;
 
@@ -374,7 +375,7 @@ public class Methodes_Rutger {
         GameApp.drawText(fontKey, text, x, y, color);
     }
 
-    public static void checkBulletHitsEnemy(PlayerClass player, EnemyClass enemy) {
+    public static void checkBulletHitsEnemy(PlayerClass player, EnemyClass enemy,managerClass managerClass) {
         if (enemy.allEnemies.isEmpty()) return;
         EnemyClass currentenemy = enemy.allEnemies.get(0);
         for (int i = 0; i < player.bullets.size(); i++) {
@@ -390,7 +391,7 @@ public class Methodes_Rutger {
                     GameApp.addSound("Enemydood", "Sounds/enemydoosounds.mp3");
                     GameApp.playSound("Enemydood");
                     i--;
-
+                    managerClass.enemyActive = false;
                     player.enemiesDefeated++; // ✅ kill registreren
                     enemy.allEnemies.remove(0);
                     enemy.type = 0;
@@ -404,7 +405,7 @@ public class Methodes_Rutger {
                     GameApp.addSound("Enemydood", "Sounds/enemydoosounds.mp3");
                     GameApp.playSound("Enemydood");
                     i--;
-
+                    managerClass.enemyActive = false;
                     player.enemiesDefeated++; // ✅ kill registreren
                     enemy.allEnemies.remove(0);
                     enemy.type = 0;
@@ -425,6 +426,7 @@ public class Methodes_Rutger {
                     player.enemiesDefeated++; // ✅ kill registreren
                     enemy.allEnemies.remove(0);
                     enemy.type = 0;
+                    managerClass.enemyActive = false;
                 }
             }
         }
@@ -653,7 +655,7 @@ public class Methodes_Rutger {
 
     public static boolean tutorialEnemy(PlayerClass player, EnemyClass enemy) {
         if (!enemy.enemyIsDead) {
-            checkBulletHitsEnemy(player, enemy);
+            checkBulletHitsEnemy(player, enemy,managerClasstutorial);
         }
         return enemy.enemyIsDead;
     }
@@ -673,7 +675,7 @@ public class Methodes_Rutger {
     public static void resetTutorialCoin() {
         tutorialCoinSpawned = false;
     }
-    public static void checkBulletHitsTutorialEnemy(PlayerClass player, EnemyClass enemy) {
+    public static void checkBulletHitsTutorialEnemy(PlayerClass player, EnemyClass enemy,managerClass managerClass) {
         // simpele hit-detectie voor EEN enkele enemy (geen allEnemies-lijst)
         for (int i = 0; i < player.bullets.size(); i++) {
             BulletClass bullet = player.bullets.get(i);

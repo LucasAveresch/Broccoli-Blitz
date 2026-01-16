@@ -10,5 +10,10 @@ public class managerClass {
     public boolean enemyActive = false;
     public boolean obstacleActive = false;
 
-    float timer = 0f;
- }
+    public boolean spawnNewEnemyTime = false;
+
+    float enemytimer = 0f;
+
+    public int lastEvent = 0;      // 1 = enemy, 2 = obstacle, 3 = powerup (if you add it)
+    public int repeatCount = 0;
+}

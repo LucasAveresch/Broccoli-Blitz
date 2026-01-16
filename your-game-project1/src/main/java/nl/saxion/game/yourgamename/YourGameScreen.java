@@ -154,6 +154,7 @@ public class YourGameScreen extends ScalableGameScreen {
         // nieuwe segmenten genereren
         if (managerClass.spawnObstacle) {
             managerClass.spawnObstacle = false;
+            managerClass.obstacleActive = true;
                 SegmentGenerator.GeneratedSegment seg =
                         segmentGenerator.generate(nextSegmentX);
 
@@ -167,6 +168,7 @@ public class YourGameScreen extends ScalableGameScreen {
             p.update(delta);
             p.draw();
         }
+
         activePlatforms.removeIf(p -> p.x + p.width < 0);
 
         // platform collision → vloer/verhogingen zoals Kaasje
@@ -187,6 +189,14 @@ public class YourGameScreen extends ScalableGameScreen {
             o.draw();
         }
         activeObstacles.removeIf(o -> o.x + o.width < 0);
+        if(managerClass.obstacleActive) {
+            if (activePlatforms.isEmpty() || activeObstacles.isEmpty()) {
+                managerClass.obstacleActive = false;
+            } else if (activePlatforms.getLast().x < 300 && activeObstacles.getLast().x < 300) {
+                managerClass.obstacleActive = false;
+            }
+        }
+
 
         // physics / movement
         Methodes_Rutger.update(player, unlimitedAmmoPowerupClass, false);
@@ -199,13 +209,13 @@ public class YourGameScreen extends ScalableGameScreen {
         Methodes_Rutger.drawBombCooldown();
 
 
-        Methodes_Maxje.updateEnemies(delta, enemyClass,subEnemyClass,flamethrowerClass);
-        Methodes_Rutger.checkBulletHitsEnemy(player, enemyClass);
+        Methodes_Maxje.updateEnemies(delta, enemyClass,subEnemyClass,flamethrowerClass,managerClass);
+        Methodes_Rutger.checkBulletHitsEnemy(player, enemyClass,managerClass);
         Methodes_Maxje.checkCollsionMes(projectileClass, player);
         Methodes_Maxje.checkCollisionEnemy(player, enemyClass, subEnemyClass, schildClass, powerupClassSchild);
-        Methodes_Maxje.checkForPowerupPickup(player, powerupClassSchild);
-        Methodes_Maxje.updateSchildPowerup(delta, powerupClassSchild, schildClass,managerClass);
-        Methodes_Maxje.updateunlimitedKogels(delta, powerupClassSchild, unlimitedAmmoPowerupClass, player,managerClass);
+        Methodes_Maxje.checkForPowerupPickup(player, powerupClassSchild,managerClass);
+        Methodes_Maxje.updateSchildPowerup(delta, powerupClassSchild, schildClass);
+        Methodes_Maxje.updateunlimitedKogels(delta, powerupClassSchild, unlimitedAmmoPowerupClass, player);
         Methodes_Maxje.unlimitedKogelsLogic(delta, unlimitedAmmoPowerupClass, player, powerupClassSchild);
         Methodes_Maxje.activeSchildUpdate(schildClass, player);
         Methodes_Maxje.selectEnemyWillekeurig(delta, enemyClass,managerClass);
@@ -217,16 +227,17 @@ public class YourGameScreen extends ScalableGameScreen {
         Methodes_Maxje.updateMes(delta, projectileClass);
         Methodes_Rutger.updatePowerupTimer(delta, powerupClassSchild, schildClass);
         Methodes_Rutger.drawPowerupTimer(powerupClassSchild);
-        Methodes_Maxje.genereerRandomPowerup(powerupClassSchild,managerClass);
+        Methodes_Maxje.genereerRandomPowerup(powerupClassSchild,delta);
         Methodes_Maxje.tekenFlamethrower(delta, flamethrowerClass, enemyClass);
         Methodes_Maxje.checkFlamethrowerCollision(flamethrowerClass,player,schildClass);
         Methodes_Maxje.addSpatel(delta,projectileClass,enemyClass);
         Methodes_Maxje.updateSpatel(delta,projectileClass);
         Methodes_Maxje.checkCollsionSpatel(projectileClass,player);
         Methodes_Maxje.generateGameLogic(managerClass,delta);
+        Methodes_Maxje.updateManagerTimer(managerClass,delta);
 
         // 1. Enemies updaten + tekenen
-        Methodes_Maxje.updateEnemies(delta, enemyClass, subEnemyClass, flamethrowerClass);
+        Methodes_Maxje.updateEnemies(delta, enemyClass, subEnemyClass, flamethrowerClass,managerClass);
 
 // 2. Flame tekenen
         Methodes_Maxje.tekenFlamethrower(delta, flamethrowerClass, enemyClass);
