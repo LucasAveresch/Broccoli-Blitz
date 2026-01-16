@@ -69,7 +69,7 @@ public class SettingsScreen extends ScalableGameScreen {
         // Updates
         Methodes_Rutger.update(player, unlimitedAmmoPowerupClass, inShootTutorial);
         Methodes_Rutger.updateBomb(player, enemy);
-        Methodes_Rutger.updateCoins(player);
+        Methodes_Rutger.updateCoins(player,delta);
 
         // HUD (nu met outline)
         Methodes_Rutger.drawGameHud(player);
@@ -94,7 +94,7 @@ public class SettingsScreen extends ScalableGameScreen {
                 break;
 
             case 4:
-                if (Methodes_Rutger.tutorialCoin(player)) tutorialStep++;
+                if (Methodes_Rutger.tutorialCoin(player,delta)) tutorialStep++;
                 break;
 
             case 5:

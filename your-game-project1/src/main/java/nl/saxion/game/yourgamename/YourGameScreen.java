@@ -40,6 +40,8 @@ public class YourGameScreen extends ScalableGameScreen {
     @Override
     public void show() {
 
+        gameSpeed = 1.0f;
+
         flamethrowerClass = new flamethrowerClass(-2000, 0);
 
         Methodes_Rutger.resetRoundStats(player);
@@ -274,7 +276,7 @@ public class YourGameScreen extends ScalableGameScreen {
 
         // rest van je game logic
         Methodes_Rutger.spawnCoins();
-        Methodes_Rutger.updateCoins(player);
+        Methodes_Rutger.updateCoins(player,delta);
         Methodes_Rutger.updateScore(player, delta);
         Methodes_Rutger.drawGameHud(player);
         Methodes_Rutger.drawBombCooldown();

@@ -11,4 +11,9 @@ public class CoinClass {
         this.x = x;
         this.y = y;
     }
+
+    // Laat de coin meebewegen met de world speed
+    public void update(int gameSpeed) {
+        x -= gameSpeed;
+    }
 }

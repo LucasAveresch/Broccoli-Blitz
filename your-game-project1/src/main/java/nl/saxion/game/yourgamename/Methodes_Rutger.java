@@ -168,7 +168,7 @@ public class Methodes_Rutger {
         }
     }
 
-    public static void updateCoins(PlayerClass player) {
+    public static void updateCoins(PlayerClass player,float delta) {
         int broccoliX = 100;
         int broccoliYTop = player.yPlayer;
         int broccoliYBottom = player.yPlayer + player.spriteHeight;
@@ -178,7 +178,8 @@ public class Methodes_Rutger {
 
             if (!coin.isCollected) {
                 // Munten bewegen naar links
-                coin.x -= player.speed * 5;
+                coin.x -= 300 * YourGameScreen.gameSpeed * delta;
+
 
                 // Teken munt
                 GameApp.drawTexture("coin", coin.x, coin.y, coin.width, coin.height);
@@ -646,7 +647,7 @@ public class Methodes_Rutger {
         }
         return false;
     }
-    public static boolean tutorialCoin(PlayerClass player) {
+    public static boolean tutorialCoin(PlayerClass player,float delta) {
         // Als er GEEN coins meer zijn → spawn er één nieuwe
         if (coins.isEmpty()) {
             int x = (int) GameApp.getWorldWidth() - 200;
@@ -655,7 +656,7 @@ public class Methodes_Rutger {
         }
 
         // Coins bewegen + collision
-        updateCoins(player);
+        updateCoins(player,delta);
 
         // Ga door naar volgende stap zodra speler er één heeft gepakt
         return player.coinsPickedUp > 0;
