@@ -139,7 +139,7 @@ public class YourGameScreen extends ScalableGameScreen {
         GameApp.startSpriteRendering();
 
         // wereld beweegt
-        PlayerClass.worldX += 600 * delta;
+        PlayerClass.worldX += 1000 * delta;
 
         // achtergrond
         Methodes_Lucas.LucasParallaxMethods.drawParallaxBackground(

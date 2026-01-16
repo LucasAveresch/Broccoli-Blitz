@@ -17,7 +17,6 @@ public class SegmentGenerator {
         GeneratedSegment seg = new GeneratedSegment();
         int pattern = rng.nextInt(6);
         System.out.println(pattern);
-pattern = 4;
         switch (pattern) {
 
             case 0:
