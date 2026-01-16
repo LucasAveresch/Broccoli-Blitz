@@ -6,10 +6,10 @@ public class PlatformClass {
 
     public float x, y;
 
-    // HITBOX (collision)
+    // HITBOX
     public float width, height;
 
-    // SPRITE (visueel)
+    // SPRITE
     public float textureWidth, textureHeight;
 
     public String textureKey;
@@ -23,8 +23,8 @@ public class PlatformClass {
     private boolean moveUp = true;
 
     public PlatformClass(float x, float y,
-                         float width, float height,              // ⭐ HITBOX (bijv. 300 × 70)
-                         float textureWidth, float textureHeight, // ⭐ SPRITE (bijv. 300 × 120)
+                         float width, float height,              // HITBOX (bijv. 300 × 70)
+                         float textureWidth, float textureHeight, // SPRITE (bijv. 300 × 120)
                          String textureKey,
                          boolean moves,
                          float moveSpeed,
@@ -33,11 +33,14 @@ public class PlatformClass {
         this.x = x;
         this.y = y;
 
-        // SPRITE (120 hoog)
+        // SPRITE (visueel)
         this.textureWidth = textureWidth;
         this.textureHeight = textureHeight;
 
-        // HITBOX (70 hoog)
+        // HITBOX (collision)
+        // ⭐ width komt 1-op-1 uit de generator
+        // ⭐ textureWidth komt 1-op-1 uit de generator
+        // → beide zijn gelijk
         this.width = width;
         this.height = height;
 
@@ -53,7 +56,6 @@ public class PlatformClass {
         // beweegt mee met wereld
         x -= 300 * delta;
 
-        // alleen bewegen als moves == true
         if (moves) {
             if (moveUp) {
                 y += moveSpeed * delta;
@@ -66,11 +68,9 @@ public class PlatformClass {
     }
 
     public void draw() {
-        // sprite tekenen (120 hoog)
         GameApp.drawTexture(textureKey, x, y, textureWidth, textureHeight);
     }
 
-    // oude helper, mag blijven
     public boolean playerIsOnTop(PlayerClass player) {
         float px = 120;
         float pw = player.spriteWidth;
@@ -78,7 +78,7 @@ public class PlatformClass {
         boolean horizontal = px + pw > x && px < x + width;
 
         float feet = player.yPlayer;
-        float platformTop = y + height; // ⭐ collision-top = 70, niet 120
+        float platformTop = y + height;
 
         boolean vertical = feet >= platformTop - 10 && feet <= platformTop + 20;
 
