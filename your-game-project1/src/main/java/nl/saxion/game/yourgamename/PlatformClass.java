@@ -5,8 +5,13 @@ import nl.saxion.gameapp.GameApp;
 public class PlatformClass {
 
     public float x, y;
-    public float width, height;          // HITBOX
-    public float textureWidth, textureHeight; // SPRITE
+
+    // HITBOX (collision)
+    public float width, height;
+
+    // SPRITE (visueel)
+    public float textureWidth, textureHeight;
+
     public String textureKey;
 
     // bewegen of niet
@@ -18,8 +23,8 @@ public class PlatformClass {
     private boolean moveUp = true;
 
     public PlatformClass(float x, float y,
-                         float width, float height,
-                         float textureWidth, float textureHeight,
+                         float width, float height,              // ⭐ HITBOX (bijv. 300 × 70)
+                         float textureWidth, float textureHeight, // ⭐ SPRITE (bijv. 300 × 120)
                          String textureKey,
                          boolean moves,
                          float moveSpeed,
@@ -28,13 +33,13 @@ public class PlatformClass {
         this.x = x;
         this.y = y;
 
-        // SPRITE
+        // SPRITE (120 hoog)
         this.textureWidth = textureWidth;
         this.textureHeight = textureHeight;
 
-        // ⭐ HITBOX = SPRITE (altijd gelijk)
-        this.width = textureWidth;
-        this.height = textureHeight;
+        // HITBOX (70 hoog)
+        this.width = width;
+        this.height = height;
 
         this.textureKey = textureKey;
 
@@ -61,18 +66,19 @@ public class PlatformClass {
     }
 
     public void draw() {
+        // sprite tekenen (120 hoog)
         GameApp.drawTexture(textureKey, x, y, textureWidth, textureHeight);
     }
 
-    // oude helper, mag blijven voor andere code
+    // oude helper, mag blijven
     public boolean playerIsOnTop(PlayerClass player) {
-        float px = 100;
+        float px = 120;
         float pw = player.spriteWidth;
 
         boolean horizontal = px + pw > x && px < x + width;
 
         float feet = player.yPlayer;
-        float platformTop = y + height;
+        float platformTop = y + height; // ⭐ collision-top = 70, niet 120
 
         boolean vertical = feet >= platformTop - 10 && feet <= platformTop + 20;
 

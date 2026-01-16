@@ -171,15 +171,40 @@ public class YourGameScreen extends ScalableGameScreen {
 
         activePlatforms.removeIf(p -> p.x + p.width < 0);
 
-        // platform collision → vloer/verhogingen zoals Kaasje
+// ⭐ PLATFORM COLLISION — massieve raises
         for (PlatformClass p : activePlatforms) {
-            if (p.playerIsOnTop(player)) {
-                int top = (int) (p.y+p.height);
-                if (player.yPlayer < top) {
-                    player.yPlayer = top;
-                }
-                player.groundLevel = top;
 
+            // Player (broccoli)
+            int px1 = 100;
+            int px2 = px1 + (int) player.spriteWidth;
+            int feet = (int) player.yPlayer;
+            int head = feet + (int) player.spriteHeight;
+
+            // Platform hitbox
+            int platLeft   = (int) p.x;
+            int platRight  = platLeft + (int) p.width;
+            int platBottom = (int) p.y;
+            int platTop    = platBottom + (int) p.height;
+
+            boolean horizontalOverlap = px2 > platLeft && px1 < platRight;
+            boolean verticalOverlap   = head > platBottom && feet < platTop;
+            boolean falling           = player.velocity < 0;
+
+            // ⭐ TOP COLLISION — landen op raise
+            // Voeten gaan door platTop heen terwijl je valt
+            if (horizontalOverlap && falling && head > platTop && feet <= platTop) {
+                player.yPlayer   = platTop;              // voeten op bovenkant
+                player.groundLevel = platTop;
+                player.velocity  = 0;
+                continue;
+            }
+
+            // ⭐ SIDE COLLISION — tegen zijkant knallen = dood
+            // Je overlapt verticaal met het platform, maar staat er niet bovenop
+            if (horizontalOverlap && verticalOverlap && !(feet >= platTop - 2)) {
+                Methodes_Rutger.killPlayer(player);
+                GameApp.endSpriteRendering();
+                return;
             }
         }
 
@@ -194,6 +219,56 @@ public class YourGameScreen extends ScalableGameScreen {
                 managerClass.obstacleActive = false;
             } else if (activePlatforms.getLast().x < 300 && activeObstacles.getLast().x < 300) {
                 managerClass.obstacleActive = false;
+            }
+        }
+        if (managerClass.obstacleActive) {
+            if (activePlatforms.isEmpty() || activeObstacles.isEmpty()) {
+                managerClass.obstacleActive = false;
+            } else if (activePlatforms.getLast().x < 300 && activeObstacles.getLast().x < 300) {
+                managerClass.obstacleActive = false;
+            }
+        }
+
+// ⭐ SPIKE COLLISION — kleine maar iets grotere hitbox
+        for (ObstacleClass o : activeObstacles) {
+
+            // Player hitbox
+            int px1 = 100;
+            int px2 = px1 + (int) player.spriteWidth;
+            int py1 = (int) player.yPlayer;
+            int py2 = py1 + (int) player.spriteHeight;
+
+            // Volledige obstacle hitbox
+            int ox1_full = (int) o.x;
+            int ox2_full = ox1_full + (int) o.width;
+            int oy1_full = (int) o.y;
+            int oy2_full = oy1_full + (int) o.height;
+
+            // ⭐ iets grotere spike-hitbox
+            // hoogte = 15% van de spike
+            int spikeHeight = (int) (o.height * 0.15f);
+
+            // breedte = 40% van de spike
+            int spikeWidth = (int) (o.width * 0.40f);
+
+            // gecentreerd
+            int ox1 = ox1_full + (int)((o.width - spikeWidth) / 2f);
+            int ox2 = ox1 + spikeWidth;
+
+            // alleen bovenste deel
+            int oy1 = oy2_full - spikeHeight;
+            int oy2 = oy2_full;
+
+            boolean intersects =
+                    px2 > ox1 &&
+                            px1 < ox2 &&
+                            py2 > oy1 &&
+                            py1 < oy2;
+
+            if (intersects) {
+                Methodes_Rutger.killPlayer(player);
+                GameApp.endSpriteRendering();
+                return;
             }
         }
 

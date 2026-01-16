@@ -24,7 +24,7 @@ public class PlatformManager {
         float randomMoveRange = 40 + rng.nextInt(80);
 
         float textureWidth = randomWidth;
-        float textureHeight = 60; // jouw platform sprite hoogte
+        float textureHeight = 120; // jouw platform sprite hoogte
 
         PlatformClass p = new PlatformClass(
                 worldX,
